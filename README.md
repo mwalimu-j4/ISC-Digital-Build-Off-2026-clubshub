@@ -1,8 +1,8 @@
 # ClubsHub
 
 ClubsHub is a planned platform for organizing university clubs, memberships, events,
-announcements, notifications, and lost-and-found workflows. The repository currently contains the Stage 1 product foundation and responsive UX
-shell. Business features are not implemented or operational.
+announcements, notifications, and lost-and-found workflows. The repository contains the Stage 04 club proposal and management workflow on top of
+the authentication and database foundation.
 
 ## Stack and architecture
 
@@ -57,6 +57,7 @@ validation, explicit module boundaries, and verified changes take priority over 
 
 ## Project status
 
-Stage 1 is complete and ready for product review. Authentication, database models,
-API implementations, dashboards, and other domain functionality intentionally remain
-unimplemented until later approved stages.
+Stage 04 is complete: students can submit proposals and see status, super-admins can
+review and oversee clubs, approved clubs have a public directory/profile, and approved
+club admins can update profiles. Events, announcements, notifications, and
+lost-and-found remain future stages.

@@ -8,6 +8,8 @@ model User {
   createdAt              DateTime        @default(now()) @db.Timestamptz(3) @map("created_at")
   updatedAt              DateTime        @updatedAt @db.Timestamptz(3) @map("updated_at")
   createdClubs            Club[]          @relation("ClubCreator")
+  reviewedClubs           Club[]          @relation("ClubReviewer")
+  suspendedClubs          Club[]          @relation("ClubSuspender")
   memberships             ClubMembership[]
   auditLogs               AuditLog[]      @relation("AuditActor")
 

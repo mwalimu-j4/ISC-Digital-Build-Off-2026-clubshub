@@ -48,3 +48,10 @@ turning the database into an authorization boundary that the UI must enforce.
 Vercel uses the `vercel-build` script to generate Prisma Client, run
 `prisma migrate deploy`, and then build Next.js. Runtime and migration connection
 values are supplied as environment variables; no database URL is committed.
+
+## 2026-11-04 — Club proposals are clubs with explicit review state
+
+Stage 04 keeps the existing club aggregate as the proposal record. Purpose,
+activities, and review reasons remain on that aggregate, while approval creates the
+proposer's approved club-admin membership. This avoids a second source of truth and
+keeps public reads restricted to active clubs.

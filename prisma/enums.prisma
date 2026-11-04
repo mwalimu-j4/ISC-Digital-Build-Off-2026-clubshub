@@ -11,6 +11,7 @@ enum UserStatus {
 
 enum ClubStatus {
   PENDING
+  CHANGES_REQUESTED
   ACTIVE
   REJECTED
   SUSPENDED

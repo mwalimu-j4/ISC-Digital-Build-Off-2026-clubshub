@@ -4,12 +4,12 @@
 
 ## Current stage
 
-Stage 03 — Authentication & Authorization: **Implemented on feature branch**
+Stage 04 — Core Club and Membership Modules: **Implemented**
 
 ## Objective
 
-Define the product direction and establish a polished, mobile-first application shell
-without implementing authentication, persistence, APIs, or business workflows.
+Deliver the first production business workflow on top of the identity and database
+foundation.
 
 ## Completed tasks
 
@@ -24,7 +24,6 @@ without implementing authentication, persistence, APIs, or business workflows.
 ## Pending tasks
 
 - Validate product assumptions with university stakeholders and representative users.
-- Review and merge the Stage 03 authentication pull request.
 - Configure Neon `DATABASE_URL` and `DIRECT_URL` in Vercel before deployment.
 - Configure Google OAuth credentials and `NEXTAUTH_SECRET` in Vercel before deployment.
 
@@ -39,11 +38,10 @@ without implementing authentication, persistence, APIs, or business workflows.
 
 ## Known limitations
 
-The core database schema and migration are present, but there is no backend API, form
-submission, search, or functional club/event/lost-and-found flow. Google OAuth only
-admits users already provisioned in the `users` table with an `ACTIVE` status. RLS
-policies still require a later authenticated repository layer to set transaction-local
-identity context.
+Events, announcements, notifications, member applications, and analytics remain out
+of scope until later stages. Google OAuth only admits users already provisioned in the
+`users` table with an `ACTIVE` status. RLS policies require request code to set
+transaction-local identity context.
 
 ## Stage 02 validation
 
@@ -60,7 +58,11 @@ identity context.
   identity and role checks with shared authorization helpers.
 - Audit entries can be written through Prisma or a transaction-scoped Prisma client.
 
+## Stage 04 validation
+
+- Prisma schema validation and client generation pass.
+- Focused club service tests cover role and input validation.
+
 ## Next approved stage
 
-Stage 04 — Core Club and Membership Modules. Begin only after Stage 03 is reviewed,
-merged, and explicitly authorized.
+Stage 05 — Events, Announcements, and Notifications.
