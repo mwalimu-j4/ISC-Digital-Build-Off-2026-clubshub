@@ -6,6 +6,11 @@ architectures, unrelated functionality, fake implementations, or hardcoded produ
 data. Validate external input with Zod, keep database access in repositories and
 business logic in services, and use shared components rather than duplicating UI.
 
+Use shadcn/ui conventions and the established ClubsHub navy/orange semantic design
+tokens in `src/app/globals.css` for all UI work. Do not introduce unrelated palettes,
+pastel replacements, or one-off color literals; extend the semantic tokens when a new
+state is genuinely required.
+
 Authorization must be enforced server-side. Never expose secrets or private
 environment variables. Write tests for new business logic, update documentation when
 architecture changes, and never suppress lint or type errors. Make focused changes,

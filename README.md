@@ -8,11 +8,16 @@ shell. Business features are not implemented or operational.
 
 - Next.js App Router with React and TypeScript strict mode
 - PostgreSQL and Prisma (planned database layer)
-- Tailwind CSS and shadcn/ui (planned presentation system)
+- Tailwind CSS and shadcn/ui conventions with semantic design tokens
 - Zod for external input validation
 - ESLint, Prettier, Vitest, Testing Library, and Playwright
 - Modular monolith with route composition, isolated business modules, shared UI, and
   infrastructure layers
+
+The approved visual system uses deep navy foundations and surfaces, orange primary
+actions and emphasis, and slate-blue semantic neutrals. UI work must use the shadcn/ui
+semantic tokens defined in [`src/app/globals.css`](src/app/globals.css); do not add
+unrelated palettes or one-off color literals.
 
 See [`docs/architecture/`](docs/architecture/) and [`docs/project/technology-stack.md`](docs/project/technology-stack.md).
 Read the [product requirements](docs/product/product-requirements.md), [roadmap](docs/project/ROADMAP.md),

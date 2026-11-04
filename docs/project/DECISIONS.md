@@ -14,9 +14,15 @@ most likely to encounter events and communities.
 
 ## 2026-11-04 — Restrained institutional visual language
 
-ClubsHub uses a warm neutral canvas, ink typography, muted green as the product accent,
-and limited pastel surfaces for content grouping. This balances student warmth with
-institutional trust and keeps contrast and hierarchy clear.
+ClubsHub uses deep navy foundations and surfaces with orange primary actions and
+accessible slate-blue neutrals. This matches the approved visual direction, gives the
+product a confident institutional identity, and keeps hierarchy clear.
+
+## 2026-11-04 — Enforced shadcn/ui semantic palette
+
+All UI uses shadcn/ui conventions and the semantic tokens in `src/app/globals.css`.
+Future components must consume those tokens rather than introduce arbitrary colors,
+so the visual system remains consistent across every development stage.
 
 ## 2026-11-04 — Anchors instead of dead links
 
