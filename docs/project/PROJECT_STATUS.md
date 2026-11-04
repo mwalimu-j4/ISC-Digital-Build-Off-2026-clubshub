@@ -4,7 +4,7 @@
 
 ## Current stage
 
-Stage 02 — Database Architecture & Data Modelling: **Implemented on feature branch**
+Stage 03 — Authentication & Authorization: **Implemented on feature branch**
 
 ## Objective
 
@@ -24,8 +24,9 @@ without implementing authentication, persistence, APIs, or business workflows.
 ## Pending tasks
 
 - Validate product assumptions with university stakeholders and representative users.
-- Review and merge the Stage 02 database pull request.
+- Review and merge the Stage 03 authentication pull request.
 - Configure Neon `DATABASE_URL` and `DIRECT_URL` in Vercel before deployment.
+- Configure Google OAuth credentials and `NEXTAUTH_SECRET` in Vercel before deployment.
 
 ## Testing results
 
@@ -38,9 +39,10 @@ without implementing authentication, persistence, APIs, or business workflows.
 
 ## Known limitations
 
-The core database schema and migration are present, but there is no authentication,
-backend API, form submission, search, or functional club/event/lost-and-found flow.
-RLS policies require a later authenticated server layer to set transaction-local
+The core database schema and migration are present, but there is no backend API, form
+submission, search, or functional club/event/lost-and-found flow. Google OAuth only
+admits users already provisioned in the `users` table with an `ACTIVE` status. RLS
+policies still require a later authenticated repository layer to set transaction-local
 identity context.
 
 ## Stage 02 validation
@@ -50,7 +52,15 @@ identity context.
 - Migration SQL was generated from the split Prisma schema without a database
   connection. Applying it requires a reachable PostgreSQL/Neon database.
 
+## Stage 03 validation
+
+- Google OAuth is configured through Auth.js with JWT sessions.
+- Suspended, deactivated, unknown, and email-less accounts are rejected at sign-in.
+- Protected route groups are guarded by middleware; server components can enforce
+  identity and role checks with shared authorization helpers.
+- Audit entries can be written through Prisma or a transaction-scoped Prisma client.
+
 ## Next approved stage
 
-Stage 03 — Authentication & Authorization. Do not begin it until Stage 02 is reviewed,
+Stage 04 — Core Club and Membership Modules. Begin only after Stage 03 is reviewed,
 merged, and explicitly authorized.
