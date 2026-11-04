@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:app": "next build",
     "start": "next start",
     "lint": "eslint .",
     "format": "prettier --write .",
@@ -17,7 +18,9 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "db:generate": "prisma generate",
-    "db:validate": "prisma validate"
+    "db:validate": "prisma validate",
+    "db:migrate:deploy": "prisma migrate deploy",
+    "vercel-build": "pnpm db:generate && pnpm db:migrate:deploy && pnpm build:app"
   },
   "dependencies": {
     "@prisma/client": "^6.15.0",

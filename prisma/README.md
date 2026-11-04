@@ -1,8 +1,18 @@
 # Database foundation
 
-ClubsHub will use PostgreSQL with Prisma. No application models or migrations are
-defined yet. The database design is documented in
-[`docs/architecture/database-architecture.md`](../docs/architecture/database-architecture.md).
+ClubsHub uses PostgreSQL with Prisma. The schema is split into readable domain files
+inside this directory and is compiled into one Prisma Client:
 
-When the first approved model is introduced, keep schema changes in `prisma/schema.prisma`,
-review generated migrations, and never commit local database files or credentials.
+- `schema.prisma` contains the datasource and generator.
+- `enums.prisma` contains shared controlled values.
+- `user.prisma`, `club.prisma`, `membership.prisma`, and `audit-log.prisma` contain
+  the Stage 02 models.
+
+Schema changes belong in reviewed migrations under `migrations/`. Run
+`pnpm db:validate` and `pnpm db:generate` after schema changes. Use
+`pnpm db:migrate:deploy` to apply committed migrations to a reachable PostgreSQL
+database.
+
+`DATABASE_URL` is the runtime connection string. `DIRECT_URL` should be an unpooled
+Neon connection for migration tooling when the deployment provider supplies pooled
+connections. Never commit either value.

@@ -1,10 +1,12 @@
 # Database architecture
 
-PostgreSQL and Prisma are the planned persistence stack. Models will use normalized
-relational design, explicit foreign keys, unique constraints for business invariants,
-and indexes based on measured query patterns. Referential actions and nullability must
-be intentional.
+PostgreSQL and Prisma are the persistence stack. The Prisma schema is split into
+domain files in `prisma/`, with `schema.prisma` containing the datasource and client
+generator. The initial migration contains normalized models, explicit foreign keys,
+unique constraints, query indexes, and forced row-level security policies.
 
-Repositories own Prisma access. Multi-record changes use transactions, and all schema
-changes are reviewed migrations. Credentials stay in environment variables; local
-database files and dumps are ignored. No application models or migrations exist yet.
+Repositories will own Prisma access in later stages. Multi-record changes must use
+transactions, and each schema change must be a reviewed migration. Credentials stay
+in environment variables; local database files and dumps are ignored. RLS context
+must be set transaction-locally by the authenticated server layer; RLS complements,
+but does not replace, service authorization.

@@ -1,0 +1,17 @@
+model ClubMembership {
+  id         String           @id @default(uuid()) @db.Uuid
+  userId     String           @map("user_id") @db.Uuid
+  clubId     String           @map("club_id") @db.Uuid
+  role       MembershipRole   @default(MEMBER)
+  status     MembershipStatus @default(PENDING)
+  appliedAt  DateTime         @default(now()) @db.Timestamptz(3) @map("applied_at")
+  approvedAt DateTime?        @db.Timestamptz(3) @map("approved_at")
+  updatedAt  DateTime         @updatedAt @db.Timestamptz(3) @map("updated_at")
+  user       User             @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  club       Club             @relation(fields: [clubId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@unique([userId, clubId])
+  @@index([clubId, status])
+  @@index([userId, status])
+  @@map("club_memberships")
+}
