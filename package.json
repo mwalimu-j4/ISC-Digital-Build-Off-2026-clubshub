@@ -20,7 +20,8 @@
     "db:generate": "prisma generate --schema prisma",
     "db:validate": "prisma validate --schema prisma",
     "db:migrate:deploy": "prisma migrate deploy --schema prisma",
-    "vercel-build": "pnpm db:generate && pnpm db:migrate:deploy && pnpm build:app"
+    "db:seed:super-admin": "node scripts/seed-super-admin.mjs",
+    "vercel-build": "pnpm db:generate && pnpm db:migrate:deploy && pnpm db:seed:super-admin && pnpm build:app"
   },
   "dependencies": {
     "@prisma/client": "^6.15.0",
@@ -28,15 +29,16 @@
     "next-auth": "^4.24.11",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "sonner": "^2.0.8",
     "tailwindcss": "^4.1.12",
     "zod": "^4.0.17"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
     "@playwright/test": "^1.55.0",
+    "@tailwindcss/postcss": "^4.1.12",
     "@testing-library/jest-dom": "^6.8.0",
     "@testing-library/react": "^16.3.0",
-    "jsdom": "^26.1.0",
     "@types/node": "^24.3.0",
     "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",
@@ -47,8 +49,8 @@
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "eslint-plugin-unused-imports": "^4.1.4",
+    "jsdom": "^26.1.0",
     "prettier": "^3.6.2",
-    "@tailwindcss/postcss": "^4.1.12",
     "prisma": "^6.15.0",
     "typescript": "^5.9.2",
     "vite": "^7.1.3",
