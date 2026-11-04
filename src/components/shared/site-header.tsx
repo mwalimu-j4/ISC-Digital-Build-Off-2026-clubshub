@@ -4,6 +4,7 @@ import { useState } from 'react';
 
 const navigation = [
   { href: '/clubs', label: 'Discover clubs' },
+  { href: '/clubs/propose', label: 'Propose a club' },
   { href: '/dashboard/clubs', label: 'My clubs' },
   { href: '#events', label: 'Events' },
   { href: '#lost-found', label: 'Lost & Found' },
