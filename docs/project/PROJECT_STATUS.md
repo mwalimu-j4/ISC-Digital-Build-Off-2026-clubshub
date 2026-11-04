@@ -32,7 +32,7 @@ foundation.
 - `pnpm lint`: passed
 - `pnpm format:check`: passed
 - `pnpm typecheck`: passed
-- `pnpm test`: passed (no business tests exist yet)
+- `pnpm test`: passed (2 focused club-service tests)
 - `pnpm build`: passed
 - Manual viewport review: passed at 360px, 390px, 768px, 1024px, and 1440px
 
@@ -62,6 +62,8 @@ transaction-local identity context.
 
 - Prisma schema validation and client generation pass.
 - Focused club service tests cover role and input validation.
+- Production build compiles successfully; runtime database rendering requires configured
+  `DATABASE_URL` and `DIRECT_URL`.
 
 ## Next approved stage
 
