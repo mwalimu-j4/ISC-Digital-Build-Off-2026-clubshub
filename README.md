@@ -1,9 +1,8 @@
 # ClubsHub
 
 ClubsHub is a planned platform for organizing university clubs, memberships, events,
-announcements, notifications, and lost-and-found workflows. This repository currently
-contains the professional engineering foundation only; no business features are
-implemented or operational.
+announcements, notifications, and lost-and-found workflows. The repository currently contains the Stage 1 product foundation and responsive UX
+shell. Business features are not implemented or operational.
 
 ## Stack and architecture
 
@@ -16,6 +15,8 @@ implemented or operational.
   infrastructure layers
 
 See [`docs/architecture/`](docs/architecture/) and [`docs/project/technology-stack.md`](docs/project/technology-stack.md).
+Read the [product requirements](docs/product/product-requirements.md), [roadmap](docs/project/ROADMAP.md),
+and [current project status](docs/project/PROJECT_STATUS.md) before contributing.
 
 ## Development setup
 
@@ -37,7 +38,8 @@ pnpm build
 
 ## Repository structure
 
-`src/app` contains routing and composition only. `src/modules` will contain isolated
+`src/app` contains routing and composition only. `src/components/shared` contains the
+visual shell. `src/modules` will contain isolated
 business modules following the documented module contract. `src/components` contains
 reusable presentation components, `src/lib` contains shared infrastructure, `prisma`
 contains database artifacts, and `tests` is split by test level.
@@ -50,6 +52,6 @@ validation, explicit module boundaries, and verified changes take priority over 
 
 ## Project status
 
-The foundation is ready for approved feature work. Authentication, database models,
+Stage 1 is complete and ready for product review. Authentication, database models,
 API implementations, dashboards, and other domain functionality intentionally remain
-unimplemented.
+unimplemented until later approved stages.
