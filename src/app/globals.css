@@ -160,6 +160,171 @@ button:focus-visible {
   background: var(--primary);
   color: var(--primary-foreground);
 }
+.button-secondary {
+  background: var(--secondary);
+  border-color: var(--border);
+  color: var(--secondary-foreground);
+}
+.button:disabled {
+  cursor: wait;
+  opacity: 0.6;
+  transform: none;
+}
+.proposal-page {
+  display: grid;
+  gap: 48px;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  padding-bottom: 96px;
+  padding-top: 80px;
+}
+.proposal-intro {
+  align-self: start;
+  position: sticky;
+  top: 120px;
+}
+.proposal-intro h1 {
+  font-size: clamp(2.8rem, 6vw, 5.2rem);
+  letter-spacing: -0.07em;
+  line-height: 0.98;
+  margin: 14px 0 24px;
+  max-width: 520px;
+}
+.proposal-intro > p:not(.eyebrow) {
+  color: var(--muted-foreground);
+  font-size: 17px;
+  line-height: 1.7;
+  max-width: 440px;
+}
+.proposal-steps {
+  border-left: 1px solid var(--border);
+  display: grid;
+  gap: 18px;
+  margin-top: 42px;
+  padding-left: 18px;
+}
+.proposal-steps span {
+  color: var(--muted-foreground);
+  font-size: 13px;
+}
+.proposal-steps strong {
+  color: var(--accent);
+  margin-right: 10px;
+}
+.proposal-card {
+  background: color-mix(in srgb, var(--card) 92%, transparent);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 24px 70px color-mix(in srgb, #000 24%, transparent);
+  display: grid;
+  gap: 24px;
+  padding: clamp(24px, 5vw, 48px);
+}
+.proposal-card-heading {
+  align-items: start;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+}
+.proposal-card h2 {
+  font-size: 28px;
+  letter-spacing: -0.05em;
+  margin: 4px 0 0;
+}
+.proposal-required,
+.proposal-card label,
+.proposal-card legend {
+  color: var(--muted-foreground);
+  font-size: 13px;
+  font-weight: 600;
+}
+.proposal-card label,
+.proposal-card fieldset {
+  display: grid;
+  gap: 9px;
+}
+.proposal-grid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: 1fr 1fr;
+}
+.proposal-card input,
+.proposal-card select,
+.proposal-card textarea {
+  background: color-mix(in srgb, var(--background) 72%, transparent);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--foreground);
+  font: inherit;
+  padding: 14px 16px;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+  width: 100%;
+}
+.proposal-card input:focus,
+.proposal-card select:focus,
+.proposal-card textarea:focus {
+  border-color: var(--ring);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ring) 18%, transparent);
+  outline: none;
+}
+.proposal-card textarea {
+  resize: vertical;
+}
+.proposal-card fieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+.proposal-card legend {
+  margin-bottom: 9px;
+}
+.activity-entry {
+  display: flex;
+  gap: 10px;
+}
+.activity-entry input {
+  flex: 1;
+}
+.activity-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-height: 20px;
+}
+.activity-tag {
+  background: color-mix(in srgb, var(--accent) 15%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  border-radius: 999px;
+  color: var(--secondary-foreground);
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  padding: 7px 11px;
+}
+.activity-tag span {
+  color: var(--accent);
+  margin-left: 5px;
+}
+.proposal-card small {
+  color: var(--muted-foreground);
+  font-size: 12px;
+}
+.proposal-submit {
+  align-items: center;
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+  padding-top: 24px;
+}
+.proposal-submit p {
+  color: var(--muted-foreground);
+  font-size: 12px;
+  line-height: 1.5;
+  margin: 0;
+  max-width: 250px;
+}
 .auth-page {
   align-items: center;
   background:
@@ -1004,6 +1169,17 @@ h2 {
   .category-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+  .proposal-page {
+    grid-template-columns: 1fr;
+    padding-bottom: 72px;
+    padding-top: 56px;
+  }
+  .proposal-intro {
+    position: static;
+  }
+  .proposal-intro h1 {
+    max-width: 700px;
+  }
 }
 @media (max-width: 680px) {
   .site-container {
@@ -1099,6 +1275,39 @@ h2 {
   }
   .category-card strong {
     font-size: 12px;
+  }
+  .proposal-page {
+    gap: 30px;
+    padding-bottom: 56px;
+    padding-top: 42px;
+  }
+  .proposal-intro h1 {
+    font-size: clamp(2.6rem, 14vw, 4rem);
+  }
+  .proposal-intro > p:not(.eyebrow) {
+    font-size: 15px;
+  }
+  .proposal-steps {
+    gap: 12px;
+    margin-top: 28px;
+  }
+  .proposal-grid {
+    grid-template-columns: 1fr;
+  }
+  .proposal-card-heading,
+  .proposal-submit {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .activity-entry {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .activity-entry .button {
+    width: 100%;
+  }
+  .proposal-submit .button {
+    width: 100%;
   }
   .category-arrow {
     display: none;

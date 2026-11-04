@@ -9,6 +9,7 @@ function getDisplayName(name: string | null | undefined, email: string) {
 
 async function findOrCreateGoogleUser(user: { email?: string | null; name?: string | null }) {
   const email = user.email?.trim().toLowerCase();
+  const superAdminEmail = process.env.SUPER_ADMIN_EMAIL?.trim().toLowerCase();
 
   if (!email) {
     // eslint-disable-next-line no-console
@@ -20,6 +21,13 @@ async function findOrCreateGoogleUser(user: { email?: string | null; name?: stri
     const account = await prisma.user.findUnique({ where: { email } });
 
     if (account) {
+      if (email === superAdminEmail && account.role !== 'SUPER_ADMIN') {
+        return prisma.user.update({
+          where: { id: account.id },
+          data: { role: 'SUPER_ADMIN', status: 'ACTIVE' },
+        });
+      }
+
       return account;
     }
 
@@ -28,7 +36,7 @@ async function findOrCreateGoogleUser(user: { email?: string | null; name?: stri
         fullName: getDisplayName(user.name, email),
         email,
         studentRegistrationId: `google-${crypto.randomUUID()}`,
-        role: 'STUDENT',
+        role: email === superAdminEmail ? 'SUPER_ADMIN' : 'STUDENT',
         status: 'ACTIVE',
       },
     });
