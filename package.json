@@ -17,14 +17,15 @@
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "db:generate": "prisma generate",
-    "db:validate": "prisma validate",
-    "db:migrate:deploy": "prisma migrate deploy",
+    "db:generate": "prisma generate --schema prisma",
+    "db:validate": "prisma validate --schema prisma",
+    "db:migrate:deploy": "prisma migrate deploy --schema prisma",
     "vercel-build": "pnpm db:generate && pnpm db:migrate:deploy && pnpm build:app"
   },
   "dependencies": {
     "@prisma/client": "^6.15.0",
     "next": "^15.5.2",
+    "next-auth": "^4.24.11",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "tailwindcss": "^4.1.12",
