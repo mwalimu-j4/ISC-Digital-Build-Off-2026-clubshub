@@ -31,7 +31,7 @@ export function SiteHeader() {
         </nav>
 
         <div className="header-actions">
-          <a className="button button-primary header-join" href="#discover">
+          <a className="button button-primary header-join" href="/sign-in">
             Join ClubsHub
           </a>
           <button
