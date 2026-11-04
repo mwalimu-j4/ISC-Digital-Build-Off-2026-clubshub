@@ -4,7 +4,7 @@
 
 ## Current stage
 
-Stage 01 — Product Foundation & Responsive UX: **Completed**
+Stage 02 — Database Architecture & Data Modelling: **Implemented on feature branch**
 
 ## Objective
 
@@ -24,7 +24,8 @@ without implementing authentication, persistence, APIs, or business workflows.
 ## Pending tasks
 
 - Validate product assumptions with university stakeholders and representative users.
-- Implement Stage 2 database architecture after review and approval.
+- Review and merge the Stage 02 database pull request.
+- Configure Neon `DATABASE_URL` and `DIRECT_URL` in Vercel before deployment.
 
 ## Testing results
 
@@ -37,10 +38,19 @@ without implementing authentication, persistence, APIs, or business workflows.
 
 ## Known limitations
 
-All content is static presentation content. There is no authentication, database,
+The core database schema and migration are present, but there is no authentication,
 backend API, form submission, search, or functional club/event/lost-and-found flow.
+RLS policies require a later authenticated server layer to set transaction-local
+identity context.
+
+## Stage 02 validation
+
+- `pnpm exec prisma validate`: passed with local placeholder environment values.
+- `pnpm exec prisma generate`: passed.
+- Migration SQL was generated from the split Prisma schema without a database
+  connection. Applying it requires a reachable PostgreSQL/Neon database.
 
 ## Next approved stage
 
-Stage 2 — Database Architecture. Do not begin it until this Stage 1 pull request is
-reviewed and approved.
+Stage 03 — Authentication & Authorization. Do not begin it until Stage 02 is reviewed,
+merged, and explicitly authorized.
