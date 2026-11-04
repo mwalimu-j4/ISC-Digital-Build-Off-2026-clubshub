@@ -3,7 +3,8 @@
 import { useState } from 'react';
 
 const navigation = [
-  { href: '#discover', label: 'Discover clubs' },
+  { href: '/clubs', label: 'Discover clubs' },
+  { href: '/dashboard/clubs', label: 'My clubs' },
   { href: '#events', label: 'Events' },
   { href: '#lost-found', label: 'Lost & Found' },
   { href: '#announcements', label: 'Announcements' },

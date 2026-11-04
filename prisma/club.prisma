@@ -3,13 +3,23 @@ model Club {
   name        String          @unique @db.VarChar(160)
   slug        String          @unique @db.VarChar(180)
   description String          @db.Text
+  purpose     String          @db.Text
+  activities  String[]        @db.Text
   category    String          @db.VarChar(80)
   logoUrl     String?         @map("logo_url") @db.VarChar(2048)
   createdById String          @map("created_by_id") @db.Uuid
   status      ClubStatus      @default(PENDING)
+  rejectionReason       String? @map("rejection_reason") @db.Text
+  changeRequestReason   String? @map("change_request_reason") @db.Text
+  reviewedById          String? @map("reviewed_by_id") @db.Uuid
+  reviewedAt            DateTime? @map("reviewed_at") @db.Timestamptz(3)
+  suspendedAt           DateTime? @map("suspended_at") @db.Timestamptz(3)
+  suspendedById         String? @map("suspended_by_id") @db.Uuid
   createdAt   DateTime        @default(now()) @db.Timestamptz(3) @map("created_at")
   updatedAt   DateTime        @updatedAt @db.Timestamptz(3) @map("updated_at")
   createdBy   User            @relation("ClubCreator", fields: [createdById], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  reviewedBy  User?           @relation("ClubReviewer", fields: [reviewedById], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  suspendedBy User?           @relation("ClubSuspender", fields: [suspendedById], references: [id], onDelete: SetNull, onUpdate: Cascade)
   memberships ClubMembership[]
 
   @@index([status, createdAt])
