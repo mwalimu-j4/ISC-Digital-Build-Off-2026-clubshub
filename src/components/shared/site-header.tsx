@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+import { signOut, useSession } from 'next-auth/react';
 import { useState } from 'react';
 
 const navigation = [
@@ -13,6 +15,9 @@ const navigation = [
 
 export function SiteHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { data: session, status } = useSession();
+  const isSignedIn = status === 'authenticated';
+  const isSuperAdmin = session?.user.role === 'SUPER_ADMIN';
 
   return (
     <header className="site-header">
@@ -30,12 +35,35 @@ export function SiteHeader() {
               {item.label}
             </a>
           ))}
+          {isSuperAdmin ? <a href="/admin/clubs">Admin</a> : null}
         </nav>
 
         <div className="header-actions">
-          <a className="button button-primary header-join" href="/sign-in">
-            Join ClubsHub
-          </a>
+          {status === 'loading' ? (
+            <span className="header-account-loading" aria-label="Loading account" />
+          ) : isSignedIn ? (
+            <>
+              <Link className="header-account" href="/account">
+                <span className="header-avatar" aria-hidden="true">
+                  {(session.user.name ?? session.user.email ?? 'U').charAt(0).toUpperCase()}
+                </span>
+                <span className="header-account-name">
+                  {session.user.name ?? session.user.email}
+                </span>
+              </Link>
+              <button
+                className="button button-secondary header-logout"
+                onClick={() => signOut({ callbackUrl: '/' })}
+                type="button"
+              >
+                Log out
+              </button>
+            </>
+          ) : (
+            <a className="button button-primary header-join" href="/sign-in">
+              Log in
+            </a>
+          )}
           <button
             className="menu-toggle"
             type="button"
@@ -59,6 +87,29 @@ export function SiteHeader() {
                 {item.label}
               </a>
             ))}
+            {isSuperAdmin ? (
+              <a href="/admin/clubs" onClick={() => setIsMenuOpen(false)}>
+                Admin review
+              </a>
+            ) : null}
+            {isSignedIn ? (
+              <>
+                <a href="/account" onClick={() => setIsMenuOpen(false)}>
+                  My profile
+                </a>
+                <button
+                  className="mobile-nav-logout"
+                  onClick={() => signOut({ callbackUrl: '/' })}
+                  type="button"
+                >
+                  Log out
+                </button>
+              </>
+            ) : (
+              <a href="/sign-in" onClick={() => setIsMenuOpen(false)}>
+                Log in
+              </a>
+            )}
           </div>
         </nav>
       ) : null}
