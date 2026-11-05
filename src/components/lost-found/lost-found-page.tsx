@@ -213,14 +213,14 @@ export function LostFoundPage() {
 
             {/* Desktop filters */}
             <div className="hidden items-center gap-2 lg:flex">
-              <Tabs value={reportType || 'ALL'} onValueChange={(v) => setReportType(v === 'ALL' ? '' : v)}>
+              <Tabs value={reportType || 'ALL'} onValueChange={(v: string) => setReportType(v === 'ALL' ? '' : v)}>
                 <TabsList className="bg-[var(--secondary)]">
                   <TabsTrigger value="ALL" className="text-xs">All</TabsTrigger>
                   <TabsTrigger value="LOST" className="text-xs">Lost</TabsTrigger>
                   <TabsTrigger value="FOUND" className="text-xs">Found</TabsTrigger>
                 </TabsList>
               </Tabs>
-              <Select value={category} onValueChange={(v) => setCategory(v === 'ALL' ? '' : v)}>
+              <Select value={category} onValueChange={(v: string) => setCategory(v === 'ALL' ? '' : v)}>
                 <SelectTrigger className="w-40 border-[var(--border)] bg-[var(--card)] text-xs">
                   <SelectValue placeholder="Category" />
                 </SelectTrigger>
@@ -231,7 +231,7 @@ export function LostFoundPage() {
                   ))}
                 </SelectContent>
               </Select>
-              <Select value={campusArea} onValueChange={(v) => setCampusArea(v === 'ALL' ? '' : v)}>
+              <Select value={campusArea} onValueChange={(v: string) => setCampusArea(v === 'ALL' ? '' : v)}>
                 <SelectTrigger className="w-40 border-[var(--border)] bg-[var(--card)] text-xs">
                   <SelectValue placeholder="Location" />
                 </SelectTrigger>
