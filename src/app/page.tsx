@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 import { SiteHeader } from '@/components/shared/site-header';
 
 const clubCategories = [
@@ -147,9 +149,9 @@ export default function HomePage() {
                   A simpler way to report, find, and return lost items across the university
                   community.
                 </p>
-                <a href="#lost-found">
+                <Link href="/lost-found">
                   Visit lost &amp; found <span>→</span>
-                </a>
+                </Link>
               </article>
             </div>
           </div>
@@ -231,9 +233,9 @@ export default function HomePage() {
                 Our campus is better when we look out for one another. Browse found items or let the
                 community know what you&apos;re looking for.
               </p>
-              <a className="button button-dark" href="#lost-found">
+              <Link className="button button-dark" href="/lost-found">
                 Visit lost &amp; found <span>→</span>
-              </a>
+              </Link>
             </div>
             <div className="lost-art" aria-hidden="true">
               <div className="lost-sun" />

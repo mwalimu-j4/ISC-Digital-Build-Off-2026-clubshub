@@ -4,13 +4,13 @@ import Link from 'next/link';
 import { signOut, useSession } from 'next-auth/react';
 import { useState } from 'react';
 
+import { NotificationBell } from '@/components/lost-found/notification-bell';
+
 const navigation = [
   { href: '/clubs', label: 'Discover clubs' },
   { href: '/clubs/propose', label: 'Propose a club' },
   { href: '/dashboard/clubs', label: 'My clubs' },
-  { href: '#events', label: 'Events' },
-  { href: '#lost-found', label: 'Lost & Found' },
-  { href: '#announcements', label: 'Announcements' },
+  { href: '/lost-found', label: 'Lost & Found' },
 ];
 
 export function SiteHeader() {
@@ -18,27 +18,30 @@ export function SiteHeader() {
   const { data: session, status } = useSession();
   const isSignedIn = status === 'authenticated';
   const isSuperAdmin = session?.user.role === 'SUPER_ADMIN';
+  const isOfficer = session?.user.role === 'RECOVERY_OFFICER' || isSuperAdmin;
 
   return (
     <header className="site-header">
       <div className="site-container header-inner">
-        <a className="brand" href="#home" aria-label="ClubsHub home">
+        <Link className="brand" href="/" aria-label="ClubsHub home">
           <span className="brand-mark" aria-hidden="true">
             C
           </span>
           <span>ClubsHub</span>
-        </a>
+        </Link>
 
         <nav className="desktop-nav" aria-label="Primary navigation">
           {navigation.map((item) => (
-            <a key={item.href} href={item.href}>
+            <Link key={item.href} href={item.href}>
               {item.label}
-            </a>
+            </Link>
           ))}
-          {isSuperAdmin ? <a href="/admin/clubs">Admin</a> : null}
+          {isOfficer ? <Link href="/recovery">Recovery</Link> : null}
+          {isSuperAdmin ? <Link href="/admin/clubs">Admin</Link> : null}
         </nav>
 
         <div className="header-actions">
+          {isSignedIn && <NotificationBell />}
           {status === 'loading' ? (
             <span className="header-account-loading" aria-label="Loading account" />
           ) : isSignedIn ? (
@@ -60,9 +63,9 @@ export function SiteHeader() {
               </button>
             </>
           ) : (
-            <a className="button button-primary header-join" href="/sign-in">
+            <Link className="button button-primary header-join" href="/sign-in">
               Log in
-            </a>
+            </Link>
           )}
           <button
             className="menu-toggle"
@@ -83,20 +86,28 @@ export function SiteHeader() {
         <nav className="mobile-nav" id="mobile-navigation" aria-label="Mobile navigation">
           <div className="site-container mobile-nav-links">
             {navigation.map((item) => (
-              <a key={item.href} href={item.href} onClick={() => setIsMenuOpen(false)}>
+              <Link key={item.href} href={item.href} onClick={() => setIsMenuOpen(false)}>
                 {item.label}
-              </a>
+              </Link>
             ))}
+            {isOfficer ? (
+              <Link href="/recovery" onClick={() => setIsMenuOpen(false)}>
+                Recovery
+              </Link>
+            ) : null}
             {isSuperAdmin ? (
-              <a href="/admin/clubs" onClick={() => setIsMenuOpen(false)}>
+              <Link href="/admin/clubs" onClick={() => setIsMenuOpen(false)}>
                 Admin review
-              </a>
+              </Link>
             ) : null}
             {isSignedIn ? (
               <>
-                <a href="/account" onClick={() => setIsMenuOpen(false)}>
+                <Link href="/notifications" onClick={() => setIsMenuOpen(false)}>
+                  Notifications
+                </Link>
+                <Link href="/account" onClick={() => setIsMenuOpen(false)}>
                   My profile
-                </a>
+                </Link>
                 <button
                   className="mobile-nav-logout"
                   onClick={() => signOut({ callbackUrl: '/' })}
@@ -106,9 +117,9 @@ export function SiteHeader() {
                 </button>
               </>
             ) : (
-              <a href="/sign-in" onClick={() => setIsMenuOpen(false)}>
+              <Link href="/sign-in" onClick={() => setIsMenuOpen(false)}>
                 Log in
-              </a>
+              </Link>
             )}
           </div>
         </nav>

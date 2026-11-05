@@ -22,3 +22,13 @@ export async function requireRole(role: UserRole) {
 
   return user;
 }
+
+export async function requireAnyRole(...roles: UserRole[]) {
+  const user = await requireUser();
+
+  if (!roles.includes(user.role)) {
+    redirect('/unauthorized');
+  }
+
+  return user;
+}

@@ -13,6 +13,17 @@ model User {
   memberships             ClubMembership[]
   auditLogs               AuditLog[]      @relation("AuditActor")
 
+  // Lost & Found relations
+  lostFoundReports        LostFoundItem[]          @relation("LostFoundReporter")
+  statusHistoryActions    LostFoundStatusHistory[] @relation("StatusHistoryActor")
+  assignedRecoveryTasks   RecoveryTask[]           @relation("RecoveryOfficer")
+  searchedCheckpoints     RecoveryCheckpoint[]     @relation("CheckpointSearcher")
+  reviewedMatches         LostFoundMatch[]         @relation("MatchReviewer")
+  claimsSubmitted         LostFoundClaim[]         @relation("ClaimClaimant")
+  claimsVerified          LostFoundClaim[]         @relation("ClaimVerifier")
+  claimsHandedOver        LostFoundClaim[]         @relation("ClaimHandoverOfficer")
+  notifications           Notification[]           @relation("NotificationRecipient")
+
   @@index([status])
   @@index([role])
   @@map("users")
