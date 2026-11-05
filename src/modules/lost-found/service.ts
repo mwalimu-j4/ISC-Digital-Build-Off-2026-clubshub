@@ -81,27 +81,24 @@ async function addStatusHistory(
 
 // ── Report creation ───────────────────────────────────────────────────
 
-export async function submitLostReport(actor: Actor, input: LostReportInput, db: PrismaClient = prisma) {
+export async function submitLostReport(
+  actor: Actor,
+  input: LostReportInput,
+  db: PrismaClient = prisma,
+) {
   const data = lostReportSchema.parse(input);
 
   return db.$transaction(async (tx) => {
     const item = await lostFoundRepository.create(tx, {
       reportType: 'LOST',
       status: 'PENDING_REVIEW',
-      category: data.category,
+      category: 'OTHER',
       name: data.name,
-      description: data.description,
-      color: data.color || null,
-      brand: data.brand || null,
-      model: data.model || null,
-      distinguishing: data.distinguishing || null,
-      serialNumber: data.serialNumber || null,
-      campusArea: data.campusArea,
-      building: data.building || null,
-      specificLocation: data.specificLocation || null,
-      locationNotes: data.locationNotes || null,
+      description: data.description || '',
+      campusArea: data.location,
+      building: null,
+      specificLocation: null,
       dateOccurred: new Date(data.dateOccurred),
-      timeOccurred: data.timeOccurred || null,
       images: data.images,
       referenceCode: generateReferenceCode(),
       reportedBy: { connect: { id: actor.id } },
@@ -110,11 +107,11 @@ export async function submitLostReport(actor: Actor, input: LostReportInput, db:
     await addStatusHistory(tx, item.id, 'PENDING_REVIEW', actor.id, 'Lost item report submitted');
 
     // Create recovery task automatically
-    const building = data.building || '';
+    const building = '';
     const checkpoints = DEFAULT_CHECKPOINTS[building] ?? ['General area search'];
     const task = await recoveryTaskRepository.create(tx, {
       item: { connect: { id: item.id } },
-      priority: data.category === 'IDENTIFICATION' ? 'HIGH' : 'MEDIUM',
+      priority: 'MEDIUM',
       status: 'PENDING',
     });
 
@@ -137,36 +134,32 @@ export async function submitLostReport(actor: Actor, input: LostReportInput, db:
     // Fire-and-forget notifications (outside transaction for performance)
     notifyLostReportCreated(item.id, actor.id, data.name).catch(() => {});
     notifyRecoveryTaskCreated(item.id, actor.id, data.name).catch(() => {});
-    notifyRecoveryOfficers(prisma, item.id, data.name, data.campusArea).catch(() => {});
+    notifyRecoveryOfficers(prisma, item.id, data.name, data.location).catch(() => {});
 
     return item;
   });
 }
 
-export async function submitFoundReport(actor: Actor, input: FoundReportInput, db: PrismaClient = prisma) {
+export async function submitFoundReport(
+  actor: Actor,
+  input: FoundReportInput,
+  db: PrismaClient = prisma,
+) {
   const data = foundReportSchema.parse(input);
 
   return db.$transaction(async (tx) => {
     const item = await lostFoundRepository.create(tx, {
       reportType: 'FOUND',
       status: 'PENDING_REVIEW',
-      category: data.category,
+      category: 'OTHER',
       name: data.name,
-      description: data.description,
-      color: data.color || null,
-      brand: data.brand || null,
-      model: data.model || null,
-      distinguishing: data.distinguishing || null,
-      serialNumber: data.serialNumber || null,
-      campusArea: data.campusArea,
-      building: data.building || null,
-      specificLocation: data.specificLocation || null,
-      locationNotes: data.locationNotes || null,
+      description: data.description || '',
+      campusArea: data.location,
+      building: null,
+      specificLocation: null,
       dateOccurred: new Date(data.dateOccurred),
-      timeOccurred: data.timeOccurred || null,
       images: data.images,
-      itemCondition: data.itemCondition || null,
-      currentHolding: data.currentHolding || null,
+      currentHolding: data.currentHolding,
       referenceCode: generateReferenceCode(),
       reportedBy: { connect: { id: actor.id } },
     });
@@ -236,7 +229,8 @@ export async function getStats() {
 // ── Status management ─────────────────────────────────────────────────
 
 export async function updateItemStatus(actor: Actor, itemId: string, input: StatusUpdateInput) {
-  if (!isOfficerOrAdmin(actor.role)) throw new LostFoundServiceError('Only officers and admins can update status');
+  if (!isOfficerOrAdmin(actor.role))
+    throw new LostFoundServiceError('Only officers and admins can update status');
   const data = statusUpdateSchema.parse(input);
 
   await prisma.$transaction(async (tx) => {
@@ -285,7 +279,11 @@ export async function getRecoveryTask(actor: Actor, taskId: string) {
   return recoveryTaskRepository.findById(prisma, taskId);
 }
 
-export async function updateRecoveryTask(actor: Actor, taskId: string, input: RecoveryTaskUpdateInput) {
+export async function updateRecoveryTask(
+  actor: Actor,
+  taskId: string,
+  input: RecoveryTaskUpdateInput,
+) {
   if (!isOfficerOrAdmin(actor.role)) throw new LostFoundServiceError('Not authorized');
   const data = recoveryTaskUpdateSchema.parse(input);
 
@@ -300,24 +298,48 @@ export async function updateRecoveryTask(actor: Actor, taskId: string, input: Re
         updateData.status = 'IN_PROGRESS';
         updateData.startedAt = new Date();
         updateData.assignedTo = { connect: { id: actor.id } };
-        await addStatusHistory(tx, task.itemId, 'SEARCHING', actor.id, 'Ground checking search started');
+        await addStatusHistory(
+          tx,
+          task.itemId,
+          'SEARCHING',
+          actor.id,
+          'Ground checking search started',
+        );
         await lostFoundRepository.updateStatus(tx, task.itemId, 'SEARCHING');
         notifyRecoveryStarted(task.itemId, task.item.reportedBy.id, task.item.name).catch(() => {});
         break;
       case 'complete-found':
         updateData.status = 'COMPLETED_FOUND';
         updateData.completedAt = new Date();
-        await addStatusHistory(tx, task.itemId, 'VERIFIED', actor.id, 'Item found during ground search');
+        await addStatusHistory(
+          tx,
+          task.itemId,
+          'VERIFIED',
+          actor.id,
+          'Item found during ground search',
+        );
         await lostFoundRepository.updateStatus(tx, task.itemId, 'VERIFIED');
         break;
       case 'complete-not-found':
         updateData.status = 'COMPLETED_NOT_FOUND';
         updateData.completedAt = new Date();
-        await addStatusHistory(tx, task.itemId, 'SEARCHING', actor.id, 'Ground search completed — item not found');
+        await addStatusHistory(
+          tx,
+          task.itemId,
+          'SEARCHING',
+          actor.id,
+          'Ground search completed — item not found',
+        );
         break;
       case 'escalate':
         updateData.status = 'ESCALATED';
-        await addStatusHistory(tx, task.itemId, 'SEARCHING', actor.id, 'Search escalated for further investigation');
+        await addStatusHistory(
+          tx,
+          task.itemId,
+          'SEARCHING',
+          actor.id,
+          'Search escalated for further investigation',
+        );
         break;
       case 'cancel':
         updateData.status = 'CANCELLED';
@@ -361,7 +383,12 @@ export async function runMatching(actor: Actor, itemId: string) {
 
   const candidates = await lostFoundRepository.findMatchCandidates(
     prisma,
-    { id: item.id, category: item.category, campusArea: item.campusArea, dateOccurred: item.dateOccurred },
+    {
+      id: item.id,
+      category: item.category,
+      campusArea: item.campusArea,
+      dateOccurred: item.dateOccurred,
+    },
     item.reportType,
   );
 
@@ -405,7 +432,11 @@ export async function runMatching(actor: Actor, itemId: string) {
         select: { reportedById: true, name: true },
       });
       if (candidateFull) {
-        notifyPossibleMatch(result.candidateId, candidateFull.reportedById, candidateFull.name).catch(() => {});
+        notifyPossibleMatch(
+          result.candidateId,
+          candidateFull.reportedById,
+          candidateFull.name,
+        ).catch(() => {});
       }
     }
     // Also notify the current item's reporter
@@ -414,7 +445,13 @@ export async function runMatching(actor: Actor, itemId: string) {
 
   if (created.length > 0) {
     await lostFoundRepository.updateStatus(prisma, item.id, 'POSSIBLE_MATCH');
-    await addStatusHistory(prisma, item.id, 'POSSIBLE_MATCH', actor.id, `${created.length} possible match(es) found`);
+    await addStatusHistory(
+      prisma,
+      item.id,
+      'POSSIBLE_MATCH',
+      actor.id,
+      `${created.length} possible match(es) found`,
+    );
   }
 
   return { matchesFound: created.length, matches: created };
@@ -450,11 +487,22 @@ export async function submitClaim(actor: Actor, itemId: string, input: ClaimInpu
     verificationData: data.verificationData,
   });
 
-  await addStatusHistory(prisma, itemId, 'OWNERSHIP_VERIFICATION', actor.id, 'Ownership claim submitted');
+  await addStatusHistory(
+    prisma,
+    itemId,
+    'OWNERSHIP_VERIFICATION',
+    actor.id,
+    'Ownership claim submitted',
+  );
   await lostFoundRepository.updateStatus(prisma, itemId, 'OWNERSHIP_VERIFICATION');
 
-  const user = await prisma.user.findUnique({ where: { id: actor.id }, select: { fullName: true } });
-  notifyClaimSubmitted(itemId, item.reportedById, item.name, user?.fullName ?? 'A user').catch(() => {});
+  const user = await prisma.user.findUnique({
+    where: { id: actor.id },
+    select: { fullName: true },
+  });
+  notifyClaimSubmitted(itemId, item.reportedById, item.name, user?.fullName ?? 'A user').catch(
+    () => {},
+  );
 
   await recordAuditLog(prisma, {
     action: 'CLAIM_SUBMITTED',
@@ -481,7 +529,13 @@ export async function reviewClaim(actor: Actor, claimId: string, input: ClaimRev
         verifiedAt: new Date(),
       });
       await lostFoundRepository.updateStatus(tx, claim.item.id, 'READY_FOR_COLLECTION');
-      await addStatusHistory(tx, claim.item.id, 'READY_FOR_COLLECTION', actor.id, 'Ownership verified — ready for collection');
+      await addStatusHistory(
+        tx,
+        claim.item.id,
+        'READY_FOR_COLLECTION',
+        actor.id,
+        'Ownership verified — ready for collection',
+      );
       notifyOwnershipVerified(claim.item.id, claim.claimant.id, claim.item.name).catch(() => {});
       notifyReadyForCollection(claim.item.id, claim.claimant.id, claim.item.name).catch(() => {});
     } else if (data.decision === 'reject') {
@@ -506,7 +560,8 @@ export async function recordHandover(actor: Actor, claimId: string, notes?: stri
   if (!isOfficerOrAdmin(actor.role)) throw new LostFoundServiceError('Not authorized');
 
   const claim = await claimRepository.findById(prisma, claimId);
-  if (!claim || claim.status !== 'APPROVED') throw new LostFoundServiceError('Claim is not approved');
+  if (!claim || claim.status !== 'APPROVED')
+    throw new LostFoundServiceError('Claim is not approved');
 
   return prisma.$transaction(async (tx) => {
     await claimRepository.update(tx, claimId, {
@@ -517,7 +572,13 @@ export async function recordHandover(actor: Actor, claimId: string, notes?: stri
     });
 
     await lostFoundRepository.updateStatus(tx, claim.item.id, 'HANDED_OVER');
-    await addStatusHistory(tx, claim.item.id, 'HANDED_OVER', actor.id, 'Item handed over to verified owner');
+    await addStatusHistory(
+      tx,
+      claim.item.id,
+      'HANDED_OVER',
+      actor.id,
+      'Item handed over to verified owner',
+    );
 
     // Auto-transition to recovered
     await lostFoundRepository.updateStatus(tx, claim.item.id, 'RECOVERED');

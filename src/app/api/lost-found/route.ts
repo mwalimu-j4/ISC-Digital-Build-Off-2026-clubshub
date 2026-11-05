@@ -1,7 +1,21 @@
 import { NextResponse } from 'next/server';
+import { z } from 'zod';
 
 import { getCurrentSession } from '@/lib/auth/session';
-import { getItems, getMyReports, getStats, LostFoundServiceError, submitFoundReport, submitLostReport } from '@/modules/lost-found/service';
+import {
+  getItems,
+  getMyReports,
+  getStats,
+  LostFoundServiceError,
+  submitFoundReport,
+  submitLostReport,
+} from '@/modules/lost-found/service';
+
+const reportRequestSchema = z
+  .object({
+    reportType: z.enum(['LOST', 'FOUND']),
+  })
+  .passthrough();
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -44,7 +58,12 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json();
-    const reportType = body.reportType;
+    const requestData = reportRequestSchema.safeParse(body);
+    if (!requestData.success) {
+      return NextResponse.json({ error: 'Invalid report type' }, { status: 400 });
+    }
+
+    const reportType = requestData.data.reportType;
 
     let item;
     if (reportType === 'LOST') {
@@ -57,11 +76,24 @@ export async function POST(request: Request) {
 
     return NextResponse.json(item, { status: 201 });
   } catch (error) {
+    if (error instanceof z.ZodError) {
+      const fieldErrors = error.flatten().fieldErrors;
+      return NextResponse.json(
+        {
+          error: 'Please check the highlighted fields.',
+          fieldErrors,
+        },
+        { status: 400 },
+      );
+    }
     if (error instanceof LostFoundServiceError) {
       return NextResponse.json({ error: error.message }, { status: 403 });
     }
     // eslint-disable-next-line no-console
     console.error('Report submission failed:', error);
-    return NextResponse.json({ error: 'Failed to submit report. Please try again.' }, { status: 400 });
+    return NextResponse.json(
+      { error: 'Failed to submit report. Please try again.' },
+      { status: 400 },
+    );
   }
 }
