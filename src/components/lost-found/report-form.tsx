@@ -54,8 +54,8 @@ export function ReportForm({ type }: ReportFormProps) {
   const totalSteps = isLost ? 3 : 4;
 
   const canProceed = () => {
-    if (step === 1) return form.category && form.name && form.description;
-    if (step === 2) return form.campusArea && form.dateOccurred;
+    if (step === 1) return !!(form.category && form.name && form.description);
+    if (step === 2) return !!(form.campusArea && form.dateOccurred);
     return true;
   };
 
@@ -128,7 +128,7 @@ export function ReportForm({ type }: ReportFormProps) {
               <CardContent className="space-y-5">
                 <div>
                   <Label className="text-[var(--muted-foreground)]">Category *</Label>
-                  <Select value={form.category} onValueChange={(v) => update('category', v)}>
+                  <Select value={form.category} onValueChange={(v: string) => update('category', v)}>
                     <SelectTrigger className="mt-1.5 border-[var(--border)] bg-[var(--secondary)]">
                       <SelectValue placeholder="Select a category" />
                     </SelectTrigger>
@@ -184,7 +184,7 @@ export function ReportForm({ type }: ReportFormProps) {
               <CardContent className="space-y-5">
                 <div>
                   <Label className="text-[var(--muted-foreground)]">Campus Area *</Label>
-                  <Select value={form.campusArea} onValueChange={(v) => { update('campusArea', v); update('building', ''); }}>
+                  <Select value={form.campusArea} onValueChange={(v: string) => { update('campusArea', v); update('building', ''); }}>
                     <SelectTrigger className="mt-1.5 border-[var(--border)] bg-[var(--secondary)]">
                       <SelectValue placeholder="Select campus area" />
                     </SelectTrigger>
@@ -196,7 +196,7 @@ export function ReportForm({ type }: ReportFormProps) {
                 {buildings.length > 0 && (
                   <div>
                     <Label className="text-[var(--muted-foreground)]">Building</Label>
-                    <Select value={form.building} onValueChange={(v) => update('building', v)}>
+                    <Select value={form.building} onValueChange={(v: string) => update('building', v)}>
                       <SelectTrigger className="mt-1.5 border-[var(--border)] bg-[var(--secondary)]">
                         <SelectValue placeholder="Select building" />
                       </SelectTrigger>
@@ -237,7 +237,7 @@ export function ReportForm({ type }: ReportFormProps) {
               <CardContent className="space-y-5">
                 <div>
                   <Label className="text-[var(--muted-foreground)]">Condition</Label>
-                  <Select value={form.itemCondition} onValueChange={(v) => update('itemCondition', v)}>
+                  <Select value={form.itemCondition} onValueChange={(v: string) => update('itemCondition', v)}>
                     <SelectTrigger className="mt-1.5 border-[var(--border)] bg-[var(--secondary)]">
                       <SelectValue placeholder="Select condition" />
                     </SelectTrigger>
