@@ -2,17 +2,14 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { type FormEvent, useState } from 'react';
 import { toast } from 'sonner';
 
 import { ImageUpload } from '@/components/lost-found/image-upload';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { CAMPUS_AREAS, CAMPUS_BUILDINGS, CATEGORY_LABELS } from '@/modules/lost-found/constants';
 
 interface ReportFormProps {
   type: 'LOST' | 'FOUND';
@@ -23,270 +20,285 @@ interface UploadedImage {
   publicId: string;
 }
 
+interface SubmittedReport {
+  id: string;
+  referenceCode?: string | null;
+  status: string;
+}
+
+type FormValues = {
+  name: string;
+  location: string;
+  dateOccurred: string;
+  description: string;
+  currentHolding: string;
+};
+
+type FieldErrors = Partial<Record<keyof FormValues, string>>;
+
+const initialForm: FormValues = {
+  name: '',
+  location: '',
+  dateOccurred: '',
+  description: '',
+  currentHolding: '',
+};
+
 export function ReportForm({ type }: ReportFormProps) {
   const router = useRouter();
-  const [submitting, setSubmitting] = useState(false);
-  const [step, setStep] = useState(1);
-  const [images, setImages] = useState<UploadedImage[]>([]);
-
-  const [form, setForm] = useState({
-    category: '',
-    name: '',
-    description: '',
-    color: '',
-    brand: '',
-    model: '',
-    distinguishing: '',
-    serialNumber: '',
-    campusArea: '',
-    building: '',
-    specificLocation: '',
-    locationNotes: '',
-    dateOccurred: '',
-    timeOccurred: '',
-    itemCondition: '',
-    currentHolding: '',
-  });
-
-  const update = (field: string, value: string) => setForm((f) => ({ ...f, [field]: value }));
-  const buildings = form.campusArea ? CAMPUS_BUILDINGS[form.campusArea] ?? [] : [];
   const isLost = type === 'LOST';
-  const totalSteps = isLost ? 3 : 4;
+  const [form, setForm] = useState(initialForm);
+  const [images, setImages] = useState<UploadedImage[]>([]);
+  const [errors, setErrors] = useState<FieldErrors>({});
+  const [submitError, setSubmitError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [submittedReport, setSubmittedReport] = useState<SubmittedReport | null>(null);
 
-  const canProceed = () => {
-    if (step === 1) return !!(form.category && form.name && form.description);
-    if (step === 2) return !!(form.campusArea && form.dateOccurred);
-    return true;
+  const update = (field: keyof FormValues, value: string) => {
+    setForm((current) => ({ ...current, [field]: value }));
+    setErrors((current) => ({ ...current, [field]: undefined }));
+    setSubmitError('');
   };
 
-  const handleSubmit = async () => {
-    if (submitting) return;
+  const validate = (): FieldErrors => {
+    const nextErrors: FieldErrors = {};
+    if (!form.name.trim()) nextErrors.name = 'Item name is required.';
+    if (!form.location.trim())
+      nextErrors.location = `Please enter where you ${isLost ? 'last saw' : 'found'} the item.`;
+    if (!form.dateOccurred)
+      nextErrors.dateOccurred = `Please select the date you ${isLost ? 'last saw' : 'found'} the item.`;
+    if (!isLost && !form.currentHolding.trim())
+      nextErrors.currentHolding = 'Please enter where the item is now.';
+    return nextErrors;
+  };
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const nextErrors = validate();
+    if (Object.keys(nextErrors).length > 0) {
+      setErrors(nextErrors);
+      return;
+    }
+
     setSubmitting(true);
+    setSubmitError('');
     try {
-      const res = await fetch('/api/lost-found', {
+      const response = await fetch('/api/lost-found', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, reportType: type, images }),
+        body: JSON.stringify({
+          reportType: type,
+          name: form.name,
+          location: form.location,
+          dateOccurred: form.dateOccurred,
+          description: form.description,
+          ...(isLost ? {} : { currentHolding: form.currentHolding }),
+          images,
+        }),
       });
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || 'Submission failed');
+
+      const result = await response.json();
+      if (!response.ok) {
+        if (result.fieldErrors) {
+          setErrors(result.fieldErrors as FieldErrors);
+        }
+        throw new Error(result.error || 'We could not submit your report. Please try again.');
       }
-      const item = await res.json();
-      toast.success(`${isLost ? 'Lost' : 'Found'} item reported successfully!`);
-      router.push(`/lost-found/${item.id}`);
+
+      setSubmittedReport(result);
+      toast.success(`${isLost ? 'Lost' : 'Found'} report submitted successfully.`);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to submit report. Please try again.');
+      setSubmitError(
+        error instanceof Error
+          ? error.message
+          : 'We could not submit your report. Please try again.',
+      );
     } finally {
       setSubmitting(false);
     }
   };
 
+  if (submittedReport) {
+    return (
+      <div className="min-h-screen bg-[var(--background)]">
+        <div className="site-container py-12 sm:py-20">
+          <section className="mx-auto max-w-xl rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 text-center shadow-sm sm:p-10">
+            <div
+              className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500/15 text-2xl text-emerald-400"
+              aria-hidden="true"
+            >
+              ✓
+            </div>
+            <h1 className="mt-5 text-2xl font-extrabold text-[var(--foreground)]">
+              {isLost
+                ? 'Lost report submitted successfully.'
+                : 'Found item report submitted successfully.'}
+            </h1>
+            <p className="mt-3 text-[var(--muted-foreground)]">
+              Keep this reference ID for future updates.
+            </p>
+            <div className="mt-6 rounded-xl bg-[var(--secondary)] p-4">
+              <p className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
+                Reference ID
+              </p>
+              <p className="mt-1 font-mono text-lg font-bold text-[var(--foreground)]">
+                {submittedReport.referenceCode ?? submittedReport.id}
+              </p>
+              <p className="mt-2 text-sm text-[var(--muted-foreground)]">
+                Status: {submittedReport.status.replaceAll('_', ' ')}
+              </p>
+            </div>
+            <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:justify-center">
+              <Button
+                asChild
+                className="bg-[var(--primary)] font-bold text-white hover:bg-[var(--primary-hover)]"
+              >
+                <Link href={`/lost-found/${submittedReport.id}`}>View report</Link>
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => router.push('/lost-found')}
+                className="border-[var(--border)]"
+              >
+                Back to Lost &amp; Found
+              </Button>
+            </div>
+          </section>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[var(--background)]">
-      <div className="site-container py-8 sm:py-12">
-        <div className="mx-auto max-w-2xl">
-          {/* Header */}
-          <div className="mb-8">
-            <Link href="/lost-found" className="mb-4 inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--accent)] hover:underline">
-              ← Back to Lost &amp; Found
-            </Link>
-            <h1 className="text-3xl font-extrabold tracking-tight text-[var(--foreground)] sm:text-4xl" style={{ letterSpacing: '-0.03em' }}>
-              Report {isLost ? 'Lost' : 'Found'} Item
-            </h1>
-            <p className="mt-2 text-[var(--muted-foreground)]">
-              {isLost
-                ? 'Provide details about your lost item so we can help locate and recover it.'
-                : 'Thank you for reporting a found item. Your report helps us reunite items with their owners.'}
-            </p>
-          </div>
+      <div className="site-container py-8 sm:py-14">
+        <div className="mx-auto max-w-xl">
+          <Link
+            href="/lost-found"
+            className="mb-5 inline-flex text-sm font-semibold text-[var(--accent)] hover:underline"
+          >
+            ← Back to Lost &amp; Found
+          </Link>
+          <h1 className="text-3xl font-extrabold tracking-tight text-[var(--foreground)] sm:text-4xl">
+            Report {isLost ? 'a lost item' : 'a found item'}
+          </h1>
+          <p className="mt-2 text-[var(--muted-foreground)]">
+            Share the essentials. You can add more information later if needed.
+          </p>
 
-          {/* Progress */}
-          <div className="mb-8 flex items-center gap-2">
-            {Array.from({ length: totalSteps }).map((_, i) => (
-              <div key={i} className="flex flex-1 items-center gap-2">
-                <div className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold transition-colors ${
-                  i + 1 <= step
-                    ? 'bg-[var(--primary)] text-white'
-                    : 'bg-[var(--secondary)] text-[var(--muted-foreground)]'
-                }`}>
-                  {i + 1 < step ? '✓' : i + 1}
-                </div>
-                {i < totalSteps - 1 && (
-                  <div className={`h-0.5 flex-1 rounded transition-colors ${i + 1 < step ? 'bg-[var(--primary)]' : 'bg-[var(--border)]'}`} />
+          <form onSubmit={handleSubmit} noValidate className="mt-8 space-y-6">
+            <div>
+              <Label htmlFor="name">
+                {isLost ? 'What did you lose?' : 'What did you find?'}{' '}
+                <span aria-hidden="true">*</span>
+              </Label>
+              <Input
+                id="name"
+                value={form.name}
+                onChange={(event) => update('name', event.target.value)}
+                placeholder={
+                  isLost ? 'e.g. Phone, Student ID, Backpack' : 'e.g. Wallet, Keys, Laptop'
+                }
+                aria-invalid={Boolean(errors.name)}
+                className="mt-2 h-12"
+              />
+              {errors.name && <p className="mt-1.5 text-sm text-red-400">{errors.name}</p>}
+            </div>
+
+            <div>
+              <Label htmlFor="location">
+                {isLost ? 'Where did you last see it?' : 'Where did you find it?'}{' '}
+                <span aria-hidden="true">*</span>
+              </Label>
+              <Input
+                id="location"
+                value={form.location}
+                onChange={(event) => update('location', event.target.value)}
+                placeholder="e.g. Main Library, Student Centre"
+                aria-invalid={Boolean(errors.location)}
+                className="mt-2 h-12"
+              />
+              {errors.location && <p className="mt-1.5 text-sm text-red-400">{errors.location}</p>}
+            </div>
+
+            <div>
+              <Label htmlFor="dateOccurred">
+                {isLost ? 'When did you last see it?' : 'When did you find it?'}{' '}
+                <span aria-hidden="true">*</span>
+              </Label>
+              <Input
+                id="dateOccurred"
+                type="date"
+                value={form.dateOccurred}
+                onChange={(event) => update('dateOccurred', event.target.value)}
+                aria-invalid={Boolean(errors.dateOccurred)}
+                className="mt-2 h-12"
+              />
+              {errors.dateOccurred && (
+                <p className="mt-1.5 text-sm text-red-400">{errors.dateOccurred}</p>
+              )}
+            </div>
+
+            {!isLost && (
+              <div>
+                <Label htmlFor="currentHolding">
+                  Where is the item now? <span aria-hidden="true">*</span>
+                </Label>
+                <Input
+                  id="currentHolding"
+                  value={form.currentHolding}
+                  onChange={(event) => update('currentHolding', event.target.value)}
+                  placeholder="e.g. Security Office, Main Reception, With me"
+                  aria-invalid={Boolean(errors.currentHolding)}
+                  className="mt-2 h-12"
+                />
+                {errors.currentHolding && (
+                  <p className="mt-1.5 text-sm text-red-400">{errors.currentHolding}</p>
                 )}
               </div>
-            ))}
-          </div>
-
-          {/* Step 1: Item Details */}
-          {step === 1 && (
-            <Card className="border-[var(--border)] bg-[var(--card)]">
-              <CardHeader>
-                <CardTitle className="text-xl text-[var(--foreground)]">Item Information</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-5">
-                <div>
-                  <Label className="text-[var(--muted-foreground)]">Category *</Label>
-                  <Select value={form.category} onValueChange={(v: string) => update('category', v)}>
-                    <SelectTrigger className="mt-1.5 border-[var(--border)] bg-[var(--secondary)]">
-                      <SelectValue placeholder="Select a category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {Object.entries(CATEGORY_LABELS).map(([k, v]) => (
-                        <SelectItem key={k} value={k}>{v}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label className="text-[var(--muted-foreground)]">Item Name *</Label>
-                  <Input value={form.name} onChange={(e) => update('name', e.target.value)} placeholder="e.g. Student ID Card, iPhone 15, Blue Backpack" className="mt-1.5 border-[var(--border)] bg-[var(--secondary)]" />
-                </div>
-                <div>
-                  <Label className="text-[var(--muted-foreground)]">Description *</Label>
-                  <Textarea value={form.description} onChange={(e) => update('description', e.target.value)} placeholder="Describe the item in detail — color, size, distinctive marks, any identifying features..." rows={4} className="mt-1.5 border-[var(--border)] bg-[var(--secondary)]" />
-                </div>
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <div>
-                    <Label className="text-[var(--muted-foreground)]">Color</Label>
-                    <Input value={form.color} onChange={(e) => update('color', e.target.value)} placeholder="e.g. Black, Navy Blue" className="mt-1.5 border-[var(--border)] bg-[var(--secondary)]" />
-                  </div>
-                  <div>
-                    <Label className="text-[var(--muted-foreground)]">Brand</Label>
-                    <Input value={form.brand} onChange={(e) => update('brand', e.target.value)} placeholder="e.g. Samsung, Nike" className="mt-1.5 border-[var(--border)] bg-[var(--secondary)]" />
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <div>
-                    <Label className="text-[var(--muted-foreground)]">Model</Label>
-                    <Input value={form.model} onChange={(e) => update('model', e.target.value)} placeholder="e.g. Galaxy S24, Air Max" className="mt-1.5 border-[var(--border)] bg-[var(--secondary)]" />
-                  </div>
-                  <div>
-                    <Label className="text-[var(--muted-foreground)]">Serial Number</Label>
-                    <Input value={form.serialNumber} onChange={(e) => update('serialNumber', e.target.value)} placeholder="If applicable" className="mt-1.5 border-[var(--border)] bg-[var(--secondary)]" />
-                  </div>
-                </div>
-                <div>
-                  <Label className="text-[var(--muted-foreground)]">Distinguishing Features</Label>
-                  <Textarea value={form.distinguishing} onChange={(e) => update('distinguishing', e.target.value)} placeholder="Any scratches, stickers, engravings, marks that make this item unique..." rows={2} className="mt-1.5 border-[var(--border)] bg-[var(--secondary)]" />
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Step 2: Location & Time */}
-          {step === 2 && (
-            <Card className="border-[var(--border)] bg-[var(--card)]">
-              <CardHeader>
-                <CardTitle className="text-xl text-[var(--foreground)]">Location &amp; Time</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-5">
-                <div>
-                  <Label className="text-[var(--muted-foreground)]">Campus Area *</Label>
-                  <Select value={form.campusArea} onValueChange={(v: string) => { update('campusArea', v); update('building', ''); }}>
-                    <SelectTrigger className="mt-1.5 border-[var(--border)] bg-[var(--secondary)]">
-                      <SelectValue placeholder="Select campus area" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {CAMPUS_AREAS.map((a) => <SelectItem key={a} value={a}>{a}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-                {buildings.length > 0 && (
-                  <div>
-                    <Label className="text-[var(--muted-foreground)]">Building</Label>
-                    <Select value={form.building} onValueChange={(v: string) => update('building', v)}>
-                      <SelectTrigger className="mt-1.5 border-[var(--border)] bg-[var(--secondary)]">
-                        <SelectValue placeholder="Select building" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {buildings.map((b) => <SelectItem key={b} value={b}>{b}</SelectItem>)}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                )}
-                <div>
-                  <Label className="text-[var(--muted-foreground)]">Specific Location</Label>
-                  <Input value={form.specificLocation} onChange={(e) => update('specificLocation', e.target.value)} placeholder="e.g. Second floor, near the study tables" className="mt-1.5 border-[var(--border)] bg-[var(--secondary)]" />
-                </div>
-                <div>
-                  <Label className="text-[var(--muted-foreground)]">Additional Location Notes</Label>
-                  <Textarea value={form.locationNotes} onChange={(e) => update('locationNotes', e.target.value)} placeholder="Any additional details about where the item was last seen or found..." rows={2} className="mt-1.5 border-[var(--border)] bg-[var(--secondary)]" />
-                </div>
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <div>
-                    <Label className="text-[var(--muted-foreground)]">Date {isLost ? 'Last Seen' : 'Found'} *</Label>
-                    <Input type="date" value={form.dateOccurred} onChange={(e) => update('dateOccurred', e.target.value)} className="mt-1.5 border-[var(--border)] bg-[var(--secondary)]" />
-                  </div>
-                  <div>
-                    <Label className="text-[var(--muted-foreground)]">Approximate Time</Label>
-                    <Input type="time" value={form.timeOccurred} onChange={(e) => update('timeOccurred', e.target.value)} className="mt-1.5 border-[var(--border)] bg-[var(--secondary)]" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Step 3 (Found only): Condition & Holding */}
-          {step === 3 && !isLost && (
-            <Card className="border-[var(--border)] bg-[var(--card)]">
-              <CardHeader>
-                <CardTitle className="text-xl text-[var(--foreground)]">Item Condition</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-5">
-                <div>
-                  <Label className="text-[var(--muted-foreground)]">Condition</Label>
-                  <Select value={form.itemCondition} onValueChange={(v: string) => update('itemCondition', v)}>
-                    <SelectTrigger className="mt-1.5 border-[var(--border)] bg-[var(--secondary)]">
-                      <SelectValue placeholder="Select condition" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Excellent">Excellent — No damage</SelectItem>
-                      <SelectItem value="Good">Good — Minor wear</SelectItem>
-                      <SelectItem value="Fair">Fair — Some damage</SelectItem>
-                      <SelectItem value="Poor">Poor — Significant damage</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label className="text-[var(--muted-foreground)]">Where is the item now?</Label>
-                  <Textarea value={form.currentHolding} onChange={(e) => update('currentHolding', e.target.value)} placeholder="e.g. I left it at the library reception desk, I have it with me" rows={3} className="mt-1.5 border-[var(--border)] bg-[var(--secondary)]" />
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Last Step: Images */}
-          {step === totalSteps && (
-            <Card className="border-[var(--border)] bg-[var(--card)]">
-              <CardHeader>
-                <CardTitle className="text-xl text-[var(--foreground)]">Photos &amp; Submit</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-5">
-                <div>
-                  <Label className="mb-2 text-[var(--muted-foreground)]">Upload Images (optional but recommended)</Label>
-                  <ImageUpload images={images} onChange={setImages} />
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Navigation */}
-          <div className="mt-6 flex items-center justify-between">
-            <Button variant="ghost" onClick={() => step > 1 ? setStep(step - 1) : router.push('/lost-found')} className="text-[var(--muted-foreground)]">
-              {step > 1 ? '← Previous' : '← Cancel'}
-            </Button>
-            {step < totalSteps ? (
-              <Button onClick={() => setStep(step + 1)} disabled={!canProceed()} className="bg-[var(--primary)] font-bold text-white hover:bg-[var(--primary-hover)]">
-                Continue →
-              </Button>
-            ) : (
-              <Button onClick={handleSubmit} disabled={submitting || !canProceed()} className="bg-[var(--primary)] px-8 font-bold text-white hover:bg-[var(--primary-hover)]">
-                {submitting ? 'Submitting...' : `Submit ${isLost ? 'Lost' : 'Found'} Report`}
-              </Button>
             )}
-          </div>
+
+            <div>
+              <Label htmlFor="description">
+                Anything that can help identify it?{' '}
+                <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
+              </Label>
+              <Textarea
+                id="description"
+                value={form.description}
+                onChange={(event) => update('description', event.target.value)}
+                placeholder={
+                  isLost
+                    ? 'e.g. black backpack with a blue stripe'
+                    : 'e.g. black wallet with a small scratch'
+                }
+                rows={3}
+                className="mt-2 resize-none"
+              />
+            </div>
+
+            <div>
+              <Label className="mb-2 block">
+                Add a photo{' '}
+                <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
+              </Label>
+              <ImageUpload images={images} onChange={setImages} />
+            </div>
+
+            {submitError && (
+              <p role="alert" className="rounded-lg bg-red-500/10 p-3 text-sm text-red-400">
+                {submitError}
+              </p>
+            )}
+
+            <Button
+              type="submit"
+              disabled={submitting}
+              className="h-12 w-full bg-[var(--primary)] font-bold text-white hover:bg-[var(--primary-hover)]"
+            >
+              {submitting ? 'Submitting report...' : `Submit ${isLost ? 'Lost' : 'Found'} Report`}
+            </Button>
+          </form>
         </div>
       </div>
     </div>

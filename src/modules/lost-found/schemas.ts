@@ -3,44 +3,48 @@ import { z } from 'zod';
 const text = (label: string, max: number) =>
   z.string().trim().min(1, `${label} is required`).max(max);
 
-const optionalText = (max: number) =>
-  z.string().trim().max(max).optional().or(z.literal(''));
+const optionalText = (max: number) => z.string().trim().max(max).optional().or(z.literal(''));
+
+const reportDate = z
+  .string()
+  .min(1, 'Date is required')
+  .refine((value) => !Number.isNaN(Date.parse(`${value}T00:00:00`)), 'Please select a valid date');
+
+const images = z
+  .array(
+    z.object({
+      url: z.string().url(),
+      publicId: z.string().min(1),
+    }),
+  )
+  .max(4)
+  .default([]);
 
 export const lostReportSchema = z.object({
-  category: z.enum([
-    'IDENTIFICATION', 'ELECTRONICS', 'CLOTHING', 'BAGS_WALLETS',
-    'BOOKS_STATIONERY', 'KEYS', 'JEWELRY_ACCESSORIES', 'SPORTS_EQUIPMENT',
-    'DOCUMENTS', 'WATER_BOTTLES', 'HEADPHONES_EARBUDS', 'OTHER',
-  ]),
   name: text('Item name', 200),
-  description: text('Description', 3000),
-  color: optionalText(80),
-  brand: optionalText(120),
-  model: optionalText(120),
-  distinguishing: optionalText(2000),
-  serialNumber: optionalText(160),
-  campusArea: text('Campus area', 160),
-  building: optionalText(160),
-  specificLocation: optionalText(2000),
-  locationNotes: optionalText(2000),
-  dateOccurred: z.string().min(1, 'Date is required'),
-  timeOccurred: optionalText(40),
-  images: z.array(z.object({
-    url: z.string().url(),
-    publicId: z.string(),
-  })).max(4).default([]),
+  location: text('Location', 240),
+  dateOccurred: reportDate,
+  description: optionalText(500),
+  images,
 });
 
 export const foundReportSchema = lostReportSchema.extend({
-  itemCondition: optionalText(80),
-  currentHolding: optionalText(2000),
+  currentHolding: text('Current holding location', 240),
 });
 
 export const statusUpdateSchema = z.object({
   status: z.enum([
-    'PENDING_REVIEW', 'VERIFIED', 'SEARCHING', 'POSSIBLE_MATCH',
-    'OWNERSHIP_VERIFICATION', 'READY_FOR_COLLECTION', 'HANDED_OVER',
-    'RECOVERED', 'CLOSED', 'EXPIRED', 'REJECTED',
+    'PENDING_REVIEW',
+    'VERIFIED',
+    'SEARCHING',
+    'POSSIBLE_MATCH',
+    'OWNERSHIP_VERIFICATION',
+    'READY_FOR_COLLECTION',
+    'HANDED_OVER',
+    'RECOVERED',
+    'CLOSED',
+    'EXPIRED',
+    'REJECTED',
   ]),
   note: optionalText(2000),
 });
