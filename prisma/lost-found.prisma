@@ -1,0 +1,194 @@
+// ──────────────────────────────────────────────────────────────────────
+// Lost & Found + Ground Recovery domain
+// ──────────────────────────────────────────────────────────────────────
+
+model LostFoundItem {
+  id              String            @id @default(uuid()) @db.Uuid
+  reportType      LostFoundType     @map("report_type")
+  status          LostFoundStatus   @default(PENDING_REVIEW)
+  category        LostFoundCategory
+  name            String            @db.VarChar(200)
+  description     String            @db.Text
+  color           String?           @db.VarChar(80)
+  brand           String?           @db.VarChar(120)
+  model           String?           @db.VarChar(120)
+  distinguishing  String?           @db.Text
+  serialNumber    String?           @map("serial_number") @db.VarChar(160)
+
+  // Location
+  campusArea      String            @map("campus_area") @db.VarChar(160)
+  building        String?           @db.VarChar(160)
+  specificLocation String?          @map("specific_location") @db.Text
+  locationNotes   String?           @map("location_notes") @db.Text
+
+  // Time
+  dateOccurred    DateTime          @map("date_occurred") @db.Date
+  timeOccurred    String?           @map("time_occurred") @db.VarChar(40)
+
+  // Found-item specific
+  itemCondition   String?           @map("item_condition") @db.VarChar(80)
+  currentHolding  String?           @map("current_holding") @db.Text
+
+  // Media (Cloudinary references stored as JSON array)
+  images          Json?             @default("[]")
+
+  // Collection
+  collectionLocation  String?       @map("collection_location") @db.Text
+  collectionDeadline  DateTime?     @map("collection_deadline") @db.Timestamptz(3)
+  referenceCode       String?       @unique @map("reference_code") @db.VarChar(40)
+
+  // Ownership
+  reportedById    String            @map("reported_by_id") @db.Uuid
+  reportedBy      User              @relation("LostFoundReporter", fields: [reportedById], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  // Timestamps
+  createdAt       DateTime          @default(now()) @db.Timestamptz(3) @map("created_at")
+  updatedAt       DateTime          @updatedAt @db.Timestamptz(3) @map("updated_at")
+
+  // Relations
+  statusHistory   LostFoundStatusHistory[]
+  recoveryTask    RecoveryTask?
+  matchesAsLost   LostFoundMatch[]  @relation("LostItem")
+  matchesAsFound  LostFoundMatch[]  @relation("FoundItem")
+  claims          LostFoundClaim[]
+  notifications   Notification[]
+
+  @@index([reportType, status, createdAt])
+  @@index([category, status])
+  @@index([campusArea, status])
+  @@index([reportedById, createdAt])
+  @@index([status, createdAt])
+  @@index([createdAt])
+  @@map("lost_found_items")
+}
+
+model LostFoundStatusHistory {
+  id        String          @id @default(uuid()) @db.Uuid
+  itemId    String          @map("item_id") @db.Uuid
+  status    LostFoundStatus
+  note      String?         @db.Text
+  evidence  Json?
+  actorId   String?         @map("actor_id") @db.Uuid
+  createdAt DateTime        @default(now()) @db.Timestamptz(3) @map("created_at")
+
+  item      LostFoundItem   @relation(fields: [itemId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  actor     User?           @relation("StatusHistoryActor", fields: [actorId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+  @@index([itemId, createdAt])
+  @@map("lost_found_status_history")
+}
+
+model RecoveryTask {
+  id              String              @id @default(uuid()) @db.Uuid
+  itemId          String              @unique @map("item_id") @db.Uuid
+  priority        RecoveryPriority    @default(MEDIUM)
+  status          RecoveryTaskStatus  @default(PENDING)
+  assignedToId    String?             @map("assigned_to_id") @db.Uuid
+  searchNotes     String?             @map("search_notes") @db.Text
+  startedAt       DateTime?           @map("started_at") @db.Timestamptz(3)
+  completedAt     DateTime?           @map("completed_at") @db.Timestamptz(3)
+  createdAt       DateTime            @default(now()) @db.Timestamptz(3) @map("created_at")
+  updatedAt       DateTime            @updatedAt @db.Timestamptz(3) @map("updated_at")
+
+  item            LostFoundItem       @relation(fields: [itemId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  assignedTo      User?               @relation("RecoveryOfficer", fields: [assignedToId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  checkpoints     RecoveryCheckpoint[]
+
+  @@index([status, priority])
+  @@index([assignedToId, status])
+  @@index([createdAt])
+  @@map("recovery_tasks")
+}
+
+model RecoveryCheckpoint {
+  id            String       @id @default(uuid()) @db.Uuid
+  taskId        String       @map("task_id") @db.Uuid
+  areaName      String       @map("area_name") @db.VarChar(200)
+  searched      Boolean      @default(false)
+  notes         String?      @db.Text
+  evidence      Json?
+  searchedAt    DateTime?    @map("searched_at") @db.Timestamptz(3)
+  searchedById  String?      @map("searched_by_id") @db.Uuid
+  createdAt     DateTime     @default(now()) @db.Timestamptz(3) @map("created_at")
+  updatedAt     DateTime     @updatedAt @db.Timestamptz(3) @map("updated_at")
+
+  task          RecoveryTask @relation(fields: [taskId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  searchedBy    User?        @relation("CheckpointSearcher", fields: [searchedById], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+  @@index([taskId])
+  @@map("recovery_checkpoints")
+}
+
+model LostFoundMatch {
+  id            String          @id @default(uuid()) @db.Uuid
+  lostItemId    String          @map("lost_item_id") @db.Uuid
+  foundItemId   String          @map("found_item_id") @db.Uuid
+  score         Float           @default(0)
+  status        MatchStatus     @default(PENDING)
+  notes         String?         @db.Text
+  reviewedById  String?         @map("reviewed_by_id") @db.Uuid
+  reviewedAt    DateTime?       @map("reviewed_at") @db.Timestamptz(3)
+  createdAt     DateTime        @default(now()) @db.Timestamptz(3) @map("created_at")
+  updatedAt     DateTime        @updatedAt @db.Timestamptz(3) @map("updated_at")
+
+  lostItem      LostFoundItem   @relation("LostItem", fields: [lostItemId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  foundItem     LostFoundItem   @relation("FoundItem", fields: [foundItemId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  reviewedBy    User?           @relation("MatchReviewer", fields: [reviewedById], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  claims        LostFoundClaim[]
+
+  @@unique([lostItemId, foundItemId])
+  @@index([status])
+  @@index([lostItemId])
+  @@index([foundItemId])
+  @@map("lost_found_matches")
+}
+
+model LostFoundClaim {
+  id              String        @id @default(uuid()) @db.Uuid
+  itemId          String        @map("item_id") @db.Uuid
+  matchId         String?       @map("match_id") @db.Uuid
+  claimantId      String        @map("claimant_id") @db.Uuid
+  status          ClaimStatus   @default(PENDING)
+  verificationData Json?        @map("verification_data")
+  verifiedById    String?       @map("verified_by_id") @db.Uuid
+  verifiedAt      DateTime?     @map("verified_at") @db.Timestamptz(3)
+  rejectionReason String?       @map("rejection_reason") @db.Text
+  handoverNotes   String?       @map("handover_notes") @db.Text
+  handedOverAt    DateTime?     @map("handed_over_at") @db.Timestamptz(3)
+  handedOverById  String?       @map("handed_over_by_id") @db.Uuid
+  createdAt       DateTime      @default(now()) @db.Timestamptz(3) @map("created_at")
+  updatedAt       DateTime      @updatedAt @db.Timestamptz(3) @map("updated_at")
+
+  item            LostFoundItem @relation(fields: [itemId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  match           LostFoundMatch? @relation(fields: [matchId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  claimant        User          @relation("ClaimClaimant", fields: [claimantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  verifiedBy      User?         @relation("ClaimVerifier", fields: [verifiedById], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  handedOverBy    User?         @relation("ClaimHandoverOfficer", fields: [handedOverById], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+  @@index([itemId, status])
+  @@index([claimantId])
+  @@index([status])
+  @@map("lost_found_claims")
+}
+
+model Notification {
+  id              String             @id @default(uuid()) @db.Uuid
+  recipientId     String             @map("recipient_id") @db.Uuid
+  type            NotificationType
+  title           String             @db.VarChar(200)
+  message         String             @db.Text
+  read            Boolean            @default(false)
+  readAt          DateTime?          @map("read_at") @db.Timestamptz(3)
+  relatedEntity   String?            @map("related_entity") @db.VarChar(80)
+  relatedEntityId String?            @map("related_entity_id") @db.Uuid
+  actionUrl       String?            @map("action_url") @db.VarChar(500)
+  itemId          String?            @map("item_id") @db.Uuid
+  createdAt       DateTime           @default(now()) @db.Timestamptz(3) @map("created_at")
+
+  recipient       User               @relation("NotificationRecipient", fields: [recipientId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  item            LostFoundItem?     @relation(fields: [itemId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+  @@index([recipientId, read, createdAt])
+  @@index([recipientId, createdAt])
+  @@map("notifications")
+}
