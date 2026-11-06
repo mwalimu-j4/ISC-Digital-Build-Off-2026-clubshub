@@ -76,3 +76,19 @@ export async function updateProfile(
   const updated = await profileRepository.findById(db, actor.id);
   return applyPrivacyFilter(updated, actor.id, actor.role);
 }
+
+export async function getProfileStats(userId: string, db: ProfileDb = prisma) {
+  return profileRepository.getStats(db, userId);
+}
+
+export async function getProfileMemberships(userId: string, db: ProfileDb = prisma) {
+  return profileRepository.getMemberships(db, userId);
+}
+
+export async function getProfileProposedClubs(userId: string, db: ProfileDb = prisma) {
+  return profileRepository.getProposedClubs(db, userId);
+}
+
+export async function getProfileActivity(userId: string, limit = 20, db: ProfileDb = prisma) {
+  return profileRepository.getRecentActivity(db, userId, limit);
+}
