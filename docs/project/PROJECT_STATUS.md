@@ -1,10 +1,12 @@
 # Project status
 
-**Last updated:** 2026-11-04
+**Last updated:** 2026-11-06
 
 ## Current stage
 
 Stage 04 — Core Club and Membership Modules: **Implemented**
+
+Profile and account experience: **Implemented**
 
 ## Objective
 
@@ -20,6 +22,8 @@ foundation.
 - Tailwind CSS and shadcn/ui conventions retained in the existing foundation.
 - Live viewport review completed at 360px, 390px, 768px, 1024px, and 1440px with no
   horizontal overflow.
+- Logged-in account menu, responsive profile navigation, profile data, memberships,
+  proposals, activity, and server-validated profile settings are implemented.
 
 ## Pending tasks
 
@@ -38,10 +42,10 @@ foundation.
 
 ## Known limitations
 
-Events, announcements, notifications, member applications, and analytics remain out
-of scope until later stages. Google OAuth only admits users already provisioned in the
-`users` table with an `ACTIVE` status. RLS policies require request code to set
-transaction-local identity context.
+Events, announcements, member applications, and analytics remain out of scope until
+later stages. Password changes and session revocation remain omitted because the
+current Google OAuth/JWT authentication flow does not support them. RLS policies
+require request code to set transaction-local identity context.
 
 ## Stage 02 validation
 

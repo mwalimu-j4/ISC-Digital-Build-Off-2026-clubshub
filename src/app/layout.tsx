@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 import { Toaster } from 'sonner';
 
 import { AuthSessionProvider } from '@/components/shared/auth-session-provider';
+import { MobileBottomNav } from '@/components/shared/mobile-bottom-nav';
 
 export const metadata: Metadata = {
   title: 'ClubsHub | Find your people on campus',
@@ -16,6 +17,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body>
         <AuthSessionProvider>
           {children}
+          <MobileBottomNav />
           <Toaster position="top-right" richColors />
         </AuthSessionProvider>
       </body>

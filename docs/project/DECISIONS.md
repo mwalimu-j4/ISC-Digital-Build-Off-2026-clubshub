@@ -55,3 +55,16 @@ Stage 04 keeps the existing club aggregate as the proposal record. Purpose,
 activities, and review reasons remain on that aggregate, while approval creates the
 proposer's approved club-admin membership. This avoids a second source of truth and
 keeps public reads restricted to active clubs.
+
+## 2026-11-06 — Profile privacy is enforced in the service layer
+
+Profile reads remove email and student registration identifiers by default, returning
+those fields only to the profile owner or a super administrator. Profile updates are
+restricted to the authenticated user's own record and validated with the module's
+Zod schema before persistence.
+
+## 2026-11-06 — Unsupported security controls are omitted
+
+The current Google OAuth and JWT session implementation does not provide password
+changes or server-side session revocation. The profile experience therefore does not
+expose misleading security controls until the authentication contract supports them.
