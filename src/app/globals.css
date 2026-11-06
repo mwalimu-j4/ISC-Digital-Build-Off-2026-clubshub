@@ -151,6 +151,16 @@ button:focus-visible {
   justify-content: center;
   width: 30px;
 }
+.header-avatar-button {
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  padding: 0;
+  transition: opacity 0.2s ease;
+}
+.header-avatar-button:hover {
+  opacity: 0.85;
+}
 .header-account-loading {
   background: var(--secondary);
   border-radius: 999px;
@@ -1241,6 +1251,55 @@ h2 {
 .footer-links a {
   color: var(--muted-foreground);
   font-size: 11px;
+}
+/* Mobile Bottom Navigation */
+.mobile-bottom-nav {
+  background: var(--card);
+  border-top: 1px solid var(--border);
+  bottom: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  left: 0;
+  position: fixed;
+  right: 0;
+  z-index: 50;
+}
+.mobile-bottom-nav-item {
+  align-items: center;
+  color: var(--muted-foreground);
+  display: flex;
+  flex-direction: column;
+  font-size: 11px;
+  font-weight: 600;
+  gap: 4px;
+  justify-content: center;
+  min-height: 56px;
+  padding: 8px 4px;
+  transition: color 0.2s ease;
+}
+.mobile-bottom-nav-item:hover {
+  color: var(--foreground);
+}
+.mobile-bottom-nav-item-active {
+  color: var(--primary);
+}
+.mobile-bottom-nav-icon {
+  height: 20px;
+  width: 20px;
+}
+.mobile-bottom-nav-label {
+  font-size: 10px;
+  line-height: 1;
+}
+.mobile-bottom-nav-label {
+  font-size: 10px;
+  line-height: 1;
+}
+/* Hide mobile bottom nav on desktop */
+@media (min-width: 768px) {
+  .mobile-bottom-nav {
+    display: none;
+  }
 }
 @media (max-width: 900px) {
   .site-container {
