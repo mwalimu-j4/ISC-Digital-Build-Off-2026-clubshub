@@ -27,7 +27,6 @@ export function SiteHeader() {
   const { data: session, status } = useSession();
   const isSignedIn = status === 'authenticated';
   const isSuperAdmin = session?.user.role === 'SUPER_ADMIN';
-  const isOfficer = session?.user.role === 'RECOVERY_OFFICER' || isSuperAdmin;
 
   return (
     <header className="site-header">
@@ -54,11 +53,7 @@ export function SiteHeader() {
           ) : isSignedIn ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button
-                  type="button"
-                  className="header-avatar-button"
-                  aria-label="Account menu"
-                >
+                <button type="button" className="header-avatar-button" aria-label="Account menu">
                   <Avatar size="default">
                     <AvatarFallback>
                       {(session.user.name ?? session.user.email ?? 'U').charAt(0).toUpperCase()}
@@ -134,11 +129,6 @@ export function SiteHeader() {
                 {item.label}
               </Link>
             ))}
-            {isOfficer ? (
-              <Link href="/recovery" onClick={() => setIsMenuOpen(false)}>
-                Recovery
-              </Link>
-            ) : null}
             {isSuperAdmin ? (
               <Link href="/admin/clubs" onClick={() => setIsMenuOpen(false)}>
                 Admin review

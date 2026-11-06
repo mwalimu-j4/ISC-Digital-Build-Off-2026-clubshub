@@ -26,10 +26,7 @@ export function MobileBottomNav() {
           <Link
             key={item.href}
             href={item.href}
-            className={cn(
-              'mobile-bottom-nav-item',
-              isActive && 'mobile-bottom-nav-item-active'
-            )}
+            className={cn('mobile-bottom-nav-item', isActive && 'mobile-bottom-nav-item-active')}
             aria-current={isActive ? 'page' : undefined}
           >
             <Icon className="mobile-bottom-nav-icon" aria-hidden="true" />

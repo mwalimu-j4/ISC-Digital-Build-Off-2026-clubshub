@@ -4,40 +4,35 @@ import { redirect } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
 import { requireUser } from '@/lib/auth/authorization';
-import { getProfile, updateProfile } from '@/modules/profile';
+import { getProfile, updateProfile, updateProfileSchema } from '@/modules/profile';
 
 async function handleUpdateProfile(formData: FormData) {
   'use server';
 
   const user = await requireUser();
 
-  const fullName = formData.get('fullName') as string;
-  const avatarUrl = formData.get('avatarUrl') as string;
-  const bio = formData.get('bio') as string;
-  const course = formData.get('course') as string;
-  const yearOfStudy = formData.get('yearOfStudy') as string;
-
+  let errorMessage: string | null = null;
   try {
-    await updateProfile(
-      { id: user.id, role: user.role },
-      {
-        fullName,
-        avatarUrl: avatarUrl || undefined,
-        bio: bio || undefined,
-        course: course || undefined,
-        yearOfStudy: yearOfStudy || undefined,
-      },
-    );
+    const data = updateProfileSchema.parse({
+      fullName: formData.get('fullName'),
+      avatarUrl: formData.get('avatarUrl'),
+      bio: formData.get('bio'),
+      course: formData.get('course'),
+      yearOfStudy: formData.get('yearOfStudy'),
+    });
 
-    revalidatePath('/profile');
-    revalidatePath('/profile/settings');
-    redirect('/profile?updated=true');
+    await updateProfile({ id: user.id, role: user.role }, data);
   } catch (error) {
-    // In production, would use a toast notification system
-    // For now, redirect with error parameter
-    const message = error instanceof Error ? error.message : 'Failed to update profile';
-    redirect(`/profile/settings?error=${encodeURIComponent(message)}`);
+    errorMessage = error instanceof Error ? error.message : 'Failed to update profile';
   }
+
+  if (errorMessage) {
+    redirect(`/profile/settings?error=${encodeURIComponent(errorMessage)}`);
+  }
+
+  revalidatePath('/profile');
+  revalidatePath('/profile/settings');
+  redirect('/profile?updated=true');
 }
 
 export default async function SettingsPage() {
@@ -88,9 +83,7 @@ export default async function SettingsPage() {
               maxLength={2048}
               placeholder="https://example.com/avatar.jpg"
             />
-            <p className="text-xs text-muted-foreground">
-              Optional: URL to your profile picture
-            </p>
+            <p className="text-xs text-muted-foreground">Optional: URL to your profile picture</p>
           </div>
 
           <div className="space-y-2">
@@ -136,9 +129,7 @@ export default async function SettingsPage() {
               maxLength={500}
               placeholder="Tell us about yourself..."
             />
-            <p className="text-xs text-muted-foreground">
-              Maximum 500 characters
-            </p>
+            <p className="text-xs text-muted-foreground">Maximum 500 characters</p>
           </div>
         </div>
 

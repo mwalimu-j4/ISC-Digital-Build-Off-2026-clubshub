@@ -2,8 +2,10 @@ import type { UserRole } from '@prisma/client';
 
 import { recordAuditLog } from '@/lib/auth/audit';
 import { prisma } from '@/lib/database/prisma';
-import type { ProfileDb } from '@/modules/profile/repositories/profile-repository';
-import { profileRepository } from '@/modules/profile/repositories/profile-repository';
+import {
+  type ProfileDb,
+  profileRepository,
+} from '@/modules/profile/repositories/profile-repository';
 import type { ProfileWithPrivacy } from '@/modules/profile/types';
 import {
   type UpdateProfileInput,

@@ -12,9 +12,7 @@ async function MyMemberships() {
   if (memberships.length === 0) {
     return (
       <div className="rounded-lg border border-border bg-card p-8 text-center">
-        <p className="text-sm text-muted-foreground">
-          You haven&apos;t joined any clubs yet
-        </p>
+        <p className="text-sm text-muted-foreground">You haven&apos;t joined any clubs yet</p>
       </div>
     );
   }
@@ -37,9 +35,7 @@ async function MyMemberships() {
               />
             )}
             <div className="flex-1 min-w-0 space-y-2">
-              <h3 className="font-semibold group-hover:text-primary">
-                {membership.club.name}
-              </h3>
+              <h3 className="font-semibold group-hover:text-primary">{membership.club.name}</h3>
               <div className="flex flex-wrap gap-2">
                 <Badge variant="outline" className="text-xs">
                   {membership.role.replace('_', ' ')}
@@ -78,18 +74,11 @@ async function ProposedClubs() {
       <h3 className="text-lg font-semibold">Clubs You Proposed</h3>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {clubs.map((club) => (
-          <div
-            key={club.id}
-            className="rounded-lg border border-border bg-card p-4"
-          >
+          <div key={club.id} className="rounded-lg border border-border bg-card p-4">
             <div className="flex items-start gap-3">
               {club.logoUrl && (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={club.logoUrl}
-                  alt=""
-                  className="size-12 rounded-md object-cover"
-                />
+                <img src={club.logoUrl} alt="" className="size-12 rounded-md object-cover" />
               )}
               <div className="flex-1 min-w-0 space-y-2">
                 <h4 className="font-semibold">{club.name}</h4>
@@ -108,9 +97,7 @@ async function ProposedClubs() {
                   {club.status}
                 </Badge>
                 {club.rejectionReason && (
-                  <p className="text-xs text-destructive">
-                    Rejected: {club.rejectionReason}
-                  </p>
+                  <p className="text-xs text-destructive">Rejected: {club.rejectionReason}</p>
                 )}
                 {club.changeRequestReason && (
                   <p className="text-xs text-muted-foreground">

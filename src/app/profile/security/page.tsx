@@ -3,9 +3,7 @@ export default function SecurityPage() {
     <div className="space-y-6">
       <div>
         <h2 className="text-lg font-semibold">Security Settings</h2>
-        <p className="text-sm text-muted-foreground">
-          Manage your password and active sessions
-        </p>
+        <p className="text-sm text-muted-foreground">Security controls for your account</p>
       </div>
 
       <div className="rounded-lg border border-border bg-card p-8 text-center">
@@ -26,9 +24,10 @@ export default function SecurityPage() {
             </svg>
           </div>
           <div className="space-y-2">
-            <h3 className="font-semibold">Password Management Coming Soon</h3>
+            <h3 className="font-semibold">Managed by Google</h3>
             <p className="text-sm text-muted-foreground">
-              Password management and session controls will be available in a future update.
+              ClubsHub uses Google OAuth and does not store passwords or manage multiple sessions.
+              Update your password and active sessions through your Google account.
             </p>
           </div>
         </div>

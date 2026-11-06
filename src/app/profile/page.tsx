@@ -50,15 +50,10 @@ async function RecentActivity() {
   return (
     <div className="space-y-4">
       {activities.map((activity) => (
-        <div
-          key={activity.id}
-          className="rounded-lg border border-border bg-card p-4"
-        >
+        <div key={activity.id} className="rounded-lg border border-border bg-card p-4">
           <div className="flex items-start justify-between gap-4">
             <div className="space-y-1">
-              <p className="text-sm font-medium">
-                {activity.action.replace(/_/g, ' ')}
-              </p>
+              <p className="text-sm font-medium">{activity.action.replace(/_/g, ' ')}</p>
               <p className="text-xs text-muted-foreground">
                 {activity.targetEntity} • {activity.targetEntityId.slice(0, 8)}
               </p>
