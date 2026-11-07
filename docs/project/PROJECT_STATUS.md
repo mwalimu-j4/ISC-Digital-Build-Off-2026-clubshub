@@ -84,6 +84,12 @@ require request code to set transaction-local identity context.
   dashboard, passport milestones, campus week, proposals, announcements, and
   suggested clubs. No migration or hardcoded business data was added.
 
+## Public landing page validation
+
+- Landing content is composed through read-only DTO queries in `src/modules/landing`.
+- Public Lost & Found cards exclude reporter identity, contact details, and claim data.
+- No migration was required; existing indexes cover the landing queries.
+
 ## Next approved stage
 
 Stage 06 — Club Admin Dashboard.

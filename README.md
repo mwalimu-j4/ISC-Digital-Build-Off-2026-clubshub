@@ -69,3 +69,10 @@ It includes a responsive dashboard, club discovery and membership actions, upcom
 events with server-enforced registration, announcements, notifications, and links to
 the existing profile and proposal workflows. The student data model is introduced by
 the additive `20261107000000_student_dashboard_events_announcements` migration.
+
+## Public landing page
+
+The `/` landing page is a responsive, database-driven discovery surface. It reads
+active clubs, approved membership counts, published events, university announcements,
+and safe Lost & Found preview fields through the landing module. Empty or unavailable
+sources render designed empty states rather than fabricated counts or content.
