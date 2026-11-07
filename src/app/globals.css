@@ -39,30 +39,359 @@
   --radius-lg: 1.5rem;
   --radius-md: 0.9rem;
   color-scheme: dark;
-  font-family: Arial, sans-serif;
+  font-family: var(--font-inter), Arial, sans-serif;
 }
 
 .student-theme {
-  --background: #f5f8fc;
-  --foreground: #102a56;
+  --blue-900: #071b45;
+  --blue-800: #0b2a6b;
+  --blue-600: #1b4db1;
+  --blue-100: #e3ecff;
+  --gold-500: #f2b705;
+  --gold-100: #fff8dc;
+  --gold-text: #8a6100;
+  --canvas: #f6f4ee;
+  --background: var(--canvas);
+  --foreground: #0b1b3a;
   --card: #ffffff;
-  --card-foreground: #102a56;
+  --card-foreground: #0b1b3a;
   --popover: #ffffff;
   --popover-foreground: #102a56;
-  --primary: #123f88;
+  --primary: var(--blue-800);
   --primary-foreground: #ffffff;
   --primary-hover: #0d316c;
-  --secondary: #e8eff9;
-  --secondary-foreground: #16386f;
-  --muted: #edf2f8;
-  --muted-foreground: #5b6f8e;
-  --accent: #c99a2e;
-  --accent-foreground: #102a56;
-  --border: #d7e1ef;
-  --input: #c5d3e6;
-  --ring: #c99a2e;
-  background: radial-gradient(circle at 85% 0%, rgb(201 154 46 / 12%), transparent 28rem), #f5f8fc;
+  --secondary: var(--blue-100);
+  --secondary-foreground: var(--blue-800);
+  --muted: #f1efe8;
+  --muted-foreground: #5b6b8a;
+  --accent: var(--gold-500);
+  --accent-foreground: var(--blue-900);
+  --border: #e6e2d6;
+  --input: #c9c4b8;
+  --ring: var(--gold-500);
+  --passport-track: #eee9dc;
+  background: var(--canvas);
   color: var(--foreground);
+}
+
+.student-theme .student-sidebar {
+  background: linear-gradient(180deg, var(--blue-800), var(--blue-900));
+  border-color: rgb(255 255 255 / 12%);
+  color: #fff;
+}
+.student-theme .student-brand {
+  color: #fff;
+}
+.student-theme .student-brand-mark {
+  border-radius: 0.55rem;
+  background: var(--gold-500);
+  color: var(--blue-900);
+  font-weight: 800;
+}
+.student-theme .student-nav-link {
+  color: #c9d6f2;
+}
+.student-theme .student-nav-link:hover,
+.student-theme .student-nav-link:focus-visible {
+  background: rgb(242 183 5 / 18%);
+  color: #fff;
+}
+.student-theme .student-nav-link:first-child {
+  background: var(--gold-500);
+  color: var(--blue-900);
+}
+.student-theme .student-account-card {
+  background: rgb(255 255 255 / 10%);
+  color: #fff;
+}
+.student-theme .student-account-card small {
+  color: #c9d6f2;
+}
+.student-theme .student-avatar {
+  display: grid;
+  size: 2rem;
+  min-width: 2rem;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--gold-500);
+  color: var(--blue-900);
+  font-weight: 700;
+}
+.student-theme .student-display {
+  font-family: var(--font-instrument-serif), Georgia, serif;
+  font-weight: 400;
+  letter-spacing: normal;
+  color: var(--foreground);
+}
+.student-theme .student-eyebrow {
+  color: var(--gold-text);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.student-theme .student-lede {
+  color: var(--muted-foreground);
+}
+.student-theme .student-panel,
+.student-theme .student-stat-card {
+  background: var(--card);
+  border-color: var(--border);
+  box-shadow: none;
+}
+.student-theme .student-hero-card {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(120deg, var(--blue-900), var(--blue-600));
+  color: #fff;
+}
+.student-theme .student-hero-card::after {
+  position: absolute;
+  right: -3rem;
+  top: -4rem;
+  width: 10rem;
+  height: 10rem;
+  border-radius: 999px;
+  background: rgb(242 183 5 / 20%);
+  content: '';
+}
+.student-theme .student-hero-card .student-eyebrow {
+  color: var(--gold-500);
+}
+.student-theme .student-hero-card .student-display {
+  color: #fff;
+}
+.student-theme .student-hero-card .student-highlight {
+  color: var(--gold-500);
+  font-style: italic;
+}
+.student-theme .student-inline-link {
+  align-items: center;
+  color: var(--blue-800);
+  display: inline-flex;
+  font-size: 0.75rem;
+  font-weight: 700;
+  gap: 0.2rem;
+}
+.student-theme .student-chip {
+  background: var(--blue-100);
+  border-radius: 999px;
+  color: var(--blue-800);
+  display: inline-flex;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.28rem 0.55rem;
+  white-space: nowrap;
+}
+.student-theme .student-chip-gold {
+  background: var(--gold-100);
+  color: var(--gold-text);
+}
+.student-theme .student-chip-danger {
+  background: #fee8e7;
+  color: #9c2c2c;
+}
+.student-theme .student-club-row {
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 0.7rem;
+  min-height: 3.8rem;
+  padding: 0.55rem 0;
+}
+.student-theme .student-club-row:last-child {
+  border-bottom: 0;
+}
+.student-theme .student-club-row small {
+  color: var(--muted-foreground);
+  font-size: 0.68rem;
+}
+.student-theme .student-club-mark {
+  align-items: center;
+  background: var(--blue-900);
+  border-radius: 0.65rem;
+  color: #fff;
+  display: inline-flex;
+  height: 2rem;
+  justify-content: center;
+  width: 2rem;
+}
+.student-theme .student-club-mark-gold {
+  background: var(--gold-500);
+  color: var(--blue-900);
+}
+.student-theme .student-week-scroll {
+  overflow-x: auto;
+}
+.student-theme .student-week-grid {
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: repeat(7, minmax(74px, 1fr));
+  min-width: 560px;
+}
+.student-theme .student-day-tile {
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  min-height: 4.5rem;
+  padding: 0.5rem;
+  text-align: center;
+}
+.student-theme .student-day-tile span {
+  font-size: 0.65rem;
+}
+.student-theme .student-day-tile strong {
+  font-size: 0.9rem;
+}
+.student-theme .student-day-tile small {
+  color: var(--muted-foreground);
+  font-size: 0.58rem;
+  max-width: 5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.student-theme .student-day-today {
+  background: var(--blue-900);
+  border-color: var(--blue-900);
+  color: #fff;
+}
+.student-theme .student-day-today small {
+  color: var(--gold-500);
+}
+.student-theme .student-day-event {
+  background: var(--gold-100);
+  border-color: var(--gold-500);
+}
+.student-theme .student-proposal-steps {
+  align-items: center;
+  display: flex;
+  gap: 0.25rem;
+}
+.student-theme .student-proposal-steps span {
+  background: var(--border);
+  border-radius: 999px;
+  height: 0.3rem;
+  flex: 1;
+}
+.student-theme .student-proposal-steps span.complete {
+  background: var(--gold-500);
+}
+.student-theme .student-proposal-steps span:first-child {
+  align-items: center;
+  display: flex;
+  height: 0.8rem;
+  justify-content: center;
+}
+.student-theme .student-topbar {
+  align-items: center;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  padding: 1rem 2.5rem 0;
+}
+.student-theme .student-search {
+  align-items: center;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--muted-foreground);
+  display: flex;
+  gap: 0.5rem;
+  max-width: 30rem;
+  padding: 0.55rem 0.8rem;
+  width: 100%;
+}
+.student-theme .student-search input {
+  background: transparent;
+  border: 0;
+  color: var(--foreground);
+  flex: 1;
+  min-width: 0;
+  outline: 0;
+}
+.student-theme .student-search kbd {
+  border: 1px solid var(--border);
+  border-radius: 0.35rem;
+  font-size: 0.6rem;
+  padding: 0.15rem 0.3rem;
+}
+.student-theme .student-propose-button {
+  background: var(--blue-800);
+  border-radius: 999px;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.65rem 1rem;
+  white-space: nowrap;
+}
+.student-theme .student-mobile-header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem;
+}
+.student-theme .student-icon-button {
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  display: inline-flex;
+  height: 2.75rem;
+  justify-content: center;
+  width: 2.75rem;
+}
+.student-theme .student-menu {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 0.8rem;
+  box-shadow: 0 8px 20px rgb(11 27 58 / 12%);
+  min-width: 9rem;
+  padding: 0.4rem;
+  position: absolute;
+  right: 0;
+  top: 3rem;
+  z-index: 20;
+}
+.student-theme .student-menu a,
+.student-theme .student-menu button {
+  display: flex;
+  padding: 0.6rem;
+  width: 100%;
+}
+.student-theme .student-unread-badge {
+  background: var(--gold-500);
+  border-radius: 999px;
+  color: var(--blue-900);
+  font-size: 0.65rem;
+  font-weight: 800;
+  min-width: 1.1rem;
+  padding: 0.1rem 0.3rem;
+  text-align: center;
+}
+.student-theme .student-footer {
+  color: var(--muted-foreground);
+  font-size: 0.7rem;
+  padding: 1rem 2.5rem 1.5rem;
+  text-align: center;
+}
+@media (max-width: 1023px) {
+  .student-theme .student-topbar {
+    display: none;
+  }
+  .student-theme .student-footer {
+    padding-bottom: 5rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .student-theme *,
+  .student-theme *::before,
+  .student-theme *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
 }
 
 .student-theme .student-sidebar {
@@ -256,6 +585,36 @@
   font-weight: 800;
   letter-spacing: 0.14em;
   text-transform: uppercase;
+}
+
+/* Campus Pulse final responsive overrides */
+.student-theme .student-mobile-bottom-nav {
+  background: var(--blue-800) !important;
+  border-color: var(--blue-800) !important;
+  color: #fff;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.student-theme .student-mobile-bottom-nav .mobile-bottom-nav-item {
+  color: #c9d6f2;
+}
+.student-theme .student-mobile-bottom-nav .mobile-bottom-nav-item-active {
+  color: var(--gold-500);
+}
+.student-theme .student-mobile-bottom-nav .mobile-bottom-nav-item:nth-child(3) {
+  background: var(--gold-500);
+  border: 4px solid var(--canvas);
+  border-radius: 999px;
+  color: var(--blue-900);
+  height: 3.5rem;
+  margin-top: -1.15rem;
+  padding: 0.6rem;
+  width: 3.5rem;
+}
+.student-theme
+  .student-mobile-bottom-nav
+  .mobile-bottom-nav-item:nth-child(3)
+  .mobile-bottom-nav-label {
+  display: none;
 }
 
 .recovery-theme .recovery-card {

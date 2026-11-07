@@ -17,6 +17,11 @@ export async function listUpcomingEvents(actor: Actor, db: EventDb = prisma) {
   return eventRepository.findUpcoming(db);
 }
 
+export async function listStudentWeekEvents(actor: Actor, db: EventDb = prisma) {
+  assertStudent(actor);
+  return eventRepository.findUpcomingForStudent(db, actor.id);
+}
+
 export async function getEvent(actor: Actor, eventId: string, db: EventDb = prisma) {
   assertStudent(actor);
   return eventRepository.findById(db, eventIdSchema.parse(eventId));
