@@ -26,7 +26,11 @@ export function SiteHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { data: session, status } = useSession();
   const isSignedIn = status === 'authenticated';
+  const isStudent = session?.user.role === 'STUDENT';
   const isSuperAdmin = session?.user.role === 'SUPER_ADMIN';
+  const visibleNavigation = isStudent
+    ? navigation.filter((item) => item.href === '/lost-found')
+    : navigation;
 
   return (
     <header className="site-header">
@@ -39,7 +43,7 @@ export function SiteHeader() {
         </Link>
 
         <nav className="desktop-nav" aria-label="Primary navigation">
-          {navigation.map((item) => (
+          {visibleNavigation.map((item) => (
             <Link key={item.href} href={item.href}>
               {item.label}
             </Link>
@@ -83,9 +87,11 @@ export function SiteHeader() {
                     My Profile
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/dashboard/clubs">My Clubs</Link>
-                </DropdownMenuItem>
+                {!isStudent && (
+                  <DropdownMenuItem asChild>
+                    <Link href="/dashboard/clubs">My Clubs</Link>
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuItem asChild>
                   <Link href="/profile/settings">Account Settings</Link>
                 </DropdownMenuItem>
@@ -126,7 +132,7 @@ export function SiteHeader() {
       {isMenuOpen ? (
         <nav className="mobile-nav" id="mobile-navigation" aria-label="Mobile navigation">
           <div className="site-container mobile-nav-links">
-            {navigation.map((item) => (
+            {visibleNavigation.map((item) => (
               <Link key={item.href} href={item.href} onClick={() => setIsMenuOpen(false)}>
                 {item.label}
               </Link>

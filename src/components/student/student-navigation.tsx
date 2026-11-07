@@ -1,6 +1,8 @@
 import { Bell, CalendarDays, Compass, Home, Megaphone, UserRound, Users } from 'lucide-react';
 import Link from 'next/link';
 
+import { StudentLogoutButton } from '@/components/student/student-logout-button';
+
 const items = [
   { href: '/student', label: 'Home', icon: Home },
   { href: '/student/clubs', label: 'Discover clubs', icon: Compass },
@@ -41,6 +43,7 @@ export function StudentSidebar() {
           <span className="block font-medium">Account settings</span>
           <span className="text-xs text-muted-foreground">Update your profile</span>
         </Link>
+        <StudentLogoutButton />
       </div>
     </aside>
   );
