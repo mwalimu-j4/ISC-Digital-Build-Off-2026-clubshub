@@ -40,16 +40,20 @@ function LandingContent({ data }: { data: LandingData }) {
               feel like home. No account needed to look around.
             </p>
             <form className="landing-search" action="/clubs" method="get">
-              <label htmlFor="landing-search">Search campus life</label>
+              <div className="landing-search-tabs" aria-label="Search destinations">
+                <Link className="landing-search-tab-active" href="/clubs">
+                  Clubs
+                </Link>
+                <Link href="/lost-found">Lost &amp; Found</Link>
+              </div>
               <div>
+                <label className="sr-only" htmlFor="landing-search">
+                  Search campus life
+                </label>
                 <input id="landing-search" name="q" placeholder="Search clubs" type="search" />
                 <button className="landing-button landing-button-gold" type="submit">
                   Search
                 </button>
-              </div>
-              <div className="landing-search-tabs" aria-label="Search destinations">
-                <Link href="/clubs">Clubs</Link>
-                <Link href="/lost-found">Lost &amp; Found</Link>
               </div>
             </form>
           </div>
@@ -66,7 +70,11 @@ function LandingContent({ data }: { data: LandingData }) {
                 Next up: <strong>{data.events[0].title}</strong> ·{' '}
                 {dateFormatter.format(data.events[0].startsAt)}
               </p>
-            ) : null}
+            ) : (
+              <p className="landing-next-up">
+                Campus activity will appear here when it is available.
+              </p>
+            )}
           </div>
         </div>
       </section>
