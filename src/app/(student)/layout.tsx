@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 
+import { StudentLogoutButton } from '@/components/student/student-logout-button';
 import { StudentSidebar } from '@/components/student/student-navigation';
 import { requireRole } from '@/lib/auth/authorization';
 
@@ -17,9 +18,12 @@ export default async function StudentLayout({ children }: { children: ReactNode 
               </span>
               <span>ClubsHub</span>
             </a>
-            <a href="/profile" className="student-mobile-profile">
-              Profile
-            </a>
+            <div className="flex items-center gap-2">
+              <a href="/profile" className="student-mobile-profile">
+                Profile
+              </a>
+              <StudentLogoutButton compact />
+            </div>
           </div>
         </header>
         <main className="mx-auto max-w-6xl px-4 py-8 pb-24 sm:px-6 lg:px-8 lg:pb-8">

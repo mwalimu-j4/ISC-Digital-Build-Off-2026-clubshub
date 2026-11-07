@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import type { ReactNode } from 'react';
 
 import { ProfileNavigation } from '@/components/profile/profile-navigation';
+import { StudentLogoutButton } from '@/components/student/student-logout-button';
 import { StudentSidebar } from '@/components/student/student-navigation';
 import { getCurrentSession } from '@/lib/auth/session';
 
@@ -25,9 +26,12 @@ export default async function ProfileLayout({ children }: { children: ReactNode 
                 </span>
                 <span>ClubsHub</span>
               </a>
-              <a href="/student" className="student-mobile-profile">
-                Dashboard
-              </a>
+              <div className="flex items-center gap-2">
+                <a href="/student" className="student-mobile-profile">
+                  Dashboard
+                </a>
+                <StudentLogoutButton compact />
+              </div>
             </div>
           </header>
           <main className="mx-auto max-w-6xl px-4 py-8 pb-24 sm:px-6 lg:px-8 lg:pb-8">
