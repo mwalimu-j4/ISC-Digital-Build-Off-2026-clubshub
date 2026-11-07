@@ -1,10 +1,10 @@
+import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 
 import { ProfileHeader } from '@/components/profile/profile-header';
 import { ProfileStats } from '@/components/profile/profile-stats';
 import { requireUser } from '@/lib/auth/authorization';
 import { getProfileActivity } from '@/modules/profile';
-import { redirect } from 'next/navigation';
 
 function ProfileHeaderSkeleton() {
   return (
