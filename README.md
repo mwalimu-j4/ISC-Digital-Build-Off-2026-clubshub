@@ -61,3 +61,11 @@ Stage 04 is complete: students can submit proposals and see status, super-admins
 review and oversee clubs, approved clubs have a public directory/profile, and approved
 club admins can update profiles. Events, announcements, notifications, and
 lost-and-found remain future stages.
+
+## Student dashboard
+
+The student experience is available at `/student` for authenticated student accounts.
+It includes a responsive dashboard, club discovery and membership actions, upcoming
+events with server-enforced registration, announcements, notifications, and links to
+the existing profile and proposal workflows. The student data model is introduced by
+the additive `20261107000000_student_dashboard_events_announcements` migration.

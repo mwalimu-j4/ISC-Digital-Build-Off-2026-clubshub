@@ -43,4 +43,57 @@ export const clubRepository = {
   findOwned(db: ClubDb, userId: string) {
     return db.club.findMany({ where: { createdById: userId }, orderBy: { createdAt: 'desc' } });
   },
+  findDiscoverable(
+    db: ClubDb,
+    filters: { search?: string; category?: string; skip: number; take: number },
+  ) {
+    const where: Prisma.ClubWhereInput = { status: 'ACTIVE' };
+    if (filters.category) where.category = filters.category;
+    if (filters.search) {
+      where.OR = [
+        { name: { contains: filters.search, mode: 'insensitive' } },
+        { description: { contains: filters.search, mode: 'insensitive' } },
+      ];
+    }
+    return db.club.findMany({
+      where,
+      orderBy: { name: 'asc' },
+      skip: filters.skip,
+      take: filters.take,
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        description: true,
+        category: true,
+        logoUrl: true,
+        _count: { select: { memberships: { where: { status: 'APPROVED' } } } },
+      },
+    });
+  },
+  findMembership(db: ClubDb, userId: string, clubId: string) {
+    return db.clubMembership.findUnique({ where: { userId_clubId: { userId, clubId } } });
+  },
+  listMemberships(db: ClubDb, userId: string) {
+    return db.clubMembership.findMany({
+      where: { userId },
+      include: {
+        club: { select: { id: true, name: true, slug: true, category: true, logoUrl: true } },
+      },
+      orderBy: { appliedAt: 'desc' },
+    });
+  },
+  applyMembership(db: ClubDb, userId: string, clubId: string) {
+    return db.clubMembership.upsert({
+      where: { userId_clubId: { userId, clubId } },
+      create: { userId, clubId },
+      update: { status: 'PENDING', appliedAt: new Date() },
+    });
+  },
+  leaveMembership(db: ClubDb, userId: string, clubId: string) {
+    return db.clubMembership.update({
+      where: { userId_clubId: { userId, clubId } },
+      data: { status: 'LEFT' },
+    });
+  },
 };

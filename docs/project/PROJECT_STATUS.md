@@ -1,12 +1,14 @@
 # Project status
 
-**Last updated:** 2026-11-06
+**Last updated:** 2026-11-07
 
 ## Current stage
 
 Stage 04 — Core Club and Membership Modules: **Implemented**
 
 Profile and account experience: **Implemented**
+
+Student dashboard experience: **Implemented**
 
 ## Objective
 
@@ -23,7 +25,8 @@ foundation.
 - Live viewport review completed at 360px, 390px, 768px, 1024px, and 1440px with no
   horizontal overflow.
 - Logged-in account menu, responsive profile navigation, profile data, memberships,
-  proposals, activity, and server-validated profile settings are implemented.
+  proposals, activity, server-validated profile settings, and the student dashboard
+  experience are implemented.
 
 ## Pending tasks
 
@@ -42,8 +45,8 @@ foundation.
 
 ## Known limitations
 
-Events, announcements, member applications, and analytics remain out of scope until
-later stages. Password changes and session revocation remain omitted because the
+Club-admin event and announcement authoring remains out of scope. Password changes
+and session revocation remain omitted because the
 current Google OAuth/JWT authentication flow does not support them. RLS policies
 require request code to set transaction-local identity context.
 
@@ -69,6 +72,14 @@ require request code to set transaction-local identity context.
 - Production build compiles successfully; runtime database rendering requires configured
   `DATABASE_URL` and `DIRECT_URL`.
 
+## Student dashboard validation
+
+- Student route layout enforces the `STUDENT` role on the server.
+- Discover clubs, membership states, leave actions, event registration rules,
+  announcements, and notifications use server-side services and repositories.
+- The additive migration `20261107000000_student_dashboard_events_announcements`
+  adds events, registrations, and announcements.
+
 ## Next approved stage
 
-Stage 05 — Events, Announcements, and Notifications.
+Stage 06 — Club Admin Dashboard.

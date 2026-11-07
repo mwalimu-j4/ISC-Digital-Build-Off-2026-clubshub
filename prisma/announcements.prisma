@@ -1,0 +1,22 @@
+enum AnnouncementAudience {
+  MEMBERS
+  UNIVERSITY
+}
+
+model Announcement {
+  id        String                @id @default(uuid()) @db.Uuid
+  clubId    String?               @map("club_id") @db.Uuid
+  authorId  String                @map("author_id") @db.Uuid
+  title     String                @db.VarChar(200)
+  body      String                @db.Text
+  pinned    Boolean               @default(false)
+  audience  AnnouncementAudience  @default(MEMBERS)
+  createdAt DateTime              @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime              @updatedAt @map("updated_at") @db.Timestamptz(3)
+  club      Club?                @relation(fields: [clubId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  author    User                 @relation("AnnouncementAuthor", fields: [authorId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@index([clubId, createdAt])
+  @@index([audience, createdAt])
+  @@map("announcements")
+}

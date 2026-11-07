@@ -179,3 +179,61 @@ export async function setClubSuspension(
 export const listApprovedClubs = (db: ClubDb = prisma) => clubRepository.findPublic(db);
 export const getApprovedClub = (slug: string, db: ClubDb = prisma) =>
   z.string().min(1).parse(slug) && clubRepository.findPublicBySlug(db, slug);
+
+export async function discoverClubs(
+  actor: { id: string; role: UserRole },
+  filters: { search?: string; category?: string; page?: number },
+  db: ClubDb = prisma,
+) {
+  if (actor.role !== 'STUDENT') throw new ClubServiceError('Only students can discover clubs');
+  const page = Math.max(1, filters.page ?? 1);
+  const clubs = await clubRepository.findDiscoverable(db, {
+    search: filters.search,
+    category: filters.category,
+    skip: (page - 1) * 12,
+    take: 12,
+  });
+  const memberships = await db.clubMembership.findMany({
+    where: { userId: actor.id, clubId: { in: clubs.map((club) => club.id) } },
+    select: { clubId: true, status: true },
+  });
+  const membershipByClub = new Map(
+    memberships.map((membership) => [membership.clubId, membership.status]),
+  );
+  return clubs.map((club) => ({
+    ...club,
+    membershipStatus: membershipByClub.get(club.id) ?? null,
+  }));
+}
+
+export async function joinClub(
+  actor: { id: string; role: UserRole },
+  clubId: string,
+  db: ClubDb = prisma,
+) {
+  if (actor.role !== 'STUDENT') throw new ClubServiceError('Only students can join clubs');
+  const id = z.string().uuid().parse(clubId);
+  const club = await db.club.findFirst({ where: { id, status: 'ACTIVE' }, select: { id: true } });
+  if (!club) throw new ClubServiceError('Club not found');
+  const membership = await clubRepository.findMembership(db, actor.id, id);
+  if (membership?.status === 'APPROVED') throw new ClubServiceError('Already a member');
+  return clubRepository.applyMembership(db, actor.id, id);
+}
+
+export async function leaveClub(
+  actor: { id: string; role: UserRole },
+  clubId: string,
+  db: ClubDb = prisma,
+) {
+  if (actor.role !== 'STUDENT') throw new ClubServiceError('Only students can leave clubs');
+  const id = z.string().uuid().parse(clubId);
+  const membership = await clubRepository.findMembership(db, actor.id, id);
+  if (!membership || membership.status !== 'APPROVED')
+    throw new ClubServiceError('Active membership not found');
+  return clubRepository.leaveMembership(db, actor.id, id);
+}
+
+export const getOwnMemberships = (actor: { id: string; role: UserRole }, db: ClubDb = prisma) => {
+  if (actor.role !== 'STUDENT') throw new ClubServiceError('Only students can view memberships');
+  return clubRepository.listMemberships(db, actor.id);
+};

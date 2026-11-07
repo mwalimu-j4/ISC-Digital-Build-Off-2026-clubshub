@@ -68,3 +68,16 @@ Zod schema before persistence.
 The current Google OAuth and JWT session implementation does not provide password
 changes or server-side session revocation. The profile experience therefore does not
 expose misleading security controls until the authentication contract supports them.
+
+## 2026-11-07 — Student routes are additive
+
+The student experience is composed under a dedicated `(student)` route group and
+uses the existing profile, club proposal, public club, and notification foundations.
+The student layout enforces the role server-side; existing public routes remain
+available and are not duplicated or restyled.
+
+## 2026-11-07 — Event registration is service-enforced
+
+Event capacity, registration deadlines, duplicate registration, and cancellation are
+validated in the event service in addition to the database uniqueness constraint.
+This keeps authorization and business rules independent of client controls.
