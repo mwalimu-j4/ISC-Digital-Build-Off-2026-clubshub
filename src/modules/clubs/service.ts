@@ -180,6 +180,19 @@ export const listApprovedClubs = (db: ClubDb = prisma) => clubRepository.findPub
 export const getApprovedClub = (slug: string, db: ClubDb = prisma) =>
   z.string().min(1).parse(slug) && clubRepository.findPublicBySlug(db, slug);
 
+export async function listPublicClubs(
+  filters: { search?: string; category?: string; page?: number },
+  db: ClubDb = prisma,
+) {
+  const page = Math.max(1, filters.page ?? 1);
+  return clubRepository.findPublicDiscoverable(db, {
+    search: filters.search,
+    category: filters.category,
+    skip: (page - 1) * 24,
+    take: 24,
+  });
+}
+
 export async function discoverClubs(
   actor: { id: string; role: UserRole },
   filters: { search?: string; category?: string; page?: number },

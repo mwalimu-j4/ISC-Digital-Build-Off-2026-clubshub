@@ -25,6 +25,34 @@ export const clubRepository = {
       },
     });
   },
+  findPublicDiscoverable(
+    db: ClubDb,
+    filters: { search?: string; category?: string; skip: number; take: number },
+  ) {
+    const where: Prisma.ClubWhereInput = { status: 'ACTIVE' };
+    if (filters.category) where.category = filters.category;
+    if (filters.search) {
+      where.OR = [
+        { name: { contains: filters.search, mode: 'insensitive' } },
+        { description: { contains: filters.search, mode: 'insensitive' } },
+      ];
+    }
+    return db.club.findMany({
+      where,
+      orderBy: { name: 'asc' },
+      skip: filters.skip,
+      take: filters.take,
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        description: true,
+        category: true,
+        logoUrl: true,
+        _count: { select: { memberships: { where: { status: 'APPROVED' } } } },
+      },
+    });
+  },
   findPublicBySlug(db: ClubDb, slug: string) {
     return db.club.findFirst({
       where: { slug, status: 'ACTIVE' },

@@ -110,9 +110,14 @@ export function SiteHeader() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Link className="button button-primary header-join" href="/sign-in">
-              Log in
-            </Link>
+            <>
+              <Link className="header-login-link" href="/sign-in">
+                Log in
+              </Link>
+              <Link className="button button-primary header-join" href="/sign-in">
+                Sign up free
+              </Link>
+            </>
           )}
           <button
             className="menu-toggle"
