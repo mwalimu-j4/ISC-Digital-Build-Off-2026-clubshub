@@ -38,7 +38,7 @@ export default async function MyStudentClubsPage() {
             >
               <div>
                 <Link
-                  href={`/clubs/${membership.club.slug}`}
+                  href={`/student/clubs/${membership.club.slug}`}
                   className="font-semibold hover:text-primary"
                 >
                   {membership.club.name}
