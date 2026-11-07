@@ -26,11 +26,11 @@ export default async function StudentDashboardPage() {
   return (
     <div className="space-y-8">
       <section>
-        <p className="eyebrow">Your campus, connected</p>
-        <h1 className="mt-2 text-3xl font-semibold tracking-tight">
+        <p className="student-eyebrow">Your campus, connected</p>
+        <h1 className="student-display mt-2 text-3xl font-semibold tracking-tight">
           Good to see you, {firstName}.
         </h1>
-        <p className="mt-2 max-w-2xl text-muted-foreground">
+        <p className="student-lede mt-2 max-w-2xl">
           Find clubs, keep up with campus life, and make your next connection.
         </p>
       </section>
@@ -42,17 +42,17 @@ export default async function StudentDashboardPage() {
           ['Pending applications', memberships.filter((item) => item.status === 'PENDING').length],
           ['Club proposals', proposals.length],
         ].map(([label, value]) => (
-          <div key={label} className="rounded-xl border border-border bg-card p-5">
-            <p className="text-sm text-muted-foreground">{label}</p>
-            <p className="mt-2 text-3xl font-semibold">{value}</p>
+          <div key={label} className="student-stat-card rounded-xl border p-5">
+            <p className="text-sm">{label}</p>
+            <p className="student-stat-value mt-2 text-3xl font-semibold">{value}</p>
           </div>
         ))}
       </section>
 
-      <section className="rounded-xl border border-border bg-card p-6">
+      <section className="student-hero-card rounded-xl border p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <p className="text-sm font-medium text-primary">Up next</p>
+            <p className="student-eyebrow text-sm font-medium">Up next</p>
             <h2 className="mt-1 text-xl font-semibold">
               {upcoming?.title ?? 'No registered events yet'}
             </h2>
@@ -71,7 +71,7 @@ export default async function StudentDashboardPage() {
       </section>
 
       <section className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
-        <div className="rounded-xl border border-border bg-card p-6">
+        <div className="student-panel rounded-xl border p-6">
           <div className="flex items-center justify-between gap-4">
             <h2 className="text-lg font-semibold">My clubs</h2>
             <Link href="/student/clubs/mine" className="text-sm text-primary hover:underline">
@@ -85,7 +85,7 @@ export default async function StudentDashboardPage() {
               {memberships.slice(0, 4).map((membership) => (
                 <Link
                   key={membership.id}
-                  href={`/clubs/${membership.club.slug}`}
+                  href={`/student/clubs/${membership.club.slug}`}
                   className="rounded-lg border border-border p-4 hover:bg-secondary"
                 >
                   <p className="font-medium">{membership.club.name}</p>
@@ -97,8 +97,8 @@ export default async function StudentDashboardPage() {
             </div>
           )}
         </div>
-        <div className="rounded-xl border border-dashed border-primary/60 bg-primary/5 p-6">
-          <p className="text-sm font-medium text-primary">Make your mark</p>
+        <div className="student-invite-card rounded-xl border border-dashed p-6">
+          <p className="student-eyebrow text-sm font-medium">Make your mark</p>
           <h2 className="mt-2 text-xl font-semibold">Have an idea for a club?</h2>
           <p className="mt-2 text-sm text-muted-foreground">
             Propose a new community and track its review status.
@@ -109,7 +109,7 @@ export default async function StudentDashboardPage() {
         </div>
       </section>
 
-      <section className="rounded-xl border border-border bg-card p-6">
+      <section className="student-panel rounded-xl border p-6">
         <div className="flex items-center justify-between gap-4">
           <h2 className="text-lg font-semibold">Announcements</h2>
           <Link href="/student/announcements" className="text-sm text-primary hover:underline">

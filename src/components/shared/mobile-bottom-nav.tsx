@@ -25,7 +25,13 @@ export function MobileBottomNav() {
   const navItems = pathname.startsWith('/student') ? studentNavItems : publicNavItems;
 
   return (
-    <nav className="mobile-bottom-nav md:hidden" aria-label="Mobile bottom navigation">
+    <nav
+      className={cn(
+        'mobile-bottom-nav md:hidden',
+        pathname.startsWith('/student') && 'student-mobile-bottom-nav',
+      )}
+      aria-label="Mobile bottom navigation"
+    >
       {navItems.map((item) => {
         const isActive = pathname === item.href;
         const Icon = item.icon;

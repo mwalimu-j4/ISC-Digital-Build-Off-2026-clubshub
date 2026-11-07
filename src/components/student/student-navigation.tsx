@@ -13,11 +13,12 @@ const items = [
 
 export function StudentSidebar() {
   return (
-    <aside className="hidden min-h-screen w-64 shrink-0 border-r border-border bg-card px-4 py-6 lg:block">
-      <Link href="/student" className="mb-8 flex items-center gap-2 px-3 text-lg font-semibold">
-        <span className="flex size-8 items-center justify-center rounded-full bg-primary text-primary-foreground">
-          C
-        </span>
+    <aside className="student-sidebar hidden min-h-screen w-64 shrink-0 border-r px-4 py-6 lg:block">
+      <Link
+        href="/student"
+        className="student-brand mb-8 flex items-center gap-2 px-3 text-lg font-semibold"
+      >
+        <span className="student-brand-mark flex size-8 items-center justify-center">C</span>
         ClubsHub
       </Link>
       <nav aria-label="Student navigation" className="space-y-1">
@@ -25,7 +26,7 @@ export function StudentSidebar() {
           <Link
             key={href}
             href={href}
-            className="flex min-h-11 items-center gap-3 rounded-md px-3 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+            className="student-nav-link flex min-h-11 items-center gap-3 rounded-md px-3 text-sm transition-colors"
           >
             <Icon className="size-4" aria-hidden="true" />
             {label}
@@ -35,7 +36,7 @@ export function StudentSidebar() {
       <div className="mt-auto pt-12">
         <Link
           href="/profile/settings"
-          className="block rounded-lg border border-border bg-background p-3 text-sm"
+          className="student-account-card block rounded-lg p-3 text-sm"
         >
           <span className="block font-medium">Account settings</span>
           <span className="text-xs text-muted-foreground">Update your profile</span>

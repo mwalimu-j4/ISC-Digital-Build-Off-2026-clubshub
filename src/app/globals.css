@@ -42,6 +42,156 @@
   font-family: Arial, sans-serif;
 }
 
+.student-theme {
+  --background: #f5f8fc;
+  --foreground: #102a56;
+  --card: #ffffff;
+  --card-foreground: #102a56;
+  --popover: #ffffff;
+  --popover-foreground: #102a56;
+  --primary: #123f88;
+  --primary-foreground: #ffffff;
+  --primary-hover: #0d316c;
+  --secondary: #e8eff9;
+  --secondary-foreground: #16386f;
+  --muted: #edf2f8;
+  --muted-foreground: #5b6f8e;
+  --accent: #c99a2e;
+  --accent-foreground: #102a56;
+  --border: #d7e1ef;
+  --input: #c5d3e6;
+  --ring: #c99a2e;
+  background: radial-gradient(circle at 85% 0%, rgb(201 154 46 / 12%), transparent 28rem), #f5f8fc;
+  color: var(--foreground);
+}
+
+.student-theme .student-sidebar {
+  background: linear-gradient(180deg, #0d3475 0%, #102a56 100%);
+  border-color: rgb(255 255 255 / 14%);
+  color: #ffffff;
+}
+
+.student-theme .student-brand {
+  color: #ffffff;
+}
+
+.student-theme .student-brand-mark {
+  align-items: center;
+  background: #d4a73c;
+  border-radius: 0.65rem;
+  color: #102a56;
+  font-weight: 800;
+  justify-content: center;
+}
+
+.student-theme .student-nav-link {
+  color: rgb(255 255 255 / 72%);
+}
+
+.student-theme .student-nav-link:hover,
+.student-theme .student-nav-link:focus-visible {
+  background: rgb(255 255 255 / 12%);
+  color: #ffffff;
+}
+
+.student-theme .student-account-card {
+  background: rgb(255 255 255 / 10%);
+  border: 1px solid rgb(255 255 255 / 16%);
+  color: #ffffff;
+}
+
+.student-theme .student-account-card span:last-child {
+  color: rgb(255 255 255 / 68%);
+}
+
+.student-theme .student-mobile-brand {
+  align-items: center;
+  display: inline-flex;
+  font-weight: 800;
+  gap: 0.55rem;
+}
+
+.student-theme .student-mobile-profile {
+  color: var(--primary);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.student-theme .student-eyebrow {
+  color: #a87818;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.student-theme .student-display {
+  color: #102a56;
+  letter-spacing: -0.045em;
+}
+
+.student-theme .student-lede {
+  color: #5b6f8e;
+}
+
+.student-theme .student-stat-card,
+.student-theme .student-panel {
+  background: rgb(255 255 255 / 88%);
+  border-color: #d7e1ef;
+  box-shadow: 0 12px 30px rgb(16 42 86 / 6%);
+}
+
+.student-theme .student-stat-card p:first-child {
+  color: #5b6f8e;
+}
+
+.student-theme .student-stat-value {
+  color: #123f88;
+}
+
+.student-theme .student-hero-card {
+  background: linear-gradient(120deg, #123f88 0%, #1c5aa8 100%);
+  border-color: #123f88;
+  box-shadow: 0 18px 34px rgb(18 63 136 / 20%);
+  color: #ffffff;
+}
+
+.student-theme .student-hero-card h2,
+.student-theme .student-hero-card p:last-child {
+  color: #ffffff;
+}
+
+.student-theme .student-hero-card .student-eyebrow {
+  color: #f1ce78;
+}
+
+.student-theme .student-invite-card {
+  background: linear-gradient(145deg, #fffdf5 0%, #fff8df 100%);
+  border-color: #d4a73c;
+  color: #102a56;
+}
+
+.student-theme .student-invite-card p:not(.student-eyebrow) {
+  color: #5b6f8e;
+}
+
+.student-mobile-bottom-nav {
+  background: #ffffff !important;
+  border-color: #d7e1ef !important;
+}
+
+.student-mobile-bottom-nav .mobile-bottom-nav-item {
+  color: #5b6f8e;
+}
+
+.student-mobile-bottom-nav .mobile-bottom-nav-item-active {
+  color: #123f88;
+}
+
+.student-mobile-bottom-nav .mobile-bottom-nav-icon {
+  color: currentColor;
+}
+
 * {
   box-sizing: border-box;
 }
