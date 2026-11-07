@@ -8,7 +8,7 @@ const items = [
   { href: '/student/announcements', label: 'Announcements', icon: Megaphone },
   { href: '/student/clubs/mine', label: 'My clubs', icon: Users },
   { href: '/student/notifications', label: 'Notifications', icon: Bell },
-  { href: '/profile', label: 'Profile', icon: UserRound },
+  { href: '/student', label: 'Profile', icon: UserRound },
 ];
 
 export function StudentSidebar() {

@@ -4,6 +4,7 @@ import { ProfileHeader } from '@/components/profile/profile-header';
 import { ProfileStats } from '@/components/profile/profile-stats';
 import { requireUser } from '@/lib/auth/authorization';
 import { getProfileActivity } from '@/modules/profile';
+import { redirect } from 'next/navigation';
 
 function ProfileHeaderSkeleton() {
   return (
@@ -80,7 +81,13 @@ function RecentActivitySkeleton() {
   );
 }
 
-export default function ProfilePage() {
+export default async function ProfilePage() {
+  const user = await requireUser();
+
+  if (user.role === 'STUDENT') {
+    redirect('/student');
+  }
+
   return (
     <div className="space-y-8">
       <Suspense fallback={<ProfileHeaderSkeleton />}>
