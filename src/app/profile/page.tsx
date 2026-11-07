@@ -92,7 +92,7 @@ export default function ProfilePage() {
       </Suspense>
 
       <div className="space-y-4">
-        <h2 className="text-lg font-semibold">Recent Activity</h2>
+        <h2 className="text-xl font-semibold">Recent activity</h2>
         <Suspense fallback={<RecentActivitySkeleton />}>
           <RecentActivity />
         </Suspense>
