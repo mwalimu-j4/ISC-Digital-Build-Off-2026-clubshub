@@ -1,20 +1,28 @@
 'use client';
 
-import { Home, Package, User, Users } from 'lucide-react';
+import { CalendarDays, Home, Package, User, Users } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 import { cn } from '@/lib/utils';
 
-const navItems = [
+const publicNavItems = [
   { href: '/', icon: Home, label: 'Home' },
   { href: '/clubs', icon: Users, label: 'Clubs' },
   { href: '/lost-found', icon: Package, label: 'Lost & Found' },
   { href: '/profile', icon: User, label: 'Profile' },
 ];
 
+const studentNavItems = [
+  { href: '/student', icon: Home, label: 'Home' },
+  { href: '/student/clubs', icon: Users, label: 'Clubs' },
+  { href: '/student/events', icon: CalendarDays, label: 'Events' },
+  { href: '/profile', icon: User, label: 'Profile' },
+];
+
 export function MobileBottomNav() {
   const pathname = usePathname();
+  const navItems = pathname.startsWith('/student') ? studentNavItems : publicNavItems;
 
   return (
     <nav className="mobile-bottom-nav md:hidden" aria-label="Mobile bottom navigation">

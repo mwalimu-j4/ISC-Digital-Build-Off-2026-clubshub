@@ -9,6 +9,11 @@ erDiagram
     USER ||--o{ CLUB_MEMBERSHIP : has
     CLUB ||--o{ CLUB_MEMBERSHIP : contains
     USER ||--o{ AUDIT_LOG : performs
+    USER ||--o{ EVENT_REGISTRATION : registers
+    EVENT ||--o{ EVENT_REGISTRATION : accepts
+    CLUB ||--o{ EVENT : hosts
+    CLUB ||--o{ ANNOUNCEMENT : publishes
+    USER ||--o{ ANNOUNCEMENT : authors
 
     USER {
         uuid id PK
@@ -52,6 +57,35 @@ erDiagram
         string target_entity
         uuid target_entity_id
         json metadata
+        datetime created_at
+    }
+
+    EVENT {
+        uuid id PK
+        uuid club_id FK
+        string title
+        datetime starts_at
+        datetime ends_at
+        int capacity
+        enum status
+    }
+
+    EVENT_REGISTRATION {
+        uuid id PK
+        uuid event_id FK
+        uuid user_id FK
+        enum status
+        datetime created_at
+    }
+
+    ANNOUNCEMENT {
+        uuid id PK
+        uuid club_id FK
+        uuid author_id FK
+        string title
+        string body
+        boolean pinned
+        enum audience
         datetime created_at
     }
 ```

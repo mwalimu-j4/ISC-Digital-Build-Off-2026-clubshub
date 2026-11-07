@@ -10,3 +10,10 @@ transactions, and each schema change must be a reviewed migration. Credentials s
 in environment variables; local database files and dumps are ignored. RLS context
 must be set transaction-locally by the authenticated server layer; RLS complements,
 but does not replace, service authorization.
+
+The student dashboard adds `events`, `event_registrations`, and `announcements` in
+the reviewed `20261107000000_student_dashboard_events_announcements` migration.
+Registrations use a database-enforced `(event_id, user_id)` uniqueness constraint;
+capacity and registration deadlines are enforced again in the event service. The
+existing notification table remains the shared notification store for Lost & Found
+and student activity.

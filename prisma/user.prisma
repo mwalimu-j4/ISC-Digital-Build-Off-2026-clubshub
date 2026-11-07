@@ -27,6 +27,8 @@ model User {
   claimsVerified          LostFoundClaim[]         @relation("ClaimVerifier")
   claimsHandedOver        LostFoundClaim[]         @relation("ClaimHandoverOfficer")
   notifications           Notification[]           @relation("NotificationRecipient")
+  eventRegistrations      EventRegistration[]
+  announcements           Announcement[]           @relation("AnnouncementAuthor")
 
   @@index([status])
   @@index([role])
