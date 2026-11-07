@@ -6,13 +6,18 @@ import { requireRole } from '@/lib/auth/authorization';
 export default async function StudentLayout({ children }: { children: ReactNode }) {
   await requireRole('STUDENT');
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="student-theme flex min-h-screen bg-background">
       <StudentSidebar />
       <div className="min-w-0 flex-1">
         <header className="border-b border-border bg-card px-4 py-4 lg:hidden">
           <div className="mx-auto flex max-w-6xl items-center justify-between">
-            <span className="font-semibold">Student dashboard</span>
-            <a href="/profile" className="text-sm text-muted-foreground">
+            <a href="/student" className="student-mobile-brand">
+              <span className="student-brand-mark" aria-hidden="true">
+                C
+              </span>
+              <span>ClubsHub</span>
+            </a>
+            <a href="/profile" className="student-mobile-profile">
               Profile
             </a>
           </div>
