@@ -1,279 +1,262 @@
 import Link from 'next/link';
 
 import { SiteHeader } from '@/components/shared/site-header';
+import { getLandingData, type LandingData } from '@/modules/landing';
 
-const clubCategories = [
-  { icon: '✦', name: 'Creative arts', count: '18 clubs', color: 'lilac' },
-  { icon: '◎', name: 'Technology', count: '24 clubs', color: 'mint' },
-  { icon: '⚑', name: 'Sports & wellness', count: '16 clubs', color: 'peach' },
-  { icon: '◌', name: 'Community', count: '21 clubs', color: 'sky' },
-];
+export const dynamic = 'force-dynamic';
 
-const upcomingEvents = [
-  {
-    date: '12',
-    month: 'OCT',
-    title: 'Campus Creatives Showcase',
-    club: 'Arts Society',
-    time: '5:30 PM · Student Centre',
-  },
-  {
-    date: '15',
-    month: 'OCT',
-    title: 'Women in Tech: Build Night',
-    club: 'Tech Collective',
-    time: '6:00 PM · Innovation Lab',
-  },
-  {
-    date: '19',
-    month: 'OCT',
-    title: 'Saturday Social Run',
-    club: 'Wellness Club',
-    time: '8:00 AM · North Gate',
-  },
-];
+const dateFormatter = new Intl.DateTimeFormat('en', { month: 'short', day: 'numeric' });
+const monthFormatter = new Intl.DateTimeFormat('en', { month: 'short' });
+const timeFormatter = new Intl.DateTimeFormat('en', { hour: 'numeric', minute: '2-digit' });
 
-export default function HomePage() {
+function StatTile({ label, value }: { label: string; value: number | null }) {
+  if (value === null) return null;
+  return (
+    <div className="landing-stat">
+      <strong>{value}</strong>
+      <span>{label}</span>
+    </div>
+  );
+}
+
+function EmptyState({ children }: { children: string }) {
+  return <p className="landing-empty">{children}</p>;
+}
+
+function LandingContent({ data }: { data: LandingData }) {
   return (
     <>
-      <SiteHeader />
-      <main id="home">
-        <section className="hero-section">
-          <div className="site-container hero-grid">
-            <div className="hero-copy">
-              <p className="eyebrow">
-                <span className="eyebrow-dot" /> Your campus, connected
-              </p>
-              <h1>
-                Find your people.
-                <br />
-                <em>Find your place.</em>
-              </h1>
-              <p className="hero-lede">
-                ClubsHub brings every club, event, and campus moment into one welcoming space.
-                Discover what moves you and make this year yours.
-              </p>
-              <div className="hero-actions">
-                <a className="button button-primary button-large" href="#discover">
-                  Explore clubs <span aria-hidden="true">→</span>
-                </a>
-                <a className="text-link" href="#how-it-works">
-                  See how it works <span aria-hidden="true">↗</span>
-                </a>
-              </div>
-              <div className="hero-proof">
-                <div className="avatar-stack" aria-hidden="true">
-                  <span>AM</span>
-                  <span>JK</span>
-                  <span>SL</span>
-                  <span>+</span>
-                </div>
-                <span>
-                  Join a community of <strong>2,400+ students</strong>
-                </span>
-              </div>
-            </div>
-            <div className="hero-visual" aria-label="Students connecting at a campus event">
-              <div className="hero-orbit orbit-one" />
-              <div className="hero-orbit orbit-two" />
-              <div className="hero-card hero-card-main">
-                <div className="hero-illustration">
-                  <div className="illustration-sun" />
-                  <div className="illustration-building building-left" />
-                  <div className="illustration-building building-right" />
-                  <div className="illustration-tree tree-left" />
-                  <div className="illustration-tree tree-right" />
-                  <div className="illustration-person person-one" />
-                  <div className="illustration-person person-two" />
-                  <div className="illustration-person person-three" />
-                  <div className="illustration-ground" />
-                </div>
-                <div className="hero-card-label">
-                  <span className="status-dot" /> Campus is buzzing
-                </div>
-              </div>
-              <div className="floating-card floating-event">
-                <span className="floating-icon">✦</span>
-                <div>
-                  <strong>12 events</strong>
-                  <small>happening this week</small>
-                </div>
-              </div>
-              <div className="floating-card floating-club">
-                <span className="floating-icon">◎</span>
-                <div>
-                  <strong>New club found</strong>
-                  <small>Design &amp; Culture Society</small>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="value-section" id="how-it-works">
-          <div className="site-container">
-            <div className="section-heading centered">
-              <p className="eyebrow">One place for campus life</p>
-              <h2>More ways to feel at home.</h2>
-              <p>
-                Whether you&apos;re looking to join, lead, or simply find something new, your next
-                chapter starts here.
-              </p>
-            </div>
-            <div className="value-grid">
-              <article className="value-card value-card-coral">
-                <span className="feature-icon">⌕</span>
-                <h3>Discover your thing</h3>
-                <p>
-                  Browse clubs by interest, meet people who get it, and find a community that feels
-                  like yours.
-                </p>
-                <a href="#discover">
-                  Explore clubs <span>→</span>
-                </a>
-              </article>
-              <article className="value-card value-card-sage">
-                <span className="feature-icon">◷</span>
-                <h3>Never miss a moment</h3>
-                <p>
-                  From big campus gatherings to small club meetups, keep every event on your radar.
-                </p>
-                <a href="#events">
-                  View events <span>→</span>
-                </a>
-              </article>
-              <article className="value-card value-card-lilac">
-                <span className="feature-icon">♡</span>
-                <h3>Look out for each other</h3>
-                <p>
-                  A simpler way to report, find, and return lost items across the university
-                  community.
-                </p>
-                <Link href="/lost-found">
-                  Visit lost &amp; found <span>→</span>
-                </Link>
-              </article>
-            </div>
-          </div>
-        </section>
-
-        <section className="discover-section" id="discover">
-          <div className="site-container">
-            <div className="section-heading split-heading">
+      <section className="landing-hero">
+        <div className="site-container landing-hero-grid">
+          <div className="landing-hero-copy">
+            <p className="landing-eyebrow">Campus life, in one place</p>
+            <h1>
+              Find your people.
+              <br />
+              <em>Find your place.</em>
+            </h1>
+            <p className="landing-lede">
+              Explore the clubs, events, announcements, and community resources that make campus
+              feel like home. No account needed to look around.
+            </p>
+            <form className="landing-search" action="/clubs" method="get">
+              <label htmlFor="landing-search">Search campus life</label>
               <div>
-                <p className="eyebrow">Find your community</p>
-                <h2>There&apos;s a place for you here.</h2>
+                <input id="landing-search" name="q" placeholder="Search clubs" type="search" />
+                <button className="landing-button landing-button-gold" type="submit">
+                  Search
+                </button>
               </div>
-              <a className="text-link" href="#discover">
-                View all clubs <span>→</span>
-              </a>
-            </div>
-            <div className="category-grid">
-              {clubCategories.map((category) => (
-                <a
-                  className={`category-card category-${category.color}`}
-                  href="#discover"
-                  key={category.name}
-                >
-                  <span className="category-icon">{category.icon}</span>
-                  <span>
-                    <strong>{category.name}</strong>
-                    <small>{category.count}</small>
-                  </span>
-                  <span className="category-arrow">↗</span>
-                </a>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="events-section" id="events">
-          <div className="site-container">
-            <div className="section-heading split-heading">
-              <div>
-                <p className="eyebrow">Make plans</p>
-                <h2>What&apos;s happening soon.</h2>
+              <div className="landing-search-tabs" aria-label="Search destinations">
+                <Link href="/clubs">Clubs</Link>
+                <Link href="/lost-found">Lost &amp; Found</Link>
               </div>
-              <a className="text-link" href="#events">
-                See all events <span>→</span>
-              </a>
-            </div>
-            <div className="events-list">
-              {upcomingEvents.map((event) => (
-                <article className="event-row" key={event.title}>
-                  <div className="event-date">
-                    <strong>{event.date}</strong>
-                    <small>{event.month}</small>
-                  </div>
-                  <div className="event-details">
-                    <h3>{event.title}</h3>
-                    <p>
-                      {event.club} <span>·</span> {event.time}
-                    </p>
-                  </div>
-                  <a className="round-arrow" href="#events" aria-label={`View ${event.title}`}>
-                    ↗
-                  </a>
-                </article>
-              ))}
-            </div>
+            </form>
           </div>
-        </section>
-
-        <section className="lost-section" id="lost-found">
-          <div className="site-container lost-grid">
-            <div className="lost-copy">
-              <p className="eyebrow">Small act, big difference</p>
-              <h2>
-                Lost something?
-                <br />
-                <em>Let&apos;s bring it home.</em>
-              </h2>
-              <p>
-                Our campus is better when we look out for one another. Browse found items or let the
-                community know what you&apos;re looking for.
+          <div className="landing-live-card">
+            <p className="landing-eyebrow">Live on campus</p>
+            <div className="landing-stats">
+              <StatTile label="active clubs" value={data.stats.activeClubs} />
+              <StatTile label="events this week" value={data.stats.upcomingEvents} />
+              <StatTile label="new announcements" value={data.stats.newAnnouncements} />
+              <StatTile label="open lost items" value={data.stats.openLostItems} />
+            </div>
+            {data.events[0] ? (
+              <p className="landing-next-up">
+                Next up: <strong>{data.events[0].title}</strong> ·{' '}
+                {dateFormatter.format(data.events[0].startsAt)}
               </p>
-              <Link className="button button-dark" href="/lost-found">
-                Visit lost &amp; found <span>→</span>
+            ) : null}
+          </div>
+        </div>
+      </section>
+
+      <main className="landing-main">
+        <section className="landing-section" id="clubs">
+          <div className="site-container">
+            <div className="landing-section-heading">
+              <div>
+                <p className="landing-eyebrow">Find your community</p>
+                <h2>Clubs to explore.</h2>
+              </div>
+              <Link className="landing-text-link" href="/clubs">
+                View all clubs →
               </Link>
             </div>
-            <div className="lost-art" aria-hidden="true">
-              <div className="lost-sun" />
-              <div className="lost-ground" />
-              <div className="lost-person" />
-              <div className="lost-object">⌂</div>
-              <div className="lost-flower flower-one" />
-              <div className="lost-flower flower-two" />
-            </div>
+            {data.categories.length > 0 ? (
+              <div className="landing-chips">
+                {data.categories.map((category) => (
+                  <Link
+                    href={`/clubs?category=${encodeURIComponent(category.name)}`}
+                    key={category.name}
+                  >
+                    {category.name} <span>{category.count}</span>
+                  </Link>
+                ))}
+              </div>
+            ) : null}
+            {data.clubs.length > 0 ? (
+              <div className="landing-club-grid">
+                {data.clubs.map((club) => (
+                  <Link className="landing-club-card" href={`/clubs/${club.slug}`} key={club.id}>
+                    <span className="landing-club-mark">
+                      {club.logoUrl ? '✦' : club.name.charAt(0)}
+                    </span>
+                    <span>
+                      <strong>{club.name}</strong>
+                      <small>
+                        {club.category} · {club.memberCount} members
+                      </small>
+                    </span>
+                    <span aria-hidden="true">↗</span>
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <EmptyState>No active clubs are available yet.</EmptyState>
+            )}
           </div>
         </section>
 
-        <section className="closing-section" id="announcements">
-          <div className="site-container closing-inner">
-            <p className="eyebrow">Your campus starts here</p>
-            <h2>
-              There&apos;s more to university
-              <br />
-              when you find your people.
-            </h2>
-            <a className="button button-primary button-large" href="#discover">
-              Get started <span>→</span>
-            </a>
+        <section className="landing-section landing-section-muted" id="events">
+          <div className="site-container">
+            <div className="landing-section-heading">
+              <div>
+                <p className="landing-eyebrow">Make plans</p>
+                <h2>Happening soon.</h2>
+              </div>
+            </div>
+            {data.events.length > 0 ? (
+              <div className="landing-event-grid">
+                {data.events.map((event) => (
+                  <article className="landing-event-card" key={event.id}>
+                    <div className="landing-date">
+                      <strong>{event.startsAt.getDate()}</strong>
+                      <span>{monthFormatter.format(event.startsAt)}</span>
+                    </div>
+                    <h3>{event.title}</h3>
+                    <p>{event.club.name}</p>
+                    <small>
+                      {timeFormatter.format(event.startsAt)} · {event.location}
+                    </small>
+                    <Link href={`/clubs/${event.club.slug}`}>View club →</Link>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <EmptyState>No public upcoming events are available yet.</EmptyState>
+            )}
+            {data.events.length > 0 ? (
+              <p className="landing-note">Registration requires a login.</p>
+            ) : null}
+          </div>
+        </section>
+
+        {data.announcements.length > 0 ? (
+          <section className="landing-section" id="announcements">
+            <div className="site-container">
+              <div className="landing-section-heading">
+                <div>
+                  <p className="landing-eyebrow">Stay in the know</p>
+                  <h2>Campus announcements.</h2>
+                </div>
+              </div>
+              <div className="landing-announcement-grid">
+                {data.announcements.map((announcement) => (
+                  <article className="landing-announcement" key={announcement.id}>
+                    <small>{dateFormatter.format(announcement.createdAt)}</small>
+                    <h3>{announcement.title}</h3>
+                    <p>{announcement.body}</p>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </section>
+        ) : null}
+
+        <section className="landing-section landing-lost" id="lost-found">
+          <div className="site-container">
+            <div className="landing-section-heading">
+              <div>
+                <p className="landing-eyebrow">Look out for each other</p>
+                <h2>Lost &amp; Found.</h2>
+              </div>
+              <Link className="landing-text-link" href="/lost-found">
+                Browse items →
+              </Link>
+            </div>
+            {data.lostItems.length > 0 ? (
+              <div className="landing-lost-grid">
+                {data.lostItems.map((item) => (
+                  <Link className="landing-lost-card" href="/lost-found" key={item.id}>
+                    <span>{item.reportType === 'FOUND' ? 'Found item' : 'Lost item'}</span>
+                    <strong>{item.category.replaceAll('_', ' ')}</strong>
+                    <small>
+                      {item.campusArea} · {dateFormatter.format(item.dateOccurred)}
+                    </small>
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <EmptyState>No public lost-and-found items are available yet.</EmptyState>
+            )}
+            <p className="landing-note">Log in to claim an item.</p>
+          </div>
+        </section>
+
+        <section className="landing-how" id="how-it-works">
+          <div className="site-container">
+            <p className="landing-eyebrow">How it works</p>
+            <h2>Find your next campus chapter.</h2>
+            <div className="landing-how-grid">
+              <article>
+                <span>01</span>
+                <h3>Students</h3>
+                <p>
+                  Discover communities, follow what is happening, and join the moments that matter
+                  to you.
+                </p>
+              </article>
+              <article>
+                <span>02</span>
+                <h3>Club leaders</h3>
+                <p>Build an active community and share the events and updates your members need.</p>
+              </article>
+              <article>
+                <span>03</span>
+                <h3>Administrators</h3>
+                <p>Support a connected campus with clear, trusted information for everyone.</p>
+              </article>
+            </div>
+            <Link className="landing-banner" href="/clubs/propose">
+              Have an idea for a club? <strong>Propose a club →</strong>
+            </Link>
           </div>
         </section>
       </main>
+    </>
+  );
+}
+
+export default async function HomePage() {
+  const data = await getLandingData();
+  return (
+    <>
+      <SiteHeader />
+      <LandingContent data={data} />
       <footer className="site-footer">
         <div className="site-container footer-inner">
-          <a className="brand" href="#home">
+          <Link className="brand" href="/">
             <span className="brand-mark" aria-hidden="true">
               C
             </span>
             <span>ClubsHub</span>
-          </a>
+          </Link>
           <p>Made for campus life.</p>
           <div className="footer-links">
-            <a href="#discover">Explore clubs</a>
-            <a href="#events">Upcoming events</a>
+            <Link href="/clubs">Explore clubs</Link>
+            <Link href="/lost-found">Lost &amp; Found</Link>
+            <Link href="/sign-in">Log in</Link>
           </div>
         </div>
       </footer>

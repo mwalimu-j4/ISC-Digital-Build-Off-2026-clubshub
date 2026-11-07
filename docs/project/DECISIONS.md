@@ -95,3 +95,14 @@ Campus Passport progress is calculated from existing profile, membership, event
 registration, and proposal data by a pure function. It is intentionally not stored
 in Prisma, which keeps the progress explainable and prevents a second source of
 truth.
+
+## 2026-11-07 — Public landing data is DTO-only
+
+The public landing page uses explicit read-only DTO queries and never serializes full
+Prisma records. Lost & Found previews intentionally expose only safe discovery fields;
+reporter, contact, identity, and claim data remain private.
+
+## 2026-11-07 — Public landing palette follows UEAB tokens
+
+The public landing page uses the existing UEAB blue, gold, canvas, surface, border,
+ink, and muted tokens rather than the previous orange-on-navy marketing palette.
