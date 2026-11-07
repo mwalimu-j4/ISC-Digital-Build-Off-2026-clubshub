@@ -79,7 +79,9 @@ export function SiteHeader() {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <Link href="/profile">My Profile</Link>
+                  <Link href={session.user.role === 'STUDENT' ? '/student' : '/profile'}>
+                    My Profile
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link href="/dashboard/clubs">My Clubs</Link>
@@ -139,7 +141,10 @@ export function SiteHeader() {
                 <Link href="/notifications" onClick={() => setIsMenuOpen(false)}>
                   Notifications
                 </Link>
-                <Link href="/profile" onClick={() => setIsMenuOpen(false)}>
+                <Link
+                  href={session.user.role === 'STUDENT' ? '/student' : '/profile'}
+                  onClick={() => setIsMenuOpen(false)}
+                >
                   My profile
                 </Link>
                 <Link href="/profile/settings" onClick={() => setIsMenuOpen(false)}>

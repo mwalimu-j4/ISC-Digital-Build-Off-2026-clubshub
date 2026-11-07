@@ -10,7 +10,9 @@ export default async function RecoveryTaskPage({ params }: { params: Promise<{ i
   return (
     <>
       <SiteHeader />
-      <main><RecoveryTaskDetail taskId={id} /></main>
+      <main className="recovery-theme">
+        <RecoveryTaskDetail taskId={id} />
+      </main>
     </>
   );
 }

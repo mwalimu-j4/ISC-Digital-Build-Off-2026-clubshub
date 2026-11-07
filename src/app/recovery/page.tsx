@@ -9,7 +9,9 @@ export default async function RecoveryPage() {
   return (
     <>
       <SiteHeader />
-      <main><RecoveryDashboard /></main>
+      <main className="recovery-theme">
+        <RecoveryDashboard />
+      </main>
     </>
   );
 }

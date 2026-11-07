@@ -24,7 +24,7 @@ export async function ProfileHeader() {
   }
 
   return (
-    <div className="rounded-lg border border-border bg-card p-6">
+    <div className="profile-header-card rounded-xl border border-border bg-card p-6 sm:p-8">
       <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:gap-8">
         <Avatar size="lg" className="size-20 sm:size-24">
           {profile.avatarUrl && <AvatarImage src={profile.avatarUrl} alt={profile.fullName} />}
@@ -34,7 +34,7 @@ export async function ProfileHeader() {
         <div className="flex-1 space-y-4">
           <div className="space-y-2">
             <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-2xl font-bold">{profile.fullName}</h1>
+              <h1 className="text-3xl font-bold tracking-tight">{profile.fullName}</h1>
               {profile.role !== 'STUDENT' && (
                 <Badge variant="secondary" className="text-xs">
                   {profile.role.replace('_', ' ')}

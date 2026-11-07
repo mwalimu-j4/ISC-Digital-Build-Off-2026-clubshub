@@ -1,3 +1,4 @@
+import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 
 import { ProfileHeader } from '@/components/profile/profile-header';
@@ -80,7 +81,13 @@ function RecentActivitySkeleton() {
   );
 }
 
-export default function ProfilePage() {
+export default async function ProfilePage() {
+  const user = await requireUser();
+
+  if (user.role === 'STUDENT') {
+    redirect('/student');
+  }
+
   return (
     <div className="space-y-8">
       <Suspense fallback={<ProfileHeaderSkeleton />}>
@@ -92,7 +99,7 @@ export default function ProfilePage() {
       </Suspense>
 
       <div className="space-y-4">
-        <h2 className="text-lg font-semibold">Recent Activity</h2>
+        <h2 className="text-xl font-semibold">Recent activity</h2>
         <Suspense fallback={<RecentActivitySkeleton />}>
           <RecentActivity />
         </Suspense>

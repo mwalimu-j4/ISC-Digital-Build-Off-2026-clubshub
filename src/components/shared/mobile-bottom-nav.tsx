@@ -22,13 +22,17 @@ const studentNavItems = [
 
 export function MobileBottomNav() {
   const pathname = usePathname();
-  const navItems = pathname.startsWith('/student') ? studentNavItems : publicNavItems;
+  const navItems =
+    pathname.startsWith('/student') || pathname.startsWith('/profile')
+      ? studentNavItems
+      : publicNavItems;
 
   return (
     <nav
       className={cn(
         'mobile-bottom-nav md:hidden',
-        pathname.startsWith('/student') && 'student-mobile-bottom-nav',
+        (pathname.startsWith('/student') || pathname.startsWith('/profile')) &&
+          'student-mobile-bottom-nav',
       )}
       aria-label="Mobile bottom navigation"
     >
@@ -40,7 +44,11 @@ export function MobileBottomNav() {
           <Link
             key={item.href}
             href={item.href}
-            className={cn('mobile-bottom-nav-item', isActive && 'mobile-bottom-nav-item-active')}
+            className={cn(
+              'mobile-bottom-nav-item',
+              (isActive || (item.href === '/profile' && pathname.startsWith('/profile'))) &&
+                'mobile-bottom-nav-item-active',
+            )}
             aria-current={isActive ? 'page' : undefined}
           >
             <Icon className="mobile-bottom-nav-icon" aria-hidden="true" />
