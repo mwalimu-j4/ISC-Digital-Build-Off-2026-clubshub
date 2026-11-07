@@ -81,3 +81,17 @@ available and are not duplicated or restyled.
 Event capacity, registration deadlines, duplicate registration, and cancellation are
 validated in the event service in addition to the database uniqueness constraint.
 This keeps authorization and business rules independent of client controls.
+
+## 2026-11-07 — Campus Pulse uses UEAB blue and gold
+
+The student dashboard redesign uses UEAB blue and gold tokens, Inter for interface
+copy, and Instrument Serif for display headings. The palette is scoped to the student
+theme so club-admin, super-admin, landing, auth, and Lost & Found surfaces retain
+their existing presentation contracts.
+
+## 2026-11-07 — Campus Passport is derived
+
+Campus Passport progress is calculated from existing profile, membership, event
+registration, and proposal data by a pure function. It is intentionally not stored
+in Prisma, which keeps the progress explainable and prevents a second source of
+truth.

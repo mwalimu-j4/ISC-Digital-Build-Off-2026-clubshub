@@ -25,6 +25,21 @@ export const eventRepository = {
       take: 50,
     });
   },
+  findUpcomingForStudent(db: EventDb, userId: string) {
+    return db.event.findMany({
+      where: {
+        status: 'PUBLISHED',
+        startsAt: { gte: new Date() },
+        OR: [
+          { registrations: { some: { userId, status: 'REGISTERED' } } },
+          { club: { memberships: { some: { userId, status: 'APPROVED' } } } },
+        ],
+      },
+      select: eventSelect,
+      orderBy: { startsAt: 'asc' },
+      take: 50,
+    });
+  },
   findById(db: EventDb, id: string) {
     return db.event.findUnique({ where: { id }, select: eventSelect });
   },

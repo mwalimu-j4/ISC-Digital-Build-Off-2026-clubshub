@@ -78,7 +78,16 @@ export const clubRepository = {
     return db.clubMembership.findMany({
       where: { userId },
       include: {
-        club: { select: { id: true, name: true, slug: true, category: true, logoUrl: true } },
+        club: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+            category: true,
+            logoUrl: true,
+            _count: { select: { memberships: { where: { status: 'APPROVED' } } } },
+          },
+        },
       },
       orderBy: { appliedAt: 'desc' },
     });
