@@ -43,15 +43,19 @@ export function SiteHeader() {
         </Link>
 
         <nav className="desktop-nav" aria-label="Primary navigation">
-          {visibleNavigation.map((item) => (
-            <Link key={item.href} href={item.href}>
-              {item.label}
-            </Link>
-          ))}
+          {isSuperAdmin ? (
+            <Link href="/super-admin">Admin</Link>
+          ) : (
+            visibleNavigation.map((item) => (
+              <Link key={item.href} href={item.href}>
+                {item.label}
+              </Link>
+            ))
+          )}
         </nav>
 
         <div className="header-actions">
-          {isSignedIn && <NotificationBell />}
+          {isSignedIn && !isSuperAdmin && <NotificationBell />}
           {status === 'loading' ? (
             <span className="header-account-loading" aria-label="Loading account" />
           ) : isSignedIn ? (
@@ -82,23 +86,20 @@ export function SiteHeader() {
                   )}
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link href={session.user.role === 'STUDENT' ? '/student' : '/profile'}>
-                    My Profile
-                  </Link>
-                </DropdownMenuItem>
-                {!isStudent && (
-                  <DropdownMenuItem asChild>
-                    <Link href="/dashboard/clubs">My Clubs</Link>
-                  </DropdownMenuItem>
-                )}
-                <DropdownMenuItem asChild>
-                  <Link href="/profile/settings">Account Settings</Link>
-                </DropdownMenuItem>
                 {isSuperAdmin && (
                   <DropdownMenuItem asChild>
-                    <Link href="/admin/clubs">Admin Dashboard</Link>
+                    <Link href="/super-admin">Admin Dashboard</Link>
                   </DropdownMenuItem>
+                )}
+                {!isSuperAdmin && (
+                  <>
+                    <DropdownMenuItem asChild>
+                      <Link href="/student">My Profile</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/profile/settings">Account Settings</Link>
+                    </DropdownMenuItem>
+                  </>
                 )}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
@@ -143,8 +144,8 @@ export function SiteHeader() {
               </Link>
             ))}
             {isSuperAdmin ? (
-              <Link href="/admin/clubs" onClick={() => setIsMenuOpen(false)}>
-                Admin review
+              <Link href="/super-admin" onClick={() => setIsMenuOpen(false)}>
+                Admin
               </Link>
             ) : null}
             {isSignedIn ? (
@@ -152,15 +153,16 @@ export function SiteHeader() {
                 <Link href="/notifications" onClick={() => setIsMenuOpen(false)}>
                   Notifications
                 </Link>
-                <Link
-                  href={session.user.role === 'STUDENT' ? '/student' : '/profile'}
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  My profile
-                </Link>
-                <Link href="/profile/settings" onClick={() => setIsMenuOpen(false)}>
-                  Account settings
-                </Link>
+                {!isSuperAdmin && (
+                  <>
+                    <Link href="/student" onClick={() => setIsMenuOpen(false)}>
+                      My profile
+                    </Link>
+                    <Link href="/profile/settings" onClick={() => setIsMenuOpen(false)}>
+                      Account settings
+                    </Link>
+                  </>
+                )}
                 <button
                   className="mobile-nav-logout"
                   onClick={() => signOut({ callbackUrl: '/' })}

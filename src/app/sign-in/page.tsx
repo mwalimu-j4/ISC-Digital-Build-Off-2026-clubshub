@@ -26,7 +26,7 @@ export default function SignInPage() {
         </p>
         <button
           type="button"
-          onClick={() => signIn('google', { callbackUrl: '/student' })}
+          onClick={() => signIn('google', { callbackUrl: '/auth/redirect' })}
           className="auth-google-button"
         >
           <svg viewBox="0 0 24 24" aria-hidden="true">
