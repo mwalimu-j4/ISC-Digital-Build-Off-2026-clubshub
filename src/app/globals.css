@@ -2610,3 +2610,422 @@ h2 {
     margin-bottom: 9px;
   }
 }
+
+.club-page {
+  background: #f6f4ee;
+  color: #0b1b3a;
+  min-height: 100vh;
+}
+.club-hero {
+  background: linear-gradient(118deg, #071b45, #0b2a6b 58%, #1b4db1);
+  color: #fff;
+}
+.club-hero-inner {
+  padding-top: 20px;
+}
+.club-hero-topline,
+.club-hero-content,
+.club-section-heading,
+.club-health div {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+.club-back-link,
+.club-auth-links {
+  color: #dce6fa;
+  font-size: 13px;
+}
+.club-auth-links {
+  display: flex;
+  gap: 20px;
+}
+.club-signup {
+  background: #f2b705;
+  border-radius: 999px;
+  color: #071b45;
+  font-weight: 700;
+  padding: 10px 18px;
+}
+.club-hero-content {
+  align-items: flex-end;
+  gap: 24px;
+  padding: 50px 0 42px;
+}
+.club-logo {
+  align-items: center;
+  background: #f2b705;
+  border-radius: 24px;
+  color: #071b45;
+  display: flex;
+  flex: 0 0 96px;
+  font-family: var(--font-instrument-serif), Georgia, serif;
+  font-size: 40px;
+  height: 96px;
+  justify-content: center;
+  overflow: hidden;
+}
+.club-logo img {
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+.club-hero-copy {
+  flex: 1;
+}
+.club-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.club-chip {
+  background: rgb(255 255 255 / 13%);
+  border-radius: 999px;
+  color: #dce6fa;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 7px 12px;
+}
+.club-chip-gold {
+  background: #f2b705;
+  color: #071b45;
+}
+.club-hero h1 {
+  font-family: var(--font-instrument-serif), Georgia, serif;
+  font-size: clamp(42px, 6vw, 68px);
+  letter-spacing: -0.035em;
+  line-height: 0.96;
+  margin: 0 0 12px;
+}
+.club-hero-copy p {
+  color: #dce6fa;
+  font-size: 16px;
+  margin: 0;
+}
+.club-hero-actions {
+  display: flex;
+  flex-shrink: 0;
+  gap: 10px;
+}
+.club-action {
+  align-items: center;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 14px;
+  font-weight: 800;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 24px;
+}
+.club-action-primary {
+  background: #f2b705;
+  color: #071b45;
+}
+.club-action-outline {
+  background: transparent;
+  border: 1px solid #9db8ed;
+  color: #fff;
+}
+.club-action-member {
+  background: rgb(255 255 255 / 12%);
+  color: #fff;
+}
+.club-tabs {
+  display: flex;
+  gap: 34px;
+  overflow-x: auto;
+}
+.club-tabs a {
+  border-bottom: 3px solid transparent;
+  color: #dce6fa;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 15px 0;
+  white-space: nowrap;
+}
+.club-tabs a.active,
+.club-tabs a:hover {
+  border-color: #f2b705;
+  color: #fff;
+}
+.club-content {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: minmax(0, 1.65fr) minmax(280px, 1fr);
+  padding-bottom: 80px;
+  padding-top: 28px;
+}
+.club-main-column,
+.club-side-column {
+  display: grid;
+  align-content: start;
+  gap: 20px;
+}
+.club-section-card,
+.club-empty-card,
+.club-event-highlight {
+  background: #fff;
+  border: 1px solid #e6e2d6;
+  border-radius: 22px;
+  padding: 28px;
+}
+.club-section-card h2,
+.club-empty-card h2,
+.club-event-highlight h2,
+.club-join-card h2 {
+  font-family: var(--font-instrument-serif), Georgia, serif;
+  font-size: 30px;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  margin: 0 0 14px;
+}
+.club-eyebrow {
+  color: #8a6100;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  margin: 0 0 12px;
+  text-transform: uppercase;
+}
+.club-section-card > p:not(.club-eyebrow),
+.club-empty-card > p:not(.club-eyebrow) {
+  color: #5b6b8a;
+  font-size: 15px;
+  line-height: 1.65;
+  margin-bottom: 0;
+}
+.club-activity-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 20px;
+}
+.club-activity-list span {
+  background: #e3ecff;
+  border-radius: 999px;
+  color: #0b2a6b;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 7px 11px;
+}
+.club-event-highlight {
+  align-items: center;
+  background: #fff8dc;
+  border-color: #f2b705;
+  display: grid;
+  gap: 18px;
+  grid-template-columns: 76px 1fr auto;
+}
+.club-event-date {
+  align-items: center;
+  background: #fff;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  padding: 12px 8px;
+}
+.club-event-date strong {
+  font-family: var(--font-instrument-serif), Georgia, serif;
+  font-size: 30px;
+  font-weight: 400;
+}
+.club-event-date span {
+  color: #8a6100;
+  font-size: 10px;
+  font-weight: 800;
+}
+.club-event-highlight h2 {
+  font-family: var(--font-inter), Arial, sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+.club-event-highlight p:last-child {
+  color: #5b6b8a;
+  font-size: 13px;
+  margin: 0;
+}
+.club-event-button {
+  background: #0b2a6b;
+  border-radius: 999px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+  padding: 13px 20px;
+  white-space: nowrap;
+}
+.club-integrity {
+  border-color: #0b2a6b;
+}
+.club-integrity ul {
+  color: #0b1b3a;
+  display: grid;
+  font-size: 13px;
+  gap: 12px;
+  list-style: none;
+  margin: 18px 0 24px;
+  padding: 0;
+}
+.club-health {
+  border-top: 1px solid #e6e2d6;
+  padding-top: 18px;
+}
+.club-health div {
+  font-size: 12px;
+}
+.club-health strong {
+  color: #8a6100;
+}
+.club-health-track {
+  background: #eee9dc;
+  border-radius: 999px;
+  display: block;
+  height: 8px;
+  margin: 10px 0 8px;
+  overflow: hidden;
+}
+.club-health-track span {
+  background: #f2b705;
+  border-radius: inherit;
+  display: block;
+  height: 100%;
+  width: 82%;
+}
+.club-health small,
+.club-leadership small {
+  color: #5b6b8a;
+  font-size: 12px;
+}
+.club-leadership {
+  display: grid;
+  gap: 18px;
+}
+.club-leadership > div {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+}
+.club-leadership > div > span {
+  align-items: center;
+  background: #0b2a6b;
+  border-radius: 50%;
+  color: #fff;
+  display: flex;
+  font-size: 12px;
+  font-weight: 800;
+  height: 40px;
+  justify-content: center;
+  width: 40px;
+}
+.club-leadership strong {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 3px;
+}
+.club-announcement-list {
+  display: grid;
+  gap: 18px;
+}
+.club-announcement-list article {
+  border-top: 1px solid #e6e2d6;
+  padding-top: 18px;
+}
+.club-announcement-list article > span {
+  color: #8a6100;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.club-announcement-list h3 {
+  font-size: 16px;
+  margin: 8px 0;
+}
+.club-announcement-list p {
+  color: #5b6b8a;
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 0;
+}
+.club-muted {
+  color: #5b6b8a;
+  font-size: 14px;
+}
+.club-join-card {
+  background: linear-gradient(135deg, #0b2a6b, #1b4db1);
+  border-radius: 22px;
+  color: #fff;
+  padding: 28px;
+}
+.club-join-card .club-eyebrow {
+  color: #f2b705;
+}
+.club-join-card h2 {
+  margin-bottom: 8px;
+}
+.club-join-card p:not(.club-eyebrow) {
+  color: #dce6fa;
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 22px;
+}
+.club-action-light {
+  background: #f2b705;
+  color: #071b45;
+}
+
+@media (max-width: 760px) {
+  .club-hero-inner {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  .club-hero-content {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    padding: 36px 0 28px;
+  }
+  .club-logo {
+    flex-basis: 64px;
+    font-size: 28px;
+    height: 64px;
+  }
+  .club-hero-copy {
+    flex-basis: calc(100% - 88px);
+  }
+  .club-hero h1 {
+    font-size: 42px;
+  }
+  .club-hero-actions {
+    width: 100%;
+  }
+  .club-hero-actions .club-action,
+  .club-hero-actions form {
+    flex: 1;
+    width: 100%;
+  }
+  .club-content {
+    display: block;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  .club-side-column {
+    margin-top: 20px;
+  }
+  .club-section-card,
+  .club-empty-card,
+  .club-event-highlight,
+  .club-join-card {
+    border-radius: 18px;
+    padding: 22px;
+  }
+  .club-event-highlight {
+    grid-template-columns: 62px 1fr;
+  }
+  .club-event-button {
+    grid-column: 1 / -1;
+    text-align: center;
+  }
+}
