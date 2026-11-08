@@ -38,4 +38,27 @@ describe('club service authorization', () => {
     ).rejects.toThrow();
     expect(db.club.create).not.toHaveBeenCalled();
   });
+
+  it('returns a conflict when the club name already exists', async () => {
+    const db = {
+      club: {
+        findUnique: vi.fn().mockResolvedValue({ id: 'existing-club' }),
+        create: vi.fn(),
+      },
+    };
+    await expect(
+      submitProposal(
+        { id: 'student', role: 'STUDENT' },
+        {
+          name: 'Robotics',
+          description: 'Build things',
+          purpose: 'Learn together',
+          activities: ['Workshops'],
+          category: 'Technology',
+        },
+        db as never,
+      ),
+    ).rejects.toThrow('already exists');
+    expect(db.club.create).not.toHaveBeenCalled();
+  });
 });
