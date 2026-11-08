@@ -52,48 +52,59 @@ export function AdminReviewList({ proposals }: { proposals: Proposal[] }) {
   }
 
   if (items.length === 0) {
-    return <p role="status">There are no proposals waiting for review.</p>;
+    return (
+      <p className="admin-empty" role="status">
+        There are no proposals waiting for review.
+      </p>
+    );
   }
 
   return (
-    <div style={{ display: 'grid', gap: '1rem' }}>
-      {message ? <p role="status">{message}</p> : null}
+    <div className="admin-review-list">
+      {message ? (
+        <p className="admin-feedback" role="status">
+          {message}
+        </p>
+      ) : null}
       {items.map((proposal) => (
-        <article className="category-card category-mint" key={proposal.id}>
-          <p className="eyebrow">{proposal.category}</p>
-          <h2>{proposal.name}</h2>
-          <p>{proposal.description}</p>
-          <p>
-            <strong>Purpose:</strong> {proposal.purpose}
-          </p>
-          <p>
-            <strong>Activities:</strong> {proposal.activities.join(', ')}
-          </p>
-          <div className="header-actions">
-            <button
-              className="button button-primary"
-              disabled={busyId === proposal.id}
-              onClick={() => review(proposal.id, 'approve')}
-              type="button"
-            >
-              Approve
-            </button>
-            <button
-              className="button"
-              disabled={busyId === proposal.id}
-              onClick={() => review(proposal.id, 'request-changes')}
-              type="button"
-            >
-              Request changes
-            </button>
-            <button
-              className="button"
-              disabled={busyId === proposal.id}
-              onClick={() => review(proposal.id, 'reject')}
-              type="button"
-            >
-              Reject
-            </button>
+        <article className="admin-review-card" key={proposal.id}>
+          <span className="admin-initial">{proposal.name.charAt(0)}</span>
+          <div className="admin-review-copy">
+            <p className="admin-eyebrow">{proposal.category}</p>
+            <h2>{proposal.name}</h2>
+            <p>{proposal.description}</p>
+            <p>
+              <strong>Purpose:</strong> {proposal.purpose}
+            </p>
+            <p>
+              <strong>Activities:</strong> {proposal.activities.join(', ')}
+            </p>
+            <div className="header-actions">
+              <button
+                className="button button-primary"
+                disabled={busyId === proposal.id}
+                onClick={() => review(proposal.id, 'approve')}
+                type="button"
+              >
+                Approve
+              </button>
+              <button
+                className="button"
+                disabled={busyId === proposal.id}
+                onClick={() => review(proposal.id, 'request-changes')}
+                type="button"
+              >
+                Request changes
+              </button>
+              <button
+                className="button"
+                disabled={busyId === proposal.id}
+                onClick={() => review(proposal.id, 'reject')}
+                type="button"
+              >
+                Reject
+              </button>
+            </div>
           </div>
         </article>
       ))}

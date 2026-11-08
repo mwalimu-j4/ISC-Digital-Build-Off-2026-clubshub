@@ -1,0 +1,1 @@
+export { getAdminOverview } from './service';
