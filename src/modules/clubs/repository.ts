@@ -6,6 +6,9 @@ export const clubRepository = {
   create(db: ClubDb, data: Prisma.ClubCreateInput) {
     return db.club.create({ data });
   },
+  findByName(db: ClubDb, name: string) {
+    return db.club.findUnique({ where: { name }, select: { id: true } });
+  },
   findById(db: ClubDb, id: string) {
     return db.club.findUnique({ where: { id }, include: { memberships: true } });
   },

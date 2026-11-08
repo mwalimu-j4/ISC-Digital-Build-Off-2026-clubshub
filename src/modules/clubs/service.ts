@@ -1,4 +1,4 @@
-import type { ClubStatus, Prisma, PrismaClient, UserRole } from '@prisma/client';
+import { type ClubStatus, Prisma, type PrismaClient, type UserRole } from '@prisma/client';
 import { z } from 'zod';
 
 import { recordAuditLog } from '@/lib/auth/audit';
@@ -14,6 +14,7 @@ import {
 } from '@/modules/clubs/schemas';
 
 export class ClubServiceError extends Error {}
+export class ClubNameConflictError extends ClubServiceError {}
 const admin = (role: UserRole) => role === 'SUPER_ADMIN';
 
 function assertAdmin(role: UserRole) {
@@ -42,12 +43,22 @@ export async function submitProposal(
 ) {
   if (actor.role !== 'STUDENT') throw new ClubServiceError('Only students can submit proposals');
   const data = clubProposalSchema.parse(input);
-  const club = await clubRepository.create(db, {
-    ...data,
-    logoUrl: data.logoUrl || null,
-    slug: `${slugify(data.name)}-${crypto.randomUUID().slice(0, 8)}`,
-    createdBy: { connect: { id: actor.id } },
-  });
+  const existingClub = await clubRepository.findByName(db, data.name);
+  if (existingClub)
+    throw new ClubNameConflictError('A club with this name already exists or is pending review.');
+  let club;
+  try {
+    club = await clubRepository.create(db, {
+      ...data,
+      logoUrl: data.logoUrl || null,
+      slug: `${slugify(data.name)}-${crypto.randomUUID().slice(0, 8)}`,
+      createdBy: { connect: { id: actor.id } },
+    });
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002')
+      throw new ClubNameConflictError('A club with this name already exists or is pending review.');
+    throw error;
+  }
   await recordAuditLog(db, {
     action: 'CLUB_PROPOSAL_SUBMITTED',
     actorId: actor.id,
