@@ -180,6 +180,17 @@ export const listApprovedClubs = (db: ClubDb = prisma) => clubRepository.findPub
 export const getApprovedClub = (slug: string, db: ClubDb = prisma) =>
   z.string().min(1).parse(slug) && clubRepository.findPublicBySlug(db, slug);
 
+export async function getMembershipStatus(
+  actor: { id: string; role: UserRole },
+  clubId: string,
+  db: ClubDb = prisma,
+) {
+  if (actor.role !== 'STUDENT') return null;
+  const id = z.string().uuid().parse(clubId);
+  const membership = await clubRepository.findMembership(db, actor.id, id);
+  return membership?.status ?? null;
+}
+
 export async function listPublicClubs(
   filters: { search?: string; category?: string; page?: number },
   db: ClubDb = prisma,

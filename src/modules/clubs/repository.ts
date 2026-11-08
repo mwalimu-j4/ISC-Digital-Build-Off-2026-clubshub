@@ -65,6 +65,36 @@ export const clubRepository = {
         activities: true,
         category: true,
         logoUrl: true,
+        createdAt: true,
+        _count: { select: { memberships: { where: { status: 'APPROVED' } } } },
+        memberships: {
+          where: { status: 'APPROVED', role: 'CLUB_ADMIN' },
+          select: {
+            user: { select: { fullName: true } },
+            role: true,
+          },
+          take: 3,
+        },
+        events: {
+          where: { status: 'PUBLISHED', startsAt: { gte: new Date() } },
+          orderBy: { startsAt: 'asc' },
+          take: 3,
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            location: true,
+            startsAt: true,
+            capacity: true,
+            _count: { select: { registrations: { where: { status: 'REGISTERED' } } } },
+          },
+        },
+        announcements: {
+          where: { audience: 'UNIVERSITY' },
+          orderBy: [{ pinned: 'desc' }, { createdAt: 'desc' }],
+          take: 3,
+          select: { id: true, title: true, body: true, pinned: true, createdAt: true },
+        },
       },
     });
   },
