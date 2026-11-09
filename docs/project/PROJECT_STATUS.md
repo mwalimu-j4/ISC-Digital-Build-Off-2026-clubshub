@@ -90,6 +90,14 @@ require request code to set transaction-local identity context.
 - Public Lost & Found cards exclude reporter identity, contact details, and claim data.
 - No migration was required; existing indexes cover the landing queries.
 
+## Super-admin users and roles validation
+
+- `/super-admin/users` uses server-side role checks, explicit DTO selects, URL-validated
+  search/filter parameters, transactional role/suspension audit entries, and a
+  responsive list/detail layout.
+- The additive `20261109000000_super_admin_users_roles` migration adds suspension
+  metadata and lookup indexes.
+
 ## Next approved stage
 
 Stage 06 — Club Admin Dashboard.

@@ -17,3 +17,7 @@ Registrations use a database-enforced `(event_id, user_id)` uniqueness constrain
 capacity and registration deadlines are enforced again in the event service. The
 existing notification table remains the shared notification store for Lost & Found
 and student activity.
+
+The additive `20261109000000_super_admin_users_roles` migration adds nullable
+`users.suspended_at` and `users.suspended_reason` fields plus lookup indexes. The
+users module keeps registration numbers out of list DTOs and audit metadata.
