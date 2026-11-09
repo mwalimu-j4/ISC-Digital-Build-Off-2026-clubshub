@@ -28,6 +28,14 @@ describe('eventInputSchema', () => {
     expect(result.startsAt.toISOString()).toBe('2030-11-18T15:00:00.000Z');
   });
 
+  describe('optional event media', () => {
+    it('allows an empty media selection to submit without a file', () => {
+      const emptyFile = new File([], '', { type: 'application/octet-stream' });
+
+      expect(emptyFile.size).toBe(0);
+    });
+  });
+
   it('accepts members-only visibility', () => {
     expect(eventInputSchema.parse({ ...validInput(), status: 'MEMBERS' }).status).toBe('MEMBERS');
   });

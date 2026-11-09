@@ -100,7 +100,7 @@ export function ClubAdminEventForm({
           <input defaultValue={registration.time} name="registrationTime" type="time" />
         </label>
       </div>
-      <fieldset>
+      <fieldset className="club-admin-visibility-grid">
         <legend>Who can see this event?</legend>
         <label className="club-admin-event-choice">
           <input
