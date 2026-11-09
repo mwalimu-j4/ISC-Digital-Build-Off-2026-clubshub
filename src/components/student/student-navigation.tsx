@@ -10,9 +10,11 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
+import { SpaceSwitcher } from '@/components/spaces/space-switcher';
 import { StudentLogoutButton } from '@/components/student/student-logout-button';
 import { requireRole } from '@/lib/auth/authorization';
 import { getUnreadNotificationCount } from '@/modules/notifications';
+import { getUserSpaces } from '@/modules/spaces';
 
 const items = [
   { href: '/student', label: 'Home', icon: Home },
@@ -27,6 +29,7 @@ const items = [
 export async function StudentSidebar() {
   const user = await requireRole('STUDENT');
   const unread = await getUnreadNotificationCount(user);
+  const spaces = await getUserSpaces(user);
   return (
     <aside className="student-sidebar hidden min-h-screen w-[244px] shrink-0 border-r px-4 py-6 lg:flex lg:flex-col">
       <Link
@@ -36,6 +39,9 @@ export async function StudentSidebar() {
         <span className="student-brand-mark flex size-8 items-center justify-center">C</span>
         ClubsHub
       </Link>
+      <div className="mt-2">
+        <SpaceSwitcher compact spaces={spaces} />
+      </div>
       <nav aria-label="Student navigation" className="space-y-1">
         {items.map(({ href, label, icon: Icon }) => (
           <Link

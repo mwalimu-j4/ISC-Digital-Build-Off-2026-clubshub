@@ -1,10 +1,14 @@
 import Link from 'next/link';
 
+import { SpaceSwitcher } from '@/components/spaces/space-switcher';
+import type { UserSpace } from '@/modules/spaces';
+
 type ClubAdminShellProps = {
   children: React.ReactNode;
   club: { name: string; slug: string };
   userName: string | null;
   pendingRequests: number;
+  spaces: UserSpace[];
 };
 
 const navigation = [
@@ -20,7 +24,13 @@ const navigation = [
   { label: 'Club profile', suffix: '/profile' },
 ];
 
-export function ClubAdminShell({ children, club, userName, pendingRequests }: ClubAdminShellProps) {
+export function ClubAdminShell({
+  children,
+  club,
+  userName,
+  pendingRequests,
+  spaces,
+}: ClubAdminShellProps) {
   return (
     <div className="club-admin-theme club-admin-layout">
       <aside className="club-admin-sidebar">
@@ -29,10 +39,7 @@ export function ClubAdminShell({ children, club, userName, pendingRequests }: Cl
           <span>ClubsHub</span>
         </Link>
         <p className="club-admin-role">Club admin</p>
-        <div className="club-admin-switcher">
-          <span>{club.name}</span>
-          <span aria-hidden="true">⌄</span>
-        </div>
+        <SpaceSwitcher currentSpaceId={`CLUB:${club.slug}`} spaces={spaces} />
         <nav aria-label="Club administration navigation" className="club-admin-nav">
           {navigation.map((item, index) => (
             <Link

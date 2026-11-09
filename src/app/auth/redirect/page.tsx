@@ -1,12 +1,11 @@
+import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 import { requireUser } from '@/lib/auth/authorization';
-import { listClubAdminClubs } from '@/modules/club-admin-overview';
+import { REMEMBERED_SPACE_COOKIE, resolvePostLoginDestination } from '@/modules/spaces';
 
 export default async function AuthRedirectPage() {
   const user = await requireUser();
-  if (user.role === 'SUPER_ADMIN') redirect('/super-admin');
-  const clubs = await listClubAdminClubs(user);
-  if (clubs[0]) redirect(`/club-admin/${clubs[0].slug}`);
-  redirect('/student');
+  const rememberedChoice = (await cookies()).get(REMEMBERED_SPACE_COOKIE)?.value;
+  redirect(await resolvePostLoginDestination(user, undefined, rememberedChoice));
 }

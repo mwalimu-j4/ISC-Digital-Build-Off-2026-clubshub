@@ -113,3 +113,15 @@ Global user role management is limited to student and super-admin roles. Club-ad
 authority remains a club membership concern. Suspension metadata is nullable and
 added without changing existing auth or membership columns; the JWT auth contract
 re-checks persisted status because this project does not store server sessions.
+
+# Space switching
+
+- Club roles are never stored in the session, JWT, or cookies as authorization
+  state. The `spaces` module reads the current `ClubMembership` and club status on
+  every request.
+- The remembered-space cookie is only a convenience identifier (`STUDENT_HOME`,
+  `SUPER_ADMIN`, or `CLUB:<slug>`). It is HttpOnly, SameSite=Lax, Secure in
+  production, expires after 30 days, and is revalidated before use.
+- Post-login routing first accepts a safe internal path the user is currently
+  allowed to open, then a revalidated remembered space, then a single enterable
+  workspace, and otherwise `/choose`. External URLs are never accepted.
