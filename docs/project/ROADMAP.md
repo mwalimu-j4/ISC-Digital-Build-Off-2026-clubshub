@@ -7,7 +7,7 @@
 | 03    | Authentication & Authorization                          | Implemented |
 | 04    | Core Club and Membership Modules                        | Implemented |
 | 05    | Events, Announcements, Notifications, Student Dashboard | Implemented |
-| 06    | Lost & Found                                            | Not started |
+| 06    | Club Admin Dashboard                                    | In progress |
 | 07    | Administration, Analytics, and Auditability             | Not started |
 | 08    | Production readiness                                    | Not started |
 
@@ -16,3 +16,7 @@ approved club-admin profile updates, suspension/reactivation, and audit history.
 
 Stage 05 implements the server-guarded student shell, dashboard, club discovery and
 membership actions, event registration, announcements, and student notifications.
+
+Stage 06 is in progress. The server-guarded club-admin overview and post-login
+landing route are implemented without adding a migration. Remaining club-admin
+workflows will be added only with their supporting modules and authorization tests.

@@ -70,6 +70,15 @@ events with server-enforced registration, announcements, notifications, and link
 the existing profile and proposal workflows. The student data model is introduced by
 the additive `20261107000000_student_dashboard_events_announcements` migration.
 
+## Club admin dashboard
+
+Approved members with an active `CLUB_ADMIN` membership land on
+`/club-admin/[slug]` after sign-in. The responsive overview uses live club,
+membership, event, announcement, and audit data and re-checks membership access
+on the server for every requested club. Workflow sections are linked from the
+shared shell and show explicit empty states until their supporting domain modules
+are implemented.
+
 ## Public landing page
 
 The `/` landing page is a responsive, database-driven discovery surface. It reads
