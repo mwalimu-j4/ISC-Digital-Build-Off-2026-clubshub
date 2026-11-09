@@ -98,6 +98,15 @@ require request code to set transaction-local identity context.
 - The additive `20261109000000_super_admin_users_roles` migration adds suspension
   metadata and lookup indexes.
 
+## Club admin dashboard validation
+
+- Approved club administrators are routed to their first active club after sign-in.
+- `/club-admin/[slug]` re-checks the requested club and approved `CLUB_ADMIN`
+  membership server-side.
+- The overview uses live membership, event, announcement, and audit data with
+  explicit empty states where supporting models do not yet exist.
+- No migration was required for this first dashboard slice.
+
 ## Next approved stage
 
 Stage 06 — Club Admin Dashboard.
