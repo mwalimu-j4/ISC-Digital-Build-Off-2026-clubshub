@@ -17,6 +17,93 @@ const eventSelect = {
 } as const;
 
 export const eventRepository = {
+  findClubAdminClub(db: EventDb, userId: string, clubId: string) {
+    return db.club.findFirst({
+      where: {
+        id: clubId,
+        memberships: { some: { userId, role: 'CLUB_ADMIN', status: 'APPROVED' } },
+      },
+      select: { id: true },
+    });
+  },
+  findForClubAdmin(db: EventDb, userId: string, clubSlug: string, status?: 'DRAFT' | 'PUBLISHED') {
+    return db.event.findMany({
+      where: {
+        status,
+        club: {
+          slug: clubSlug,
+          memberships: { some: { userId, role: 'CLUB_ADMIN', status: 'APPROVED' } },
+        },
+      },
+      select: {
+        ...eventSelect,
+        clubId: true,
+      },
+      orderBy: [{ startsAt: 'asc' }, { createdAt: 'desc' }],
+    });
+  },
+  findForClubAdminById(db: EventDb, userId: string, clubSlug: string, eventId: string) {
+    return db.event.findFirst({
+      where: {
+        id: eventId,
+        club: {
+          slug: clubSlug,
+          memberships: { some: { userId, role: 'CLUB_ADMIN', status: 'APPROVED' } },
+        },
+      },
+      select: { ...eventSelect, clubId: true },
+    });
+  },
+  createForClubAdmin(
+    db: EventDb,
+    data: {
+      clubId: string;
+      title: string;
+      description: string;
+      location: string;
+      startsAt: Date;
+      endsAt: Date;
+      capacity: number | null;
+      registrationDeadline: Date | null;
+      status: 'DRAFT' | 'PUBLISHED';
+    },
+  ) {
+    return db.event.create({
+      data,
+      select: eventSelect,
+    });
+  },
+  updateForClubAdmin(
+    db: EventDb,
+    userId: string,
+    eventId: string,
+    data: {
+      title: string;
+      description: string;
+      location: string;
+      startsAt: Date;
+      endsAt: Date;
+      capacity: number | null;
+      registrationDeadline: Date | null;
+      status: 'DRAFT' | 'PUBLISHED';
+    },
+  ) {
+    return db.event.updateMany({
+      where: {
+        id: eventId,
+        club: { memberships: { some: { userId, role: 'CLUB_ADMIN', status: 'APPROVED' } } },
+      },
+      data,
+    });
+  },
+  deleteForClubAdmin(db: EventDb, userId: string, eventId: string) {
+    return db.event.deleteMany({
+      where: {
+        id: eventId,
+        club: { memberships: { some: { userId, role: 'CLUB_ADMIN', status: 'APPROVED' } } },
+      },
+    });
+  },
   findUpcoming(db: EventDb) {
     return db.event.findMany({
       where: { status: 'PUBLISHED', startsAt: { gte: new Date() } },
@@ -25,15 +112,11 @@ export const eventRepository = {
       take: 50,
     });
   },
-  findUpcomingForStudent(db: EventDb, userId: string) {
+  findUpcomingForStudent(db: EventDb, _userId: string) {
     return db.event.findMany({
       where: {
         status: 'PUBLISHED',
         startsAt: { gte: new Date() },
-        OR: [
-          { registrations: { some: { userId, status: 'REGISTERED' } } },
-          { club: { memberships: { some: { userId, status: 'APPROVED' } } } },
-        ],
       },
       select: eventSelect,
       orderBy: { startsAt: 'asc' },
