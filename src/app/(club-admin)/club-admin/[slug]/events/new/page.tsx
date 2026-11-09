@@ -5,6 +5,7 @@ import { z } from 'zod';
 
 import { ClubAdminEventForm } from '@/components/club-admin/event-form';
 import { requireUser } from '@/lib/auth/authorization';
+import { CloudinaryUploadError } from '@/lib/utils/cloudinary';
 import { getClubAdminOverview } from '@/modules/club-admin-overview';
 import { createClubAdminEvent } from '@/modules/events';
 
@@ -51,6 +52,13 @@ export default async function NewClubAdminEventPage({
       if (error instanceof z.ZodError) {
         const message = error.issues[0]?.message ?? 'Check the event details and try again.';
         redirect(`/club-admin/${slug}/events/new?error=${encodeURIComponent(message)}`);
+      }
+      if (error instanceof CloudinaryUploadError) {
+        redirect(
+          `/club-admin/${slug}/events/new?error=${encodeURIComponent(
+            'Media upload failed. Check the selected file and try again.',
+          )}`,
+        );
       }
       throw error;
     }
