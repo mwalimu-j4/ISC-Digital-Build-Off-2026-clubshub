@@ -115,6 +115,9 @@ require request code to set transaction-local identity context.
 - Post-login routing validates safe internal destinations and revalidates the
   remembered-space cookie; the cookie never stores a role.
 - No migration was required.
+- Contextual `/spaces` pages are now rendered inside the student, club-admin, and
+  super-admin dashboard layouts, with contextual back buttons and no account logout
+  required to switch workspaces.
 
 ## Next approved stage
 

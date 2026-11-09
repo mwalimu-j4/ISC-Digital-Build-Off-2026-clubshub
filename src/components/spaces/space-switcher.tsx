@@ -19,6 +19,13 @@ function currentSpace(spaces: UserSpace[], pathname: string) {
   );
 }
 
+function chooserHref(pathname: string) {
+  const clubAdminMatch = pathname.match(/^\/club-admin\/([^/]+)/);
+  if (clubAdminMatch?.[1]) return `/club-admin/${clubAdminMatch[1]}/spaces`;
+  if (pathname.startsWith('/super-admin')) return '/super-admin/spaces';
+  return '/student/spaces';
+}
+
 function SpaceIcon({ space }: { space: UserSpace }) {
   return space.club?.logoUrl ? (
     // eslint-disable-next-line @next/next/no-img-element
@@ -136,6 +143,9 @@ export function SpaceSwitcher({ spaces, currentSpaceId, compact = false }: Space
           {group('Member of', member)}
           {group('Other spaces', other)}
           <div className="space-switcher-footer">
+            <Link href={chooserHref(pathname)} onClick={() => setOpen(false)}>
+              Switch workspace
+            </Link>
             <SpaceAccountActions />
           </div>
         </div>
