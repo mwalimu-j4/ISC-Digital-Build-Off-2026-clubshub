@@ -1,6 +1,7 @@
 import { revalidatePath } from 'next/cache';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
+import { z } from 'zod';
 
 import { ClubAdminEventForm } from '@/components/club-admin/event-form';
 import { requireUser } from '@/lib/auth/authorization';
@@ -30,18 +31,29 @@ function formInput(formData: FormData, clubId: string) {
 
 export default async function NewClubAdminEventPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ error?: string }>;
 }) {
   const user = await requireUser();
   const { slug } = await params;
+  const { error } = await searchParams;
   const overview = await getClubAdminOverview(user, slug);
 
   async function createEvent(formData: FormData) {
     'use server';
     const actor = await requireUser();
     const input = formInput(formData, overview.id);
-    await createClubAdminEvent(actor, { ...input, mediaFiles: formData.getAll('media') });
+    try {
+      await createClubAdminEvent(actor, { ...input, mediaFiles: formData.getAll('media') });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const message = error.issues[0]?.message ?? 'Check the event details and try again.';
+        redirect(`/club-admin/${slug}/events/new?error=${encodeURIComponent(message)}`);
+      }
+      throw error;
+    }
     revalidatePath(`/club-admin/${slug}/events`);
     redirect(`/club-admin/${slug}/events`);
   }
@@ -59,6 +71,7 @@ export default async function NewClubAdminEventPage({
         <ClubAdminEventForm
           action={createEvent}
           submitLabel="Save event"
+          error={error}
           values={{ clubId: overview.id }}
         />
       </section>
