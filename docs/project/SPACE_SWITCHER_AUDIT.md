@@ -9,6 +9,7 @@
 | Space resolver                | MISSING | No cross-club DTO or role-aware space grouping existed           | Added `src/modules/spaces` with one membership query                                        |
 | Chooser page                  | MISSING | No `/choose` route existed                                       | Added responsive real-data chooser                                                          |
 | Club switcher                 | MISSING | Club admin chip was static text                                  | Added shared popover/bottom-sheet switcher to admin, student, and super-admin shells        |
+| In-dashboard chooser | PARTIAL | `/choose` existed outside dashboard layouts | Added `/spaces` under all three dashboard route groups with contextual back navigation |
 | Remembered choice             | MISSING | No preference cookie existed                                     | Added HttpOnly, SameSite=Lax, production-secure cookie containing only a validated space id |
 | Open redirect protection      | MISSING | Redirect route had no requested URL resolver                     | Added safe internal path validation and current-space revalidation                          |
 | Font system                   | EXISTS  | Root layout loads Inter and Instrument Serif                     | No font change required                                                                     |
