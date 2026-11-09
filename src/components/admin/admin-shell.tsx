@@ -10,7 +10,7 @@ const navigation = [
   { href: '/super-admin', label: 'Overview', icon: '⌂' },
   { href: '/super-admin/approvals', label: 'Club approvals', icon: '✓' },
   { href: '/clubs', label: 'Clubs', icon: '◈' },
-  { href: '/profile', label: 'Users and roles', icon: '◎' },
+  { href: '/super-admin/users', label: 'Users and roles', icon: '◎' },
   { href: '/admin/clubs', label: 'Moderation', icon: '!' },
   { href: '/super-admin#analytics', label: 'Analytics', icon: '▥' },
   { href: '/super-admin#audit', label: 'Audit logs', icon: '≡' },
@@ -28,7 +28,11 @@ export function AdminShell({ children, pendingCount = 0, userName }: AdminShellP
         <p className="admin-role">Super admin</p>
         <nav className="admin-nav" aria-label="Super admin navigation">
           {navigation.map((item) => (
-            <Link className="admin-nav-link" href={item.href} key={item.label}>
+            <Link
+              className={`admin-nav-link${item.label === 'Users and roles' ? ' admin-nav-link-active' : ''}`}
+              href={item.href}
+              key={item.label}
+            >
               <span aria-hidden="true">{item.icon}</span>
               {item.label}
               {item.label === 'Club approvals' && pendingCount > 0 ? (

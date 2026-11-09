@@ -106,3 +106,10 @@ reporter, contact, identity, and claim data remain private.
 
 The public landing page uses the existing UEAB blue, gold, canvas, surface, border,
 ink, and muted tokens rather than the previous orange-on-navy marketing palette.
+
+## 2026-11-09 — Super-admin users use additive suspension metadata
+
+Global user role management is limited to student and super-admin roles. Club-admin
+authority remains a club membership concern. Suspension metadata is nullable and
+added without changing existing auth or membership columns; the JWT auth contract
+re-checks persisted status because this project does not store server sessions.

@@ -24,7 +24,7 @@ async function findOrCreateGoogleUser(user: { email?: string | null; name?: stri
       if (email === superAdminEmail && account.role !== 'SUPER_ADMIN') {
         return prisma.user.update({
           where: { id: account.id },
-          data: { role: 'SUPER_ADMIN', status: 'ACTIVE' },
+          data: { role: 'SUPER_ADMIN' },
         });
       }
 
@@ -89,9 +89,11 @@ export const authOptions: NextAuthOptions = {
       return true;
     },
     async jwt({ token, user }) {
-      if (user?.email || token.email) {
+      if (user?.email || token.email || token.id) {
         const account = await prisma.user.findUnique({
-          where: { email: (user?.email ?? token.email)?.toLowerCase() },
+          where: token.id
+            ? { id: token.id }
+            : { email: (user?.email ?? token.email)?.toLowerCase() },
           select: { id: true, role: true, status: true },
         });
 

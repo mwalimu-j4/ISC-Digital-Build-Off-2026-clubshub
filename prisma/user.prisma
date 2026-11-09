@@ -5,6 +5,8 @@ model User {
   studentRegistrationId  String          @unique @map("student_registration_id") @db.VarChar(80)
   role                   UserRole        @default(STUDENT)
   status                 UserStatus      @default(ACTIVE)
+  suspendedAt            DateTime?       @map("suspended_at") @db.Timestamptz(3)
+  suspendedReason        String?         @map("suspended_reason") @db.VarChar(500)
   avatarUrl              String?         @map("avatar_url") @db.VarChar(2048)
   bio                    String?         @db.VarChar(500)
   course                 String?         @db.VarChar(100)
@@ -32,5 +34,7 @@ model User {
 
   @@index([status])
   @@index([role])
+  @@index([suspendedAt])
+  @@index([createdAt])
   @@map("users")
 }

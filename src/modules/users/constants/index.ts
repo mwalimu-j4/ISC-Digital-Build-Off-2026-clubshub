@@ -1,0 +1,3 @@
+export const USERS_PAGE_SIZE = 10;
+export const SUSPENSION_REASON_MIN_LENGTH = 10;
+export const REACTIVATION_NOTE_MIN_LENGTH = 3;
