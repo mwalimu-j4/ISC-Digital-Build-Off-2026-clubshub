@@ -1,4 +1,13 @@
-import { createHmac } from 'node:crypto';
+import { createHash } from 'node:crypto';
+
+import { z } from 'zod';
+
+export class CloudinaryUploadError extends Error {
+  constructor(message = 'Media upload failed. Please try again.') {
+    super(message);
+    this.name = 'CloudinaryUploadError';
+  }
+}
 
 function getConfig() {
   const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
@@ -6,17 +15,29 @@ function getConfig() {
   const apiSecret = process.env.CLOUDINARY_API_SECRET;
 
   if (!cloudName || !apiKey || !apiSecret) {
-    throw new Error('Cloudinary environment variables are not configured');
+    throw new CloudinaryUploadError();
   }
 
   return { cloudName, apiKey, apiSecret };
 }
 
-function generateSignature(params: Record<string, string>, apiSecret: string): string {
+export function generateCloudinarySignature(
+  params: Record<string, string>,
+  apiSecret: string,
+): string {
   const sortedKeys = Object.keys(params).sort();
   const stringToSign = sortedKeys.map((k) => `${k}=${params[k]}`).join('&');
-  return createHmac('sha256', apiSecret).update(stringToSign).digest('hex');
+  return createHash('sha1').update(`${stringToSign}${apiSecret}`).digest('hex');
 }
+
+const cloudinaryUploadResponseSchema = z.object({
+  secure_url: z.string().url(),
+  public_id: z.string().min(1),
+  width: z.number().optional(),
+  height: z.number().optional(),
+  bytes: z.number().optional(),
+  duration: z.number().optional(),
+});
 
 export async function uploadToCloudinary(
   buffer: Buffer,
@@ -39,26 +60,50 @@ export async function uploadToCloudinary(
     timestamp,
   };
 
-  const signature = generateSignature(params, apiSecret);
+  const signature = generateCloudinarySignature(params, apiSecret);
 
   const formData = new FormData();
   formData.append('file', new Blob([new Uint8Array(buffer)]));
-  formData.append('folder', folder);
-  formData.append('timestamp', timestamp);
+  for (const [key, value] of Object.entries(params)) {
+    formData.append(key, value);
+  }
   formData.append('api_key', apiKey);
   formData.append('signature', signature);
 
-  const response = await fetch(
-    `https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`,
-    { method: 'POST', body: formData },
-  );
-
-  if (!response.ok) {
-    const error = await response.text();
-    throw new Error(`Cloudinary upload failed: ${error}`);
+  let response: Response;
+  try {
+    response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`, {
+      method: 'POST',
+      body: formData,
+    });
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Cloudinary upload request failed:', error);
+    throw new CloudinaryUploadError();
   }
 
-  const result = await response.json();
+  if (!response.ok) {
+    const providerError = await response.text();
+    // eslint-disable-next-line no-console
+    console.error('Cloudinary upload failed:', providerError);
+    throw new CloudinaryUploadError();
+  }
+
+  let responseBody: unknown;
+  try {
+    responseBody = JSON.parse(await response.text());
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Cloudinary returned an unreadable upload response:', error);
+    throw new CloudinaryUploadError();
+  }
+  const parsedResult = cloudinaryUploadResponseSchema.safeParse(responseBody);
+  if (!parsedResult.success) {
+    // eslint-disable-next-line no-console
+    console.error('Cloudinary returned an invalid upload response:', parsedResult.error);
+    throw new CloudinaryUploadError();
+  }
+  const result = parsedResult.data;
 
   return {
     url: result.secure_url,

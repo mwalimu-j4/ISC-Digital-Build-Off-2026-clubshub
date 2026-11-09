@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
+import { generateCloudinarySignature } from '@/lib/utils/cloudinary';
 import { eventInputSchema } from '@/modules/events/validations/event-schema';
 
 const futureStart = '2030-11-18T18:00';
@@ -26,6 +27,20 @@ describe('eventInputSchema', () => {
     expect(result.capacity).toBeNull();
     expect(result.registrationDeadline).toBeNull();
     expect(result.startsAt.toISOString()).toBe('2030-11-18T15:00:00.000Z');
+  });
+
+  describe('Cloudinary signing', () => {
+    it('uses Cloudinary SHA-1 signing with sorted upload parameters', () => {
+      expect(
+        generateCloudinarySignature(
+          {
+            timestamp: '1794259996',
+            folder: 'clubshub/clubs/example/events',
+          },
+          'test-secret',
+        ),
+      ).toBe('029b826a531dee069fedca9145d023f241335c40');
+    });
   });
 
   describe('optional event media', () => {
