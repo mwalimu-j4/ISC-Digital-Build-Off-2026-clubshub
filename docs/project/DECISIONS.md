@@ -114,6 +114,20 @@ authority remains a club membership concern. Suspension metadata is nullable and
 added without changing existing auth or membership columns; the JWT auth contract
 re-checks persisted status because this project does not store server sessions.
 
+## 2026-11-10 — Join requests use additive membership snapshots
+
+Join applications remain `ClubMembership` records so existing membership states
+continue to work. Application details and decision metadata are nullable additive
+fields; older requests remain decidable and render “Details not provided”.
+
+School IDs are stored on the private request record and masked in admin lists.
+Rejected requests use a seven-day re-apply cooldown. Approved details remain
+available while the applicant is a member and should be cleared after they leave;
+rejected details should be cleared by retention maintenance after 30 days.
+
+Approvals receive a ten-second server-backed undo window. Decision writes use a
+conditional pending-state update so a second admin cannot decide the same request.
+
 # Space switching
 
 - Club roles are never stored in the session, JWT, or cookies as authorization

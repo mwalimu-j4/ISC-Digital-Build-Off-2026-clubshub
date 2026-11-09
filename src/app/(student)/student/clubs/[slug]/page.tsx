@@ -1,9 +1,11 @@
 import { revalidatePath } from 'next/cache';
 import { notFound } from 'next/navigation';
 
+import { JoinRequestForm } from '@/components/student/join-request-form';
 import { Button } from '@/components/ui/button';
 import { requireRole } from '@/lib/auth/authorization';
 import { getApprovedClub, getOwnMemberships, joinClub, leaveClub } from '@/modules/clubs/service';
+import { submitJoinRequest } from '@/modules/join-requests';
 
 async function membershipAction(formData: FormData) {
   'use server';
@@ -14,6 +16,24 @@ async function membershipAction(formData: FormData) {
   revalidatePath(`/student/clubs/${String(formData.get('slug'))}`);
   revalidatePath('/student/clubs');
   revalidatePath('/student');
+}
+
+async function requestAction(_: { error?: string; success?: boolean }, formData: FormData) {
+  'use server';
+  const user = await requireRole('STUDENT');
+  try {
+    await submitJoinRequest(user, String(formData.get('clubId')), {
+      schoolId: formData.get('schoolId'),
+      department: formData.get('department'),
+      major: formData.get('major'),
+      yearOfStudy: formData.get('yearOfStudy') || undefined,
+      message: formData.get('message') || undefined,
+      saveDetails: formData.get('saveDetails') === 'on',
+    });
+    return { success: true };
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : 'Unable to send request.' };
+  }
 }
 
 export default async function StudentClubDetailPage({
@@ -43,18 +63,24 @@ export default async function StudentClubDetailPage({
             <li key={activity}>{activity}</li>
           ))}
         </ul>
-        <form action={membershipAction} className="mt-6">
-          <input type="hidden" name="clubId" value={club.id} />
-          <input type="hidden" name="slug" value={club.slug} />
-          <input type="hidden" name="action" value={canLeave ? 'leave' : 'join'} />
-          <Button type="submit" variant={canLeave ? 'outline' : 'default'}>
-            {canLeave
-              ? 'Leave club'
-              : membership?.status === 'PENDING'
-                ? 'Application pending'
-                : 'Join club'}
-          </Button>
-        </form>
+        <div className="mt-6">
+          {canLeave ? (
+            <form action={membershipAction}>
+              <input type="hidden" name="clubId" value={club.id} />
+              <input type="hidden" name="slug" value={club.slug} />
+              <input type="hidden" name="action" value="leave" />
+              <Button type="submit" variant="outline">
+                Leave club
+              </Button>
+            </form>
+          ) : membership?.status === 'PENDING' ? (
+            <Button disabled type="button">
+              Request pending
+            </Button>
+          ) : (
+            <JoinRequestForm action={requestAction} clubId={club.id} />
+          )}
+        </div>
       </section>
     </article>
   );

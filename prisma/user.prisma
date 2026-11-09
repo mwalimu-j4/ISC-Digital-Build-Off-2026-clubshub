@@ -17,6 +17,7 @@ model User {
   reviewedClubs           Club[]          @relation("ClubReviewer")
   suspendedClubs          Club[]          @relation("ClubSuspender")
   memberships             ClubMembership[]
+  membershipDecisions     ClubMembership[] @relation("MembershipDecisions")
   auditLogs               AuditLog[]      @relation("AuditActor")
 
   // Lost & Found relations

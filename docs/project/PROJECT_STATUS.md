@@ -51,6 +51,15 @@ and session revocation remain omitted because the
 current Google OAuth/JWT authentication flow does not support them. RLS policies
 require request code to set transaction-local identity context.
 
+## Join requests validation
+
+- The additive `20261110000000_join_request_details` migration extends existing
+  memberships with nullable application snapshots and decision metadata.
+- Student submissions and club-admin reads/decisions are server-authorized and
+  Zod-validated.
+- The responsive student request form and `/club-admin/[slug]/requests` review page
+  use live membership data and designed empty states.
+
 ## Stage 02 validation
 
 - `pnpm exec prisma validate`: passed with local placeholder environment values.
