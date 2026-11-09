@@ -1,6 +1,6 @@
 'use client';
 
-import { type ChangeEvent, type FormHTMLAttributes, useState } from 'react';
+import { type ChangeEvent, type FormEvent, type FormHTMLAttributes, useState } from 'react';
 
 type EventFormValues = {
   clubId?: string;
@@ -38,10 +38,12 @@ export function ClubAdminEventForm({
   action,
   values = {},
   submitLabel,
+  error,
 }: {
   action: FormHTMLAttributes<HTMLFormElement>['action'];
   values?: EventFormValues;
   submitLabel: string;
+  error?: string;
 }) {
   const starts = parts(values.startsAt);
   const ends = parts(values.endsAt);
@@ -50,9 +52,39 @@ export function ClubAdminEventForm({
   const handleFiles = (event: ChangeEvent<HTMLInputElement>) => {
     setFiles(Array.from(event.target.files ?? []).slice(0, 8));
   };
+  const [formError, setFormError] = useState(error);
+  const validateDateRange = (event: FormEvent<HTMLFormElement>) => {
+    const data = new FormData(event.currentTarget);
+    const startsAt = `${String(data.get('startsDate') ?? '')}T${String(data.get('startsTime') ?? '')}`;
+    const endsAt = `${String(data.get('endsDate') ?? '')}T${String(data.get('endsTime') ?? '')}`;
+    if (
+      !data.get('startsDate') ||
+      !data.get('startsTime') ||
+      !data.get('endsDate') ||
+      !data.get('endsTime')
+    ) {
+      event.preventDefault();
+      setFormError('Choose a start and end date and time.');
+      return;
+    }
+    if (endsAt <= startsAt) {
+      event.preventDefault();
+      setFormError('The end date and time must be after the start date and time.');
+    }
+  };
 
   return (
-    <form action={action} className="club-admin-event-form" encType="multipart/form-data">
+    <form
+      action={action}
+      className="club-admin-event-form"
+      encType="multipart/form-data"
+      onSubmit={validateDateRange}
+    >
+      {formError ? (
+        <p aria-live="polite" className="club-admin-form-error" role="alert">
+          {formError}
+        </p>
+      ) : null}
       {values.clubId ? <input name="clubId" type="hidden" value={values.clubId} /> : null}
       <label>
         Title
