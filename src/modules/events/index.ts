@@ -1,11 +1,16 @@
 export {
   cancelEventRegistration,
+  createClubAdminEvent,
+  deleteClubAdminEvent,
   EventServiceError,
+  getClubAdminEvent,
   getEvent,
   getEventRegistration,
   getNextRegisteredEvent,
   getRegisteredEventCount,
+  listClubAdminEvents,
   listStudentWeekEvents,
   listUpcomingEvents,
   registerForEvent,
+  updateClubAdminEvent,
 } from '@/modules/events/services/event-service';
