@@ -88,13 +88,25 @@ const MAX_EVENT_MEDIA = 8;
 const MAX_EVENT_IMAGE_BYTES = 10 * 1024 * 1024;
 const MAX_EVENT_VIDEO_BYTES = 100 * 1024 * 1024;
 
+function isFileLike(value: unknown): value is File {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    'size' in value &&
+    typeof value.size === 'number' &&
+    'arrayBuffer' in value &&
+    typeof value.arrayBuffer === 'function'
+  );
+}
+
 const eventMediaFileSchema = z.custom<File>(
-  (value) => value instanceof File && value.size > 0,
+  (value) => isFileLike(value) && value.size > 0,
   'A valid media file is required',
 );
 
 async function uploadEventMedia(files: unknown[], clubId: string) {
-  const parsedFiles = z.array(eventMediaFileSchema).max(MAX_EVENT_MEDIA).parse(files);
+  const optionalFiles = files.filter((file) => !isFileLike(file) || file.size > 0);
+  const parsedFiles = z.array(eventMediaFileSchema).max(MAX_EVENT_MEDIA).parse(optionalFiles);
   return Promise.all(
     parsedFiles.map(async (file, sortOrder) => {
       const kind: 'IMAGE' | 'VIDEO' = file.type.startsWith('video/') ? 'VIDEO' : 'IMAGE';
