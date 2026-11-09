@@ -79,6 +79,13 @@ on the server for every requested club. Workflow sections are linked from the
 shared shell and show explicit empty states until their supporting domain modules
 are implemented.
 
+## Space chooser and switching
+
+After sign-in, users with multiple available spaces can choose from `/choose`.
+The shared switcher is available in the club-admin, student, and super-admin
+shells. It resolves club roles from current memberships on the server and never
+uses the remembered-device cookie as authorization.
+
 ## Public landing page
 
 The `/` landing page is a responsive, database-driven discovery surface. It reads

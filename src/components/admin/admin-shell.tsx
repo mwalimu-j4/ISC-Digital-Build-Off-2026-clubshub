@@ -1,9 +1,13 @@
 import Link from 'next/link';
 
+import { SpaceSwitcher } from '@/components/spaces/space-switcher';
+import type { UserSpace } from '@/modules/spaces';
+
 type AdminShellProps = {
   children: React.ReactNode;
   pendingCount?: number;
   userName?: string | null;
+  spaces?: UserSpace[];
 };
 
 const navigation = [
@@ -17,7 +21,7 @@ const navigation = [
   { href: '/super-admin#settings', label: 'Settings', icon: '⚙' },
 ];
 
-export function AdminShell({ children, pendingCount = 0, userName }: AdminShellProps) {
+export function AdminShell({ children, pendingCount = 0, userName, spaces = [] }: AdminShellProps) {
   return (
     <div className="admin-theme admin-layout">
       <aside className="admin-sidebar">
@@ -26,6 +30,7 @@ export function AdminShell({ children, pendingCount = 0, userName }: AdminShellP
           <span>ClubsHub</span>
         </Link>
         <p className="admin-role">Super admin</p>
+        <SpaceSwitcher currentSpaceId="SUPER_ADMIN" spaces={spaces} />
         <nav className="admin-nav" aria-label="Super admin navigation">
           {navigation.map((item) => (
             <Link

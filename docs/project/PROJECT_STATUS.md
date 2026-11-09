@@ -107,6 +107,15 @@ require request code to set transaction-local identity context.
   explicit empty states where supporting models do not yet exist.
 - No migration was required for this first dashboard slice.
 
+## Space switcher validation
+
+- `/choose` resolves real student, member, club-admin, pending, suspended, and
+  super-admin spaces from current database memberships.
+- The shared switcher is wired into the club-admin, student, and super-admin shells.
+- Post-login routing validates safe internal destinations and revalidates the
+  remembered-space cookie; the cookie never stores a role.
+- No migration was required.
+
 ## Next approved stage
 
 Stage 06 — Club Admin Dashboard.
