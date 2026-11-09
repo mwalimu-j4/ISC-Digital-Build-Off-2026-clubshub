@@ -21,7 +21,14 @@ function generateSignature(params: Record<string, string>, apiSecret: string): s
 export async function uploadToCloudinary(
   buffer: Buffer,
   options: { folder?: string; resourceType?: string } = {},
-): Promise<{ url: string; publicId: string; width: number; height: number }> {
+): Promise<{
+  url: string;
+  publicId: string;
+  width: number;
+  height: number;
+  bytes: number;
+  durationSeconds: number | null;
+}> {
   const { cloudName, apiKey, apiSecret } = getConfig();
   const folder = options.folder ?? 'clubshub/lost-found';
   const resourceType = options.resourceType ?? 'image';
@@ -58,6 +65,8 @@ export async function uploadToCloudinary(
     publicId: result.public_id,
     width: result.width ?? 0,
     height: result.height ?? 0,
+    bytes: result.bytes ?? 0,
+    durationSeconds: result.duration ? Math.ceil(result.duration) : null,
   };
 }
 

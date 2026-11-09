@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 
 import { eventInputSchema } from '@/modules/events/validations/event-schema';
 
-const futureStart = new Date(Date.now() + 86_400_000);
-const futureEnd = new Date(futureStart.getTime() + 7_200_000);
+const futureStart = '2030-11-18T18:00';
+const futureEnd = '2030-11-18T20:00';
 
 function validInput() {
   return {
@@ -25,6 +25,11 @@ describe('eventInputSchema', () => {
 
     expect(result.capacity).toBeNull();
     expect(result.registrationDeadline).toBeNull();
+    expect(result.startsAt.toISOString()).toBe('2030-11-18T15:00:00.000Z');
+  });
+
+  it('accepts members-only visibility', () => {
+    expect(eventInputSchema.parse({ ...validInput(), status: 'MEMBERS' }).status).toBe('MEMBERS');
   });
 
   it('rejects an event whose end is not after its start', () => {
@@ -37,7 +42,7 @@ describe('eventInputSchema', () => {
     expect(() =>
       eventInputSchema.parse({
         ...validInput(),
-        startsAt: new Date(Date.now() - 3_600_000),
+        startsAt: '2020-11-18T18:00',
         status: 'PUBLISHED',
       }),
     ).toThrow('Published events must start in the future');

@@ -6,7 +6,15 @@ export const eventActionSchema = z.object({
   action: z.enum(['register', 'cancel']),
 });
 
-export const eventVisibilitySchema = z.enum(['DRAFT', 'PUBLISHED']);
+export const eventVisibilitySchema = z.enum(['DRAFT', 'MEMBERS', 'PUBLISHED']);
+
+const localDateTimeSchema = z
+  .string()
+  .regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/, 'Enter a valid date and time');
+
+function parseEastAfricaTime(value: string) {
+  return new Date(`${value}:00+03:00`);
+}
 
 export const eventInputSchema = z
   .object({
@@ -14,14 +22,14 @@ export const eventInputSchema = z
     title: z.string().trim().min(3).max(120),
     description: z.string().trim().max(5000),
     location: z.string().trim().min(1).max(200),
-    startsAt: z.coerce.date(),
-    endsAt: z.coerce.date(),
+    startsAt: localDateTimeSchema.transform(parseEastAfricaTime),
+    endsAt: localDateTimeSchema.transform(parseEastAfricaTime),
     capacity: z
       .union([z.coerce.number().int().positive(), z.literal(''), z.null()])
       .transform((value) => (value === '' || value === null ? null : value)),
     registrationDeadline: z
-      .union([z.coerce.date(), z.literal(''), z.null()])
-      .transform((value) => (value === '' || value === null ? null : value)),
+      .union([localDateTimeSchema, z.literal(''), z.null()])
+      .transform((value) => (value === '' || value === null ? null : parseEastAfricaTime(value))),
     status: eventVisibilitySchema,
   })
   .superRefine((value, context) => {
