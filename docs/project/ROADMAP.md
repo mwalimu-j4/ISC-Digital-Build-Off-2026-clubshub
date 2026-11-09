@@ -17,6 +17,7 @@ approved club-admin profile updates, suspension/reactivation, and audit history.
 Stage 05 implements the server-guarded student shell, dashboard, club discovery and
 membership actions, event registration, announcements, and student notifications.
 
-Stage 06 is in progress. The server-guarded club-admin overview and post-login
-landing route are implemented without adding a migration. Remaining club-admin
+Stage 06 is in progress. The server-guarded club-admin overview, join request form,
+and join-request review page are implemented. The post-login landing route is
+implemented without adding a migration. Remaining club-admin
 workflows will be added only with their supporting modules and authorization tests.

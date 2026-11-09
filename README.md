@@ -79,6 +79,14 @@ on the server for every requested club. Workflow sections are linked from the
 shared shell and show explicit empty states until their supporting domain modules
 are implemented.
 
+## Join requests
+
+Students can submit a validated request with a private school-ID snapshot from the
+club page. Approved club admins can review live pending, approved, and rejected
+requests at `/club-admin/[slug]/requests`; decisions are audited and notify the
+applicant. Existing membership requests without application details remain visible
+with an explicit empty-detail label.
+
 ## Space chooser and switching
 
 After sign-in, users with multiple available spaces can choose from `/choose`.
