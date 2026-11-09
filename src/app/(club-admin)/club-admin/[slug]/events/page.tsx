@@ -36,7 +36,10 @@ export default async function ClubAdminEventsPage({
   const user = await requireUser();
   const { slug } = await params;
   const statusParam = (await searchParams).status;
-  const status = statusParam === 'DRAFT' || statusParam === 'PUBLISHED' ? statusParam : undefined;
+  const status =
+    statusParam === 'DRAFT' || statusParam === 'MEMBERS' || statusParam === 'PUBLISHED'
+      ? statusParam
+      : undefined;
   const events = await listClubAdminEvents(user, slug, status);
 
   return (
@@ -58,7 +61,10 @@ export default async function ClubAdminEventsPage({
           All
         </Link>
         <Link className={status === 'PUBLISHED' ? 'active' : ''} href={`?status=PUBLISHED`}>
-          Published
+          Everyone
+        </Link>
+        <Link className={status === 'MEMBERS' ? 'active' : ''} href="?status=MEMBERS">
+          Members only
         </Link>
         <Link className={status === 'DRAFT' ? 'active' : ''} href={`?status=DRAFT`}>
           Drafts
@@ -79,7 +85,11 @@ export default async function ClubAdminEventsPage({
             <article className="club-admin-event-row" key={event.id}>
               <div>
                 <span className={`club-admin-event-status ${event.status.toLowerCase()}`}>
-                  {event.status === 'PUBLISHED' ? 'Everyone' : 'Draft'}
+                  {event.status === 'PUBLISHED'
+                    ? 'Everyone'
+                    : event.status === 'MEMBERS'
+                      ? 'Members only'
+                      : 'Draft'}
                 </span>
                 <h2>{event.title}</h2>
                 <p>

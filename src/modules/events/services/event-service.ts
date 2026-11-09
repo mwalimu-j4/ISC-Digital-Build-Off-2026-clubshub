@@ -1,6 +1,8 @@
 import type { UserRole } from '@prisma/client';
+import { z } from 'zod';
 
 import { prisma } from '@/lib/database/prisma';
+import { uploadToCloudinary } from '@/lib/utils/cloudinary';
 import { type EventDb, eventRepository } from '@/modules/events/repositories/event-repository';
 import {
   eventActionSchema,
@@ -28,7 +30,7 @@ export async function listStudentWeekEvents(actor: Actor, db: EventDb = prisma) 
 
 export async function getEvent(actor: Actor, eventId: string, db: EventDb = prisma) {
   assertStudent(actor);
-  return eventRepository.findById(db, eventIdSchema.parse(eventId));
+  return eventRepository.findByIdForStudent(db, eventIdSchema.parse(eventId), actor.id);
 }
 
 export async function registerForEvent(actor: Actor, input: unknown, db: EventDb = prisma) {
@@ -36,7 +38,14 @@ export async function registerForEvent(actor: Actor, input: unknown, db: EventDb
   const data = eventActionSchema.parse(input);
   if (data.action !== 'register') throw new EventServiceError('Invalid registration action');
   const event = await eventRepository.findById(db, data.eventId);
-  if (!event || event.status !== 'PUBLISHED') throw new EventServiceError('Event is not available');
+  if (!event || !['PUBLISHED', 'MEMBERS'].includes(event.status))
+    throw new EventServiceError('Event is not available');
+  if (
+    event.status === 'MEMBERS' &&
+    !(await eventRepository.findByIdForStudent(db, data.eventId, actor.id))
+  ) {
+    throw new EventServiceError('Approved club membership is required');
+  }
   if (event.registrationDeadline && event.registrationDeadline < new Date())
     throw new EventServiceError('Registration is closed');
   if (event.capacity !== null) {
@@ -75,11 +84,51 @@ export async function getRegisteredEventCount(actor: Actor, db: EventDb = prisma
 }
 
 type ClubAdminActor = { id: string };
+const MAX_EVENT_MEDIA = 8;
+const MAX_EVENT_IMAGE_BYTES = 10 * 1024 * 1024;
+const MAX_EVENT_VIDEO_BYTES = 100 * 1024 * 1024;
+
+const eventMediaFileSchema = z.custom<File>(
+  (value) => value instanceof File && value.size > 0,
+  'A valid media file is required',
+);
+
+async function uploadEventMedia(files: unknown[], clubId: string) {
+  const parsedFiles = z.array(eventMediaFileSchema).max(MAX_EVENT_MEDIA).parse(files);
+  return Promise.all(
+    parsedFiles.map(async (file, sortOrder) => {
+      const kind: 'IMAGE' | 'VIDEO' = file.type.startsWith('video/') ? 'VIDEO' : 'IMAGE';
+      const maxBytes = kind === 'VIDEO' ? MAX_EVENT_VIDEO_BYTES : MAX_EVENT_IMAGE_BYTES;
+      if (!file.type.startsWith('image/') && !file.type.startsWith('video/')) {
+        throw new EventServiceError('Only image and video files are allowed');
+      }
+      if (file.size > maxBytes) {
+        throw new EventServiceError(
+          `${kind === 'VIDEO' ? 'Video' : 'Image'} files exceed the allowed size`,
+        );
+      }
+      const result = await uploadToCloudinary(Buffer.from(await file.arrayBuffer()), {
+        folder: `clubshub/clubs/${clubId}/events`,
+        resourceType: kind === 'VIDEO' ? 'video' : 'image',
+      });
+      return {
+        kind,
+        cloudinaryPublicId: result.publicId,
+        url: result.url,
+        width: result.width,
+        height: result.height,
+        durationSeconds: result.durationSeconds,
+        bytes: result.bytes,
+        sortOrder,
+      };
+    }),
+  );
+}
 
 export async function listClubAdminEvents(
   actor: ClubAdminActor,
   clubSlug: string,
-  status?: 'DRAFT' | 'PUBLISHED',
+  status?: 'DRAFT' | 'MEMBERS' | 'PUBLISHED',
   db: EventDb = prisma,
 ) {
   return eventRepository.findForClubAdmin(db, actor.id, clubSlug, status);
@@ -99,10 +148,15 @@ export async function createClubAdminEvent(
   input: unknown,
   db: EventDb = prisma,
 ) {
-  const data = eventInputSchema.parse(input);
+  const raw = z.record(z.string(), z.unknown()).parse(input);
+  const data = eventInputSchema.parse(raw);
   const club = await eventRepository.findClubAdminClub(db, actor.id, data.clubId);
   if (!club) throw new EventServiceError('Club-admin access is required');
-  return eventRepository.createForClubAdmin(db, data);
+  const media = await uploadEventMedia(
+    z.array(z.unknown()).parse(raw.mediaFiles ?? []),
+    data.clubId,
+  );
+  return eventRepository.createForClubAdmin(db, { ...data, media });
 }
 
 export async function updateClubAdminEvent(
@@ -111,14 +165,25 @@ export async function updateClubAdminEvent(
   input: unknown,
   db: EventDb = prisma,
 ) {
-  const data = eventInputSchema.omit({ clubId: true }).parse(input);
-  const result = await eventRepository.updateForClubAdmin(
-    db,
-    actor.id,
-    eventIdSchema.parse(eventId),
-    data,
-  );
+  const raw = z.record(z.string(), z.unknown()).parse(input);
+  const parsedInput = eventInputSchema.parse(raw);
+  const data = eventInputSchema.omit({ clubId: true }).parse(parsedInput);
+  const parsedEventId = eventIdSchema.parse(eventId);
+  const result = await eventRepository.updateForClubAdmin(db, actor.id, parsedEventId, data);
   if (result.count !== 1) throw new EventServiceError('Event was not found or access was denied');
+  const media = await uploadEventMedia(
+    z.array(z.unknown()).parse(raw.mediaFiles ?? []),
+    parsedInput.clubId,
+  );
+  if (media.length > 0) {
+    const mediaResult = await eventRepository.addMediaForClubAdmin(
+      db,
+      actor.id,
+      parsedEventId,
+      media,
+    );
+    if (mediaResult.count !== 1) throw new EventServiceError('Event media could not be attached');
+  }
 }
 
 export async function deleteClubAdminEvent(

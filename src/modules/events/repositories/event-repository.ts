@@ -26,7 +26,12 @@ export const eventRepository = {
       select: { id: true },
     });
   },
-  findForClubAdmin(db: EventDb, userId: string, clubSlug: string, status?: 'DRAFT' | 'PUBLISHED') {
+  findForClubAdmin(
+    db: EventDb,
+    userId: string,
+    clubSlug: string,
+    status?: 'DRAFT' | 'MEMBERS' | 'PUBLISHED',
+  ) {
     return db.event.findMany({
       where: {
         status,
@@ -65,11 +70,24 @@ export const eventRepository = {
       endsAt: Date;
       capacity: number | null;
       registrationDeadline: Date | null;
-      status: 'DRAFT' | 'PUBLISHED';
+      status: 'DRAFT' | 'MEMBERS' | 'PUBLISHED';
+      media?: Array<{
+        kind: 'IMAGE' | 'VIDEO';
+        cloudinaryPublicId: string;
+        url: string;
+        width: number;
+        height: number;
+        durationSeconds: number | null;
+        bytes: number;
+        sortOrder: number;
+      }>;
     },
   ) {
     return db.event.create({
-      data,
+      data: {
+        ...data,
+        media: data.media ? { create: data.media } : undefined,
+      },
       select: eventSelect,
     });
   },
@@ -85,7 +103,7 @@ export const eventRepository = {
       endsAt: Date;
       capacity: number | null;
       registrationDeadline: Date | null;
-      status: 'DRAFT' | 'PUBLISHED';
+      status: 'DRAFT' | 'MEMBERS' | 'PUBLISHED';
     },
   ) {
     return db.event.updateMany({
@@ -94,6 +112,36 @@ export const eventRepository = {
         club: { memberships: { some: { userId, role: 'CLUB_ADMIN', status: 'APPROVED' } } },
       },
       data,
+    });
+  },
+  addMediaForClubAdmin(
+    db: EventDb,
+    userId: string,
+    eventId: string,
+    media: Array<{
+      kind: 'IMAGE' | 'VIDEO';
+      cloudinaryPublicId: string;
+      url: string;
+      width: number;
+      height: number;
+      durationSeconds: number | null;
+      bytes: number;
+      sortOrder: number;
+    }>,
+  ) {
+    return db.$transaction(async (transaction) => {
+      const event = await transaction.event.findFirst({
+        where: {
+          id: eventId,
+          club: { memberships: { some: { userId, role: 'CLUB_ADMIN', status: 'APPROVED' } } },
+        },
+        select: { id: true },
+      });
+      if (!event) return { count: 0 };
+      await transaction.eventMedia.createMany({
+        data: media.map((item) => ({ ...item, eventId })),
+      });
+      return { count: 1 };
     });
   },
   deleteForClubAdmin(db: EventDb, userId: string, eventId: string) {
@@ -112,11 +160,17 @@ export const eventRepository = {
       take: 50,
     });
   },
-  findUpcomingForStudent(db: EventDb, _userId: string) {
+  findUpcomingForStudent(db: EventDb, userId: string) {
     return db.event.findMany({
       where: {
-        status: 'PUBLISHED',
         startsAt: { gte: new Date() },
+        OR: [
+          { status: 'PUBLISHED' },
+          {
+            status: 'MEMBERS',
+            club: { memberships: { some: { userId, status: 'APPROVED' } } },
+          },
+        ],
       },
       select: eventSelect,
       orderBy: { startsAt: 'asc' },
@@ -125,6 +179,21 @@ export const eventRepository = {
   },
   findById(db: EventDb, id: string) {
     return db.event.findUnique({ where: { id }, select: eventSelect });
+  },
+  findByIdForStudent(db: EventDb, id: string, userId: string) {
+    return db.event.findFirst({
+      where: {
+        id,
+        OR: [
+          { status: 'PUBLISHED' },
+          {
+            status: 'MEMBERS',
+            club: { memberships: { some: { userId, status: 'APPROVED' } } },
+          },
+        ],
+      },
+      select: eventSelect,
+    });
   },
   findRegistration(db: EventDb, eventId: string, userId: string) {
     return db.eventRegistration.findUnique({ where: { eventId_userId: { eventId, userId } } });
@@ -155,7 +224,7 @@ export const eventRepository = {
       where: {
         userId,
         status: 'REGISTERED',
-        event: { startsAt: { gte: new Date() }, status: 'PUBLISHED' },
+        event: { startsAt: { gte: new Date() }, status: { in: ['PUBLISHED', 'MEMBERS'] } },
       },
       include: { event: { select: eventSelect } },
       orderBy: { event: { startsAt: 'asc' } },
