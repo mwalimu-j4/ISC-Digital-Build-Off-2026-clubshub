@@ -55,4 +55,14 @@ describe('eventInputSchema', () => {
       }),
     ).toThrow('Published events must start in the future');
   });
+
+  it('keeps morning and afternoon times distinct', () => {
+    const result = eventInputSchema.parse({
+      ...validInput(),
+      startsAt: '2030-11-18T08:00',
+      endsAt: '2030-11-18T12:00',
+    });
+
+    expect(result.endsAt.getTime()).toBeGreaterThan(result.startsAt.getTime());
+  });
 });

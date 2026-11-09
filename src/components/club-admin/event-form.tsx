@@ -52,11 +52,38 @@ export function ClubAdminEventForm({
   const handleFiles = (event: ChangeEvent<HTMLInputElement>) => {
     setFiles(Array.from(event.target.files ?? []).slice(0, 8));
   };
+  const readLocalDateTime = (date: FormDataEntryValue | null, time: FormDataEntryValue | null) => {
+    const dateValue = String(date ?? '');
+    const timeValue = String(time ?? '');
+    const [year = Number.NaN, month = Number.NaN, day = Number.NaN] = dateValue
+      .split('-')
+      .map(Number);
+    const [hour = Number.NaN, minute = Number.NaN] = timeValue.split(':').map(Number);
+    const dateParts = [year, month, day];
+    const timeParts = [hour, minute];
+    if (
+      dateParts.length !== 3 ||
+      timeParts.length < 2 ||
+      dateParts.some((part) => !Number.isInteger(part)) ||
+      timeParts.some((part) => !Number.isInteger(part))
+    ) {
+      return Number.NaN;
+    }
+    const timestamp = Date.UTC(year, month - 1, day, hour, minute);
+    const parsed = new Date(timestamp);
+    return parsed.getUTCFullYear() === year &&
+      parsed.getUTCMonth() === month - 1 &&
+      parsed.getUTCDate() === day &&
+      parsed.getUTCHours() === hour &&
+      parsed.getUTCMinutes() === minute
+      ? timestamp
+      : Number.NaN;
+  };
   const [formError, setFormError] = useState(error);
   const validateDateRange = (event: FormEvent<HTMLFormElement>) => {
     const data = new FormData(event.currentTarget);
-    const startsAt = `${String(data.get('startsDate') ?? '')}T${String(data.get('startsTime') ?? '')}`;
-    const endsAt = `${String(data.get('endsDate') ?? '')}T${String(data.get('endsTime') ?? '')}`;
+    const startsAt = readLocalDateTime(data.get('startsDate'), data.get('startsTime'));
+    const endsAt = readLocalDateTime(data.get('endsDate'), data.get('endsTime'));
     if (
       !data.get('startsDate') ||
       !data.get('startsTime') ||
@@ -67,7 +94,10 @@ export function ClubAdminEventForm({
       setFormError('Choose a start and end date and time.');
       return;
     }
-    if (endsAt <= startsAt) {
+    if (!Number.isFinite(startsAt) || !Number.isFinite(endsAt)) {
+      event.preventDefault();
+      setFormError('Enter valid start and end dates and times.');
+    } else if (endsAt <= startsAt) {
       event.preventDefault();
       setFormError('The end date and time must be after the start date and time.');
     }
