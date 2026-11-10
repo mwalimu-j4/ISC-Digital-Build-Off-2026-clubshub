@@ -1,8 +1,9 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { prisma } from '@/lib/database/prisma';
+
 import { requireUser } from '@/lib/auth/authorization';
+import { prisma } from '@/lib/database/prisma';
 
 const statuses = ['APPROVED', 'LEFT', 'SUSPENDED', 'GRADUATED'] as const;
 
