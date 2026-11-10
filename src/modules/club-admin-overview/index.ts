@@ -1,4 +1,5 @@
 export {
+  calculateClubHealthScore,
   ClubAdminAuthorizationError,
   getClubAdminOverview,
   listClubAdminClubs,

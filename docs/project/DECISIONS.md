@@ -128,6 +128,16 @@ rejected details should be cleared by retention maintenance after 30 days.
 Approvals receive a ten-second server-backed undo window. Decision writes use a
 conditional pending-state update so a second admin cannot decide the same request.
 
+## 2026-11-10 — Public discovery uses real club signals
+
+Landing recommendations use the existing active/reviewed club state, approved
+membership counts, public events, assigned interest tags, and the shared club-health
+score. Interest preferences are URL-addressable and saved per user only after sign-in;
+anonymous preferences use an HttpOnly first-party cookie. Featured cards are the top
+three reviewed clubs rated Active or Very active. Match scores are omitted until at
+least one interest is selected. No sample club data, fabricated match percentages,
+contact details, or leadership titles are added.
+
 # Space switching
 
 - Club roles are never stored in the session, JWT, or cookies as authorization

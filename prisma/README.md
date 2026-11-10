@@ -7,6 +7,7 @@ inside this directory and is compiled into one Prisma Client:
 - `enums.prisma` contains shared controlled values.
 - `user.prisma`, `club.prisma`, `membership.prisma`, and `audit-log.prisma` contain
   the Stage 02 models.
+- `interests.prisma` models shared discovery interests and their club/user joins.
 
 Schema changes belong in reviewed migrations under `migrations/`. Run
 `pnpm db:validate` and `pnpm db:generate` after schema changes. Use

@@ -1,6 +1,17 @@
+import { cookies } from 'next/headers';
 import Link from 'next/link';
 
+import { ClubDiscoveryCard } from '@/components/landing/club-discovery-card';
+import { InterestPicker } from '@/components/landing/interest-picker';
 import { SiteHeader } from '@/components/shared/site-header';
+import { getCurrentSession } from '@/lib/auth/session';
+import {
+  type DiscoveryQuery,
+  discoveryQuerySchema,
+  getUserInterestSlugs,
+  INTEREST_COOKIE,
+  parseDiscoveryQuery,
+} from '@/modules/discovery';
 import { getLandingData, type LandingData } from '@/modules/landing';
 
 export const dynamic = 'force-dynamic';
@@ -23,7 +34,30 @@ function EmptyState({ children }: { children: string }) {
   return <p className="landing-empty">{children}</p>;
 }
 
-function LandingContent({ data }: { data: LandingData }) {
+function discoveryHref(query: DiscoveryQuery, changes: Partial<DiscoveryQuery> = {}) {
+  const next = { ...query, ...changes };
+  const params = new URLSearchParams();
+  if (next.interests.length) params.set('interests', next.interests.join(','));
+  if (next.category) params.set('category', next.category);
+  if (next.sort !== 'match') params.set('sort', next.sort);
+  if (next.verifiedOnly) params.set('verified', '1');
+  if (next.q) params.set('q', next.q);
+  if (next.page > 1) params.set('page', String(next.page));
+  return `/${params.size ? `?${params.toString()}` : ''}#clubs-for-you`;
+}
+
+function LandingContent({
+  data,
+  query,
+  signedIn,
+  invalidFilters = false,
+}: {
+  data: LandingData;
+  query: DiscoveryQuery;
+  signedIn: boolean;
+  invalidFilters?: boolean;
+}) {
+  const discovery = data.discovery;
   return (
     <>
       <section className="landing-hero">
@@ -39,7 +73,7 @@ function LandingContent({ data }: { data: LandingData }) {
               Explore the clubs, events, announcements, and community resources that make campus
               feel like home. No account needed to look around.
             </p>
-            <form className="landing-search" action="/clubs" method="get">
+            <form className="landing-search" action="/" method="get">
               <div className="landing-search-tabs" aria-label="Search destinations">
                 <Link className="landing-search-tab-active" href="/clubs">
                   Clubs
@@ -50,7 +84,13 @@ function LandingContent({ data }: { data: LandingData }) {
                 <label className="sr-only" htmlFor="landing-search">
                   Search campus life
                 </label>
-                <input id="landing-search" name="q" placeholder="Search clubs" type="search" />
+                <input
+                  defaultValue={query.q}
+                  id="landing-search"
+                  name="q"
+                  placeholder="Search clubs"
+                  type="search"
+                />
                 <button className="landing-button landing-button-gold" type="submit">
                   Search
                 </button>
@@ -80,49 +120,149 @@ function LandingContent({ data }: { data: LandingData }) {
       </section>
 
       <main className="landing-main">
-        <section className="landing-section" id="clubs">
+        {invalidFilters ? (
+          <div className="site-container discovery-query-notice" role="status">
+            Some filters in that link were invalid, so the club list has been reset.
+          </div>
+        ) : null}
+        <InterestPicker
+          interests={discovery.interests}
+          query={query}
+          selected={discovery.selectedInterests}
+          signedIn={signedIn}
+        />
+
+        <section className="landing-section discovery-section" id="clubs-for-you">
           <div className="site-container">
             <div className="landing-section-heading">
               <div>
-                <p className="landing-eyebrow">Find your community</p>
-                <h2>Clubs to explore.</h2>
+                <p className="landing-eyebrow">Matched to your interests</p>
+                <h2>
+                  Clubs for <em>you.</em>
+                </h2>
+                <p className="discovery-intro">
+                  {query.interests.length
+                    ? 'Recommendations are ranked using your selected interests and recent public club activity.'
+                    : 'Explore reviewed clubs and active campus communities.'}
+                </p>
               </div>
-              <Link className="landing-text-link" href="/clubs">
+              <Link
+                className="landing-text-link"
+                href={discoveryHref(query, { page: 1, category: undefined })}
+              >
                 View all clubs →
               </Link>
             </div>
-            {data.categories.length > 0 ? (
-              <div className="landing-chips">
-                {data.categories.map((category) => (
+            <form action="/" className="discovery-controls" method="get">
+              <input name="interests" type="hidden" value={query.interests.join(',')} />
+              <input name="q" type="hidden" value={query.q ?? ''} />
+              <input name="page" type="hidden" value="1" />
+              <label>
+                Sort by
+                <select
+                  defaultValue={
+                    !query.interests.length && query.sort === 'match' ? 'active' : query.sort
+                  }
+                  name="sort"
+                >
+                  <option value="match">Best match</option>
+                  <option value="active">Most active</option>
+                  <option value="newest">Newest</option>
+                </select>
+              </label>
+              <label className="discovery-verified-toggle">
+                <input
+                  defaultChecked={query.verifiedOnly}
+                  name="verified"
+                  type="checkbox"
+                  value="1"
+                />
+                Verified only
+              </label>
+              <label>
+                Category
+                <select defaultValue={query.category ?? ''} name="category">
+                  <option value="">All categories</option>
+                  {discovery.categories.map((category) => (
+                    <option key={category.name} value={category.name}>
+                      {category.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <button className="discovery-control-submit" type="submit">
+                Update results
+              </button>
+            </form>
+            {discovery.categories.length > 0 ? (
+              <nav
+                aria-label="Filter clubs by category"
+                className="landing-chips discovery-category-chips"
+              >
+                <Link
+                  aria-current={!query.category ? 'page' : undefined}
+                  className={!query.category ? 'active' : ''}
+                  href={discoveryHref(query, { category: undefined, page: 1 })}
+                >
+                  All
+                </Link>
+                {discovery.categories.map((category) => (
                   <Link
-                    href={`/clubs?category=${encodeURIComponent(category.name)}`}
+                    aria-current={query.category === category.name ? 'page' : undefined}
+                    className={query.category === category.name ? 'active' : ''}
+                    href={discoveryHref(query, { category: category.name, page: 1 })}
                     key={category.name}
                   >
-                    {category.name} <span>{category.count}</span>
+                    {category.name}
+                    <span>{category.count}</span>
                   </Link>
+                ))}
+              </nav>
+            ) : null}
+            {discovery.featured.length ? (
+              <div aria-label="Featured clubs" className="discovery-featured-grid">
+                {discovery.featured.map((club) => (
+                  <ClubDiscoveryCard club={club} key={club.id} />
                 ))}
               </div>
             ) : null}
-            {data.clubs.length > 0 ? (
-              <div className="landing-club-grid">
-                {data.clubs.map((club) => (
-                  <Link className="landing-club-card" href={`/clubs/${club.slug}`} key={club.id}>
-                    <span className="landing-club-mark">
-                      {club.logoUrl ? '✦' : club.name.charAt(0)}
-                    </span>
-                    <span>
-                      <strong>{club.name}</strong>
-                      <small>
-                        {club.category} · {club.memberCount} members
-                      </small>
-                    </span>
-                    <span aria-hidden="true">↗</span>
-                  </Link>
+            {discovery.clubs.length ? (
+              <div className="discovery-compact-grid">
+                {discovery.clubs.map((club) => (
+                  <ClubDiscoveryCard club={club} key={club.id} variant="compact" />
                 ))}
               </div>
-            ) : (
-              <EmptyState>No active clubs are available yet.</EmptyState>
-            )}
+            ) : null}
+            {!discovery.total ? (
+              <div className="discovery-empty-state">
+                <h3>
+                  {query.interests.length
+                    ? 'No clubs match these interests yet.'
+                    : query.q || query.category
+                      ? 'No clubs match these filters.'
+                      : 'No active clubs are available yet.'}
+                </h3>
+                <p>
+                  {query.interests.length
+                    ? 'Try fewer interests or clear your selection to explore every active club.'
+                    : 'Club profiles will appear here once they are reviewed and active.'}
+                </p>
+                {query.interests.length ? (
+                  <Link
+                    href={discoveryHref({ ...query, interests: [], category: undefined, page: 1 })}
+                  >
+                    Clear interests
+                  </Link>
+                ) : (
+                  <Link href="/clubs/propose">Propose a club</Link>
+                )}
+              </div>
+            ) : null}
+            {discovery.total > query.page * discovery.pageSize ? (
+              <div className="discovery-more">
+                <Link href={discoveryHref(query, { page: query.page + 1 })}>Show more clubs</Link>
+              </div>
+            ) : null}
           </div>
         </section>
 
@@ -246,12 +386,46 @@ function LandingContent({ data }: { data: LandingData }) {
   );
 }
 
-export default async function HomePage() {
-  const data = await getLandingData();
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const [rawQuery, session, cookieStore] = await Promise.all([
+    searchParams,
+    getCurrentSession(),
+    cookies(),
+  ]);
+  const first = (key: string) => (Array.isArray(rawQuery[key]) ? rawQuery[key][0] : rawQuery[key]);
+  const queryResult = discoveryQuerySchema.safeParse({
+    interests: first('interests'),
+    category: first('category'),
+    sort: first('sort'),
+    verified: first('verified'),
+    q: first('q'),
+    page: first('page'),
+  });
+  let query = queryResult.success ? queryResult.data : parseDiscoveryQuery({});
+  if (rawQuery.interests === undefined) {
+    const saved = session?.user?.id
+      ? await getUserInterestSlugs(session.user.id)
+      : (cookieStore.get(INTEREST_COOKIE)?.value ?? '').split(',').filter(Boolean);
+    if (saved.length)
+      query = {
+        ...query,
+        interests: parseDiscoveryQuery({ interests: saved.join(',') }).interests,
+      };
+  }
+  const data = await getLandingData(query);
   return (
     <>
       <SiteHeader />
-      <LandingContent data={data} />
+      <LandingContent
+        data={data}
+        invalidFilters={!queryResult.success}
+        query={query}
+        signedIn={Boolean(session?.user?.id)}
+      />
       <footer className="site-footer">
         <div className="site-container footer-inner">
           <Link className="brand" href="/">

@@ -7,7 +7,11 @@ future modules are intentionally omitted.
 erDiagram
     USER ||--o{ CLUB : creates
     USER ||--o{ CLUB_MEMBERSHIP : has
+    USER ||--o{ USER_INTEREST : saves
+    INTEREST ||--o{ USER_INTEREST : selected_by
     CLUB ||--o{ CLUB_MEMBERSHIP : contains
+    CLUB ||--o{ CLUB_INTEREST : tagged_with
+    INTEREST ||--o{ CLUB_INTEREST : describes
     USER ||--o{ AUDIT_LOG : performs
     USER ||--o{ EVENT_REGISTRATION : registers
     EVENT ||--o{ EVENT_REGISTRATION : accepts
@@ -48,6 +52,23 @@ erDiagram
         datetime applied_at
         datetime approved_at
         datetime updated_at
+    }
+
+    INTEREST {
+        uuid id PK
+        string name UK
+        string slug UK
+        int sort_order
+    }
+
+    CLUB_INTEREST {
+        uuid club_id PK, FK
+        uuid interest_id PK, FK
+    }
+
+    USER_INTEREST {
+        uuid user_id PK, FK
+        uuid interest_id PK, FK
     }
 
     AUDIT_LOG {
@@ -93,3 +114,8 @@ erDiagram
 `USER` to `CLUB` membership is many-to-many through `CLUB_MEMBERSHIP`, with a
 database-enforced unique `(user_id, club_id)` pair. `AUDIT_LOG.actor_id` is nullable
 and uses `SET NULL` so historical records remain available if an account is removed.
+
+Public discovery uses `CLUB_INTEREST` and `USER_INTEREST` as separate many-to-many
+associations. Their composite primary keys prevent duplicate tags and preferences;
+interest slugs are stable URL values. Preference rows are only read for the current
+authenticated account, and club interest tags are shown only for active clubs.
