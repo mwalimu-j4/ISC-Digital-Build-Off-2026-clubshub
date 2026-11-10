@@ -29,6 +29,7 @@ enum MembershipStatus {
   REJECTED
   SUSPENDED
   LEFT
+  GRADUATED
 }
 
 // ── Lost & Found ──────────────────────────────────────────────────────

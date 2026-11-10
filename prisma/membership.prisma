@@ -3,6 +3,7 @@ model ClubMembership {
   userId     String           @map("user_id") @db.Uuid
   clubId     String           @map("club_id") @db.Uuid
   role       MembershipRole   @default(MEMBER)
+  officialRole String?        @map("official_role") @db.VarChar(80)
   status     MembershipStatus @default(PENDING)
   appliedAt  DateTime         @default(now()) @db.Timestamptz(3) @map("applied_at")
   approvedAt DateTime?        @db.Timestamptz(3) @map("approved_at")
