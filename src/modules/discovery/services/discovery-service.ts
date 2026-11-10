@@ -1,11 +1,11 @@
 import type { PrismaClient } from '@prisma/client';
 
 import { prisma } from '@/lib/database/prisma';
-import { DISCOVERY_PAGE_SIZE } from '@/modules/discovery/constants';
+import { DISCOVERY_PAGE_SIZE, FALLBACK_DISCOVERY_INTERESTS } from '@/modules/discovery/constants';
 import { discoveryRepository } from '@/modules/discovery/repositories/discovery-repository';
 import { toDiscoveryCard } from '@/modules/discovery/services/dto';
 import { chooseFeatured, rankClubs } from '@/modules/discovery/services/ranking';
-import type { DiscoveryInterest } from '@/modules/discovery/types';
+import type { DiscoveryCandidate, DiscoveryInterest } from '@/modules/discovery/types';
 import type { DiscoveryQuery } from '@/modules/discovery/validations/discovery-schema';
 
 export class DiscoveryServiceError extends Error {}
@@ -88,19 +88,42 @@ function sortCandidates<
 }
 
 export async function getDiscoveryResult(query: DiscoveryQuery, db: PrismaClient = prisma) {
-  const [{ candidates, categories }, interests] = await Promise.all([
-    discoveryRepository.listDiscoveryCandidates(db, query),
-    discoveryRepository.listInterests(db),
-  ]);
+  let candidates: DiscoveryCandidate[];
+  let categories: Array<{ name: string; count: number }>;
+  let interests: DiscoveryInterest[];
+  let total: number;
+  let usingFallbackData = false;
+
+  try {
+    const [discovery, interestCatalog] = await Promise.all([
+      discoveryRepository.listDiscoveryCandidates(db, query),
+      discoveryRepository.listInterests(db),
+    ]);
+    candidates = discovery.candidates;
+    categories = discovery.categories;
+    interests = interestCatalog;
+    total = candidates.length;
+  } catch (error) {
+    console.error(
+      '[club-discovery] Interest-based query failed; loading active clubs without recommendation metadata.',
+      error,
+    );
+    const fallback = await discoveryRepository.listActiveClubsFallback(db, query);
+    candidates = fallback.candidates;
+    categories = fallback.categories;
+    interests = FALLBACK_DISCOVERY_INTERESTS.map((interest) => ({ ...interest }));
+    total = fallback.total;
+    usingFallbackData = true;
+  }
+
   const effectiveSort = !query.interests.length && query.sort === 'match' ? 'active' : query.sort;
-  const ranked = rankClubs(candidates, query.interests);
+  const ranked = rankClubs(candidates, usingFallbackData ? [] : query.interests);
   const ordered = sortCandidates(ranked, effectiveSort);
   const featuredCandidates = query.page === 1 ? chooseFeatured(ranked, 3) : [];
   const featuredIds = new Set(featuredCandidates.map((club) => club.id));
-  const pageCandidates = ordered.slice(
-    (query.page - 1) * DISCOVERY_PAGE_SIZE,
-    query.page * DISCOVERY_PAGE_SIZE,
-  );
+  const pageCandidates = usingFallbackData
+    ? ordered
+    : ordered.slice((query.page - 1) * DISCOVERY_PAGE_SIZE, query.page * DISCOVERY_PAGE_SIZE);
   const featured = featuredCandidates.map((club) =>
     toDiscoveryCard(club, featuredIds.has(club.id)),
   );
@@ -119,8 +142,9 @@ export async function getDiscoveryResult(query: DiscoveryQuery, db: PrismaClient
     categories,
     featured,
     clubs,
-    total: ordered.length,
+    total,
     page: query.page,
     pageSize: DISCOVERY_PAGE_SIZE,
+    ...(usingFallbackData ? { usingFallbackData: true } : {}),
   };
 }

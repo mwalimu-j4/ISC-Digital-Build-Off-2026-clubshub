@@ -1,12 +1,15 @@
-import { describe, expect, it } from 'vitest';
+import type { PrismaClient } from '@prisma/client';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
   activityFromHealthScore,
   chooseFeatured,
+  discoveryRepository,
+  getDiscoveryResult,
   parseDiscoveryQuery,
   rankClubs,
+  type DiscoveryCandidate,
 } from '@/modules/discovery';
-import type { DiscoveryCandidate } from '@/modules/discovery';
 import { toDiscoveryCard } from '@/modules/discovery/services/dto';
 
 function candidate(overrides: Partial<DiscoveryCandidate> = {}): DiscoveryCandidate {
@@ -30,6 +33,8 @@ function candidate(overrides: Partial<DiscoveryCandidate> = {}): DiscoveryCandid
 }
 
 describe('public club discovery', () => {
+  afterEach(() => vi.restoreAllMocks());
+
   it('ranks clubs with interest overlap as the largest score component', () => {
     const exactMatch = candidate({
       id: 'match',
@@ -116,5 +121,64 @@ describe('public club discovery', () => {
     expect(card).not.toHaveProperty('schoolId');
     expect(card).not.toHaveProperty('latestPublicEventAt');
     expect(card).not.toHaveProperty('recommendationScore');
+  });
+
+  it('falls back to active clubs if interest-aware discovery data is unavailable', async () => {
+    const expected = candidate({ interests: [] });
+    vi.spyOn(discoveryRepository, 'listDiscoveryCandidates').mockRejectedValue(
+      new Error('Interest relation is unavailable'),
+    );
+    vi.spyOn(discoveryRepository, 'listInterests').mockRejectedValue(
+      new Error('Interest table is unavailable'),
+    );
+    vi.spyOn(discoveryRepository, 'listActiveClubsFallback').mockResolvedValue({
+      candidates: [expected],
+      total: 1,
+      categories: [{ name: 'Technology', count: 1 }],
+    });
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    const result = await getDiscoveryResult(
+      parseDiscoveryQuery({}),
+      {} as unknown as PrismaClient,
+    );
+
+    expect(result.total).toBe(1);
+    expect(result.usingFallbackData).toBe(true);
+    expect(result.interests).toHaveLength(8);
+    expect(result.featured[0]?.slug).toBe(expected.slug);
+  });
+
+  it('loads real active-club fields without relying on discovery join tables', async () => {
+    const findMany = vi.fn().mockResolvedValue([
+      {
+        id: 'club-1',
+        name: 'Coding Society',
+        slug: 'coding-society',
+        description: 'Build projects together.',
+        category: 'Technology',
+        logoUrl: null,
+        createdAt: new Date('2026-01-01T12:00:00.000Z'),
+        _count: { memberships: 30 },
+      },
+    ]);
+    const db = {
+      club: {
+        findMany,
+        count: vi.fn().mockResolvedValue(1),
+        groupBy: vi.fn().mockResolvedValue([{ category: 'Technology', _count: { id: 1 } }]),
+      },
+    } as unknown as PrismaClient;
+
+    const result = await discoveryRepository.listActiveClubsFallback(db, parseDiscoveryQuery({}));
+
+    expect(findMany.mock.calls[0]?.[0]?.where).toMatchObject({ status: 'ACTIVE' });
+    expect(result.total).toBe(1);
+    expect(result.candidates[0]).toMatchObject({
+      id: 'club-1',
+      slug: 'coding-society',
+      memberCount: 30,
+      verified: true,
+    });
   });
 });

@@ -3,6 +3,7 @@ import { Prisma, type PrismaClient } from '@prisma/client';
 import { calculateClubHealthScore } from '@/modules/club-admin-overview';
 import { listPublicCategories, publicClubSearchWhere } from '@/modules/clubs';
 import { activityFromHealthScore } from '@/modules/discovery/activity';
+import { DISCOVERY_PAGE_SIZE } from '@/modules/discovery/constants';
 import type { DiscoveryCandidate, DiscoveryInterest } from '@/modules/discovery/types';
 import type { DiscoveryQuery } from '@/modules/discovery/validations/discovery-schema';
 
@@ -160,5 +161,66 @@ export const discoveryRepository = {
       }),
       categories,
     };
+  },
+
+  async listActiveClubsFallback(
+    db: PrismaClient,
+    query: DiscoveryQuery,
+  ): Promise<{
+    candidates: DiscoveryCandidate[];
+    total: number;
+    categories: Array<{ name: string; count: number }>;
+  }> {
+    const where: Prisma.ClubWhereInput = {
+      ...publicClubSearchWhere({ search: query.q, category: query.category }),
+      ...(query.verifiedOnly ? { reviewedAt: { not: null } } : {}),
+    };
+    const [clubs, total, categories] = await Promise.all([
+      db.club.findMany({
+        where,
+        orderBy: [{ createdAt: 'desc' }, { name: 'asc' }],
+        skip: (query.page - 1) * DISCOVERY_PAGE_SIZE,
+        take: DISCOVERY_PAGE_SIZE,
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          description: true,
+          category: true,
+          logoUrl: true,
+          createdAt: true,
+          _count: { select: { memberships: { where: { status: 'APPROVED' } } } },
+        },
+      }),
+      db.club.count({ where }),
+      listPublicCategories(db).catch(() => []),
+    ]);
+
+    const candidates: DiscoveryCandidate[] = clubs.map((club) => {
+      const memberCount = club._count.memberships;
+      const healthScore = calculateClubHealthScore({
+        memberCount,
+        eventCount: 0,
+        announcementCount: 0,
+      });
+      return {
+        id: club.id,
+        name: club.name,
+        slug: club.slug,
+        description: club.description,
+        category: club.category,
+        logoUrl: club.logoUrl,
+        verified: true,
+        memberCount,
+        activity: activityFromHealthScore(healthScore),
+        interests: [],
+        nextEvent: null,
+        chairperson: null,
+        latestPublicEventAt: null,
+        createdAt: club.createdAt,
+      };
+    });
+
+    return { total, categories, candidates };
   },
 };
