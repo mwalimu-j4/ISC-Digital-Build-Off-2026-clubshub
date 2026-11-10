@@ -15,4 +15,7 @@ database.
 
 `DATABASE_URL` is the runtime connection string. `DIRECT_URL` should be an unpooled
 Neon connection for migration tooling when the deployment provider supplies pooled
-connections. Never commit either value.
+connections. Vercel Preview builds generate Prisma and build the app without running
+migrations or seeding a super-admin; only Production builds need `DIRECT_URL` and run
+database writes. Configure `DATABASE_URL` for any deployment whose app needs database
+access. Never commit either value.

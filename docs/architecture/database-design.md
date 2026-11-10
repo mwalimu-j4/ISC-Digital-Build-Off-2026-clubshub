@@ -99,10 +99,12 @@ the core tables.
    Vercel `DATABASE_URL` variable.
 2. Copy the Neon direct (unpooled) connection string to the Vercel `DIRECT_URL`
    variable. Keep the `?sslmode=require` query parameter supplied by Neon.
-3. Configure both variables for the Vercel environments that deploy the application.
-4. Vercel automatically uses the `vercel-build` script. It runs `prisma generate`,
-   `prisma migrate deploy`, and then `next build`, so all committed pending migrations
-   are applied before the deployment is finalized.
+3. Configure `DATABASE_URL` for each Vercel environment that needs database-backed
+   application pages. Configure `DIRECT_URL` for Production, where migrations run.
+4. Vercel automatically uses the `vercel-build` script. Every environment runs
+   `prisma generate` and `next build`; only Production runs `prisma migrate deploy` and
+   seeds the super-admin. Preview builds therefore do not need `DIRECT_URL` and cannot
+   modify the production database.
 
 Do not use `prisma migrate dev` in Vercel and do not put credentials in
 `.env.example`. The first deployment must use a migration-capable Neon role; the

@@ -21,7 +21,7 @@
     "db:validate": "prisma validate --schema prisma",
     "db:migrate:deploy": "prisma migrate deploy --schema prisma",
     "db:seed:super-admin": "node scripts/seed-super-admin.mjs",
-    "vercel-build": "pnpm db:generate && pnpm db:migrate:deploy && pnpm db:seed:super-admin && pnpm build:app"
+    "vercel-build": "node scripts/vercel-build.mjs"
   },
   "dependencies": {
     "@prisma/client": "^6.15.0",
