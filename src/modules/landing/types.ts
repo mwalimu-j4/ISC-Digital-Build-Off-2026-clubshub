@@ -1,5 +1,7 @@
 import type { LostFoundCategory } from '@prisma/client';
 
+import type { DiscoveryResult } from '@/modules/discovery';
+
 export type LandingClub = {
   id: string;
   name: string;
@@ -38,6 +40,7 @@ export type LandingData = {
   events: LandingEvent[];
   announcements: LandingAnnouncement[];
   lostItems: LandingLostItem[];
+  discovery: DiscoveryResult;
   stats: {
     activeClubs: number | null;
     upcomingEvents: number | null;

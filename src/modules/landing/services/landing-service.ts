@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/database/prisma';
+import { type DiscoveryQuery,getDiscoveryResult, parseDiscoveryQuery } from '@/modules/discovery';
 import { landingRepository } from '@/modules/landing/repositories/landing-repository';
 import type { LandingData } from '@/modules/landing/types';
 
@@ -10,10 +11,11 @@ async function optional<T>(query: () => Promise<T>): Promise<T | null> {
   }
 }
 
-export async function getLandingData(): Promise<LandingData> {
+export async function getLandingData(
+  query: DiscoveryQuery = parseDiscoveryQuery({}),
+): Promise<LandingData> {
   const [
-    categories,
-    clubs,
+    discovery,
     events,
     announcements,
     lostItems,
@@ -22,8 +24,7 @@ export async function getLandingData(): Promise<LandingData> {
     newAnnouncements,
     openLostItems,
   ] = await Promise.all([
-    optional(() => landingRepository.listCategories(prisma)),
-    optional(() => landingRepository.listClubs(prisma)),
+    optional(() => getDiscoveryResult(query)),
     optional(() => landingRepository.listEvents(prisma)),
     optional(() => landingRepository.listAnnouncements(prisma)),
     optional(() => landingRepository.listLostItems(prisma)),
@@ -34,11 +35,28 @@ export async function getLandingData(): Promise<LandingData> {
   ]);
 
   return {
-    categories: categories ?? [],
-    clubs: clubs ?? [],
+    categories: discovery?.categories ?? [],
+    clubs: [...(discovery?.featured ?? []), ...(discovery?.clubs ?? [])].map((club) => ({
+      id: club.id,
+      name: club.name,
+      slug: club.slug,
+      category: club.category,
+      logoUrl: club.logoUrl,
+      memberCount: club.memberCount,
+    })),
     events: events ?? [],
     announcements: announcements ?? [],
     lostItems: lostItems ?? [],
+    discovery: discovery ?? {
+      interests: [],
+      selectedInterests: query.interests,
+      categories: [],
+      featured: [],
+      clubs: [],
+      total: 0,
+      page: query.page,
+      pageSize: 12,
+    },
     stats: { activeClubs, upcomingEvents, newAnnouncements, openLostItems },
   };
 }

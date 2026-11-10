@@ -2,6 +2,32 @@ import type { Prisma, PrismaClient } from '@prisma/client';
 
 export type ClubDb = PrismaClient | Prisma.TransactionClient;
 
+export function publicClubSearchWhere(
+  filters: { search?: string; category?: string } = {},
+): Prisma.ClubWhereInput {
+  const where: Prisma.ClubWhereInput = { status: 'ACTIVE' };
+  if (filters.category) where.category = filters.category;
+  if (filters.search) {
+    where.OR = [
+      { name: { contains: filters.search, mode: 'insensitive' } },
+      { description: { contains: filters.search, mode: 'insensitive' } },
+    ];
+  }
+  return where;
+}
+
+export function listPublicCategories(db: ClubDb) {
+  return db.club
+    .groupBy({
+      by: ['category'],
+      where: { status: 'ACTIVE' },
+      _count: { id: true },
+      orderBy: { _count: { id: 'desc' } },
+      take: 8,
+    })
+    .then((rows) => rows.map((row) => ({ name: row.category, count: row._count.id })));
+}
+
 export const clubRepository = {
   create(db: ClubDb, data: Prisma.ClubCreateInput) {
     return db.club.create({ data });
@@ -32,14 +58,7 @@ export const clubRepository = {
     db: ClubDb,
     filters: { search?: string; category?: string; skip: number; take: number },
   ) {
-    const where: Prisma.ClubWhereInput = { status: 'ACTIVE' };
-    if (filters.category) where.category = filters.category;
-    if (filters.search) {
-      where.OR = [
-        { name: { contains: filters.search, mode: 'insensitive' } },
-        { description: { contains: filters.search, mode: 'insensitive' } },
-      ];
-    }
+    const where = publicClubSearchWhere(filters);
     return db.club.findMany({
       where,
       orderBy: { name: 'asc' },
@@ -108,14 +127,7 @@ export const clubRepository = {
     db: ClubDb,
     filters: { search?: string; category?: string; skip: number; take: number },
   ) {
-    const where: Prisma.ClubWhereInput = { status: 'ACTIVE' };
-    if (filters.category) where.category = filters.category;
-    if (filters.search) {
-      where.OR = [
-        { name: { contains: filters.search, mode: 'insensitive' } },
-        { description: { contains: filters.search, mode: 'insensitive' } },
-      ];
-    }
+    const where = publicClubSearchWhere(filters);
     return db.club.findMany({
       where,
       orderBy: { name: 'asc' },

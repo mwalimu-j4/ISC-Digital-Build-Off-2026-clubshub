@@ -252,6 +252,11 @@ export async function joinClub(
   if (!club) throw new ClubServiceError('Club not found');
   const membership = await clubRepository.findMembership(db, actor.id, id);
   if (membership?.status === 'APPROVED') throw new ClubServiceError('Already a member');
+  if (membership?.status === 'SUSPENDED' || membership?.status === 'GRADUATED') {
+    throw new ClubServiceError(
+      'This membership cannot be reopened. Contact the club administrator for help.',
+    );
+  }
   return clubRepository.applyMembership(db, actor.id, id);
 }
 

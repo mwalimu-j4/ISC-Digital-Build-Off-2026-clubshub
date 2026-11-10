@@ -1,47 +1,17 @@
 import type { PrismaClient } from '@prisma/client';
 
-import type {
-  LandingAnnouncement,
-  LandingClub,
-  LandingEvent,
-  LandingLostItem,
-} from '@/modules/landing/types';
-
-const publicClubSelect = {
-  id: true,
-  name: true,
-  slug: true,
-  category: true,
-  logoUrl: true,
-  _count: { select: { memberships: { where: { status: 'APPROVED' as const } } } },
-} as const;
+import { listPublicCategories } from '@/modules/clubs';
+import type { LandingAnnouncement, LandingEvent, LandingLostItem } from '@/modules/landing/types';
 
 export const landingRepository = {
-  async listClubs(db: PrismaClient): Promise<LandingClub[]> {
-    const clubs = await db.club.findMany({
-      where: { status: 'ACTIVE' },
-      orderBy: { name: 'asc' },
-      take: 8,
-      select: publicClubSelect,
-    });
-    return clubs.map(({ _count, ...club }) => ({ ...club, memberCount: _count.memberships }));
-  },
-
   async listCategories(db: PrismaClient) {
-    const categories = await db.club.groupBy({
-      by: ['category'],
-      where: { status: 'ACTIVE' },
-      _count: { id: true },
-      orderBy: { _count: { id: 'desc' } },
-      take: 8,
-    });
-    return categories.map((category) => ({ name: category.category, count: category._count.id }));
+    return listPublicCategories(db);
   },
 
   listEvents(db: PrismaClient): Promise<LandingEvent[]> {
     return db.event
       .findMany({
-        where: { status: 'PUBLISHED', startsAt: { gte: new Date() } },
+        where: { status: 'PUBLISHED', startsAt: { gte: new Date() }, club: { status: 'ACTIVE' } },
         orderBy: { startsAt: 'asc' },
         take: 3,
         select: {
@@ -94,7 +64,7 @@ export const landingRepository = {
     const end = new Date(now);
     end.setDate(end.getDate() + 7);
     return db.event.count({
-      where: { status: 'PUBLISHED', startsAt: { gte: now, lt: end } },
+      where: { status: 'PUBLISHED', startsAt: { gte: now, lt: end }, club: { status: 'ACTIVE' } },
     });
   },
 
