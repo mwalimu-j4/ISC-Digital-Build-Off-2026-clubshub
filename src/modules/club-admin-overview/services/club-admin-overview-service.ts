@@ -12,6 +12,23 @@ function assertAuthenticated(actor: ClubAdminActor) {
   if (!actor.id) throw new ClubAdminAuthorizationError('Authentication is required');
 }
 
+export function calculateClubHealthScore({
+  memberCount,
+  eventCount,
+  announcementCount,
+}: {
+  memberCount: number;
+  eventCount: number;
+  announcementCount: number;
+}) {
+  return Math.min(
+    100,
+    (memberCount > 0 ? 40 : 0) +
+      Math.min(eventCount * 15, 30) +
+      Math.min(announcementCount * 10, 30),
+  );
+}
+
 export async function listClubAdminClubs(actor: ClubAdminActor) {
   assertAuthenticated(actor);
   return clubAdminOverviewRepository.findAdminClubs(prisma, actor.id);
@@ -31,12 +48,11 @@ export async function getClubAdminOverview(actor: ClubAdminActor, slug: unknown)
   const membersThisMonth = club.memberships.filter(
     (membership) => membership.approvedAt && membership.approvedAt >= monthStart,
   ).length;
-  const healthScore = Math.min(
-    100,
-    (club.memberships.length > 0 ? 40 : 0) +
-      Math.min(club._count.events * 15, 30) +
-      Math.min(club.announcements.length * 10, 30),
-  );
+  const healthScore = calculateClubHealthScore({
+    memberCount: club.memberships.length,
+    eventCount: club._count.events,
+    announcementCount: club.announcements.length,
+  });
   const health = healthScore >= 70 ? 'Strong' : healthScore >= 40 ? 'Steady' : 'Quiet';
 
   return {

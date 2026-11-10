@@ -21,6 +21,7 @@ model Club {
   reviewedBy  User?           @relation("ClubReviewer", fields: [reviewedById], references: [id], onDelete: SetNull, onUpdate: Cascade)
   suspendedBy User?           @relation("ClubSuspender", fields: [suspendedById], references: [id], onDelete: SetNull, onUpdate: Cascade)
   memberships ClubMembership[]
+  interests   ClubInterest[]
   events      Event[]
   announcements Announcement[]
 

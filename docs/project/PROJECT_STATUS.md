@@ -1,6 +1,6 @@
 # Project status
 
-**Last updated:** 2026-11-07
+**Last updated:** 2026-11-10
 
 ## Current stage
 
@@ -127,6 +127,22 @@ require request code to set transaction-local identity context.
 - Contextual `/spaces` pages are now rendered inside the student, club-admin, and
   super-admin dashboard layouts, with contextual back buttons and no account logout
   required to switch workspaces.
+
+## Public smart discovery validation
+
+- `/` keeps the existing live campus stats, announcements, event strip, and Lost & Found
+  preview while adding server-rendered interest, category, sort, verified, search, and
+  pagination filters.
+- Interest choices are saved to the signed-in user or an HttpOnly first-party cookie;
+  club admins can assign one to five discovery interests from the existing profile area.
+- Match ranking uses assigned club interests, the shared club-health score, reviewed
+  status, approved member counts, and published public events. Cards use explicit
+  public DTOs and show leadership only where an approved member has an assigned
+  chairperson title.
+- The additive migration is `20261110100000_landing_discovery_interests`; no sample
+  clubs or member records are seeded.
+- Verified means active and reviewed in the existing approval workflow. Public contact
+  details remain omitted because the current club model has no public contact field.
 
 ## Next approved stage
 

@@ -1,0 +1,33 @@
+model Interest {
+  id        String          @id @default(uuid()) @db.Uuid
+  name      String          @unique @db.VarChar(80)
+  slug      String          @unique @db.VarChar(80)
+  sortOrder Int             @default(0) @map("sort_order")
+  clubs     ClubInterest[]
+  users     UserInterest[]
+
+  @@index([sortOrder, name])
+  @@map("interests")
+}
+
+model ClubInterest {
+  clubId     String   @map("club_id") @db.Uuid
+  interestId String   @map("interest_id") @db.Uuid
+  club       Club     @relation(fields: [clubId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  interest   Interest @relation(fields: [interestId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@id([clubId, interestId])
+  @@index([interestId, clubId])
+  @@map("club_interests")
+}
+
+model UserInterest {
+  userId     String   @map("user_id") @db.Uuid
+  interestId String   @map("interest_id") @db.Uuid
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  interest   Interest @relation(fields: [interestId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@id([userId, interestId])
+  @@index([interestId, userId])
+  @@map("user_interests")
+}

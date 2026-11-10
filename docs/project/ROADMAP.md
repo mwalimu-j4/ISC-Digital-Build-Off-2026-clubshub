@@ -21,3 +21,12 @@ Stage 06 is in progress. The server-guarded club-admin overview, join request fo
 and join-request review page are implemented. The post-login landing route is
 implemented without adding a migration. Remaining club-admin
 workflows will be added only with their supporting modules and authorization tests.
+
+## Public landing discovery
+
+Smart discovery extends the live landing page with URL-based interest filters,
+persisted user preferences, club-admin interest tagging, featured/recommended cards,
+activity labels derived from the existing club-health formula, and public event
+highlights. The additive interest migration seeds taxonomy values only. Existing search,
+membership request, public event, announcement, Lost & Found, and live-stat flows are
+reused. Interest tagging by club admins is required before interest matches appear.

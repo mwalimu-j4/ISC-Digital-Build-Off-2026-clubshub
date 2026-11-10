@@ -99,6 +99,10 @@ export default async function ClubProfilePage({ params }: { params: Promise<{ sl
                 <span className="club-action club-action-member">Member</span>
               ) : membership === 'PENDING' ? (
                 <span className="club-action club-action-member">Request pending</span>
+              ) : membership === 'SUSPENDED' ? (
+                <span className="club-action club-action-member">Membership suspended</span>
+              ) : membership === 'GRADUATED' ? (
+                <span className="club-action club-action-member">Graduated member</span>
               ) : session?.user?.role === 'STUDENT' ? (
                 <form action={requestMembership}>
                   <input type="hidden" name="clubId" value={club.id} />

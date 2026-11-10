@@ -27,3 +27,10 @@ cascade-delete relationship.
 The additive `20261109000000_super_admin_users_roles` migration adds nullable
 `users.suspended_at` and `users.suspended_reason` fields plus lookup indexes. The
 users module keeps registration numbers out of list DTOs and audit metadata.
+
+Public club discovery adds the normalized `interests`, `club_interests`, and
+`user_interests` tables in `20261110100000_landing_discovery_interests`. The migration
+seeds the eight shared taxonomy values, not club or student records. Club and user
+associations use composite primary keys and cascading foreign keys. Discovery queries
+select only public club fields, approved membership counts, published events, and
+explicitly assigned chairperson names/titles.
