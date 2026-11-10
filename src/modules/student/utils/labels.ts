@@ -3,9 +3,10 @@ import type { ClubStatus, MembershipRole, MembershipStatus } from '@prisma/clien
 export function membershipLabel(
   role: MembershipRole,
   status: MembershipStatus,
-): 'Club admin' | 'Member' | 'Pending approval' | 'Suspended' {
+): 'Club admin' | 'Member' | 'Pending approval' | 'Suspended' | 'Graduated' {
   if (status === 'PENDING') return 'Pending approval';
   if (status === 'SUSPENDED') return 'Suspended';
+  if (status === 'GRADUATED') return 'Graduated';
   if (role === 'CLUB_ADMIN') return 'Club admin';
   return 'Member';
 }

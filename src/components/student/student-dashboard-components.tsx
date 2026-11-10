@@ -137,7 +137,7 @@ export function WeekStrip({ days }: { days: WeekDay[] }) {
 type Membership = {
   id: string;
   role: 'MEMBER' | 'CLUB_ADMIN';
-  status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'SUSPENDED' | 'LEFT';
+  status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'SUSPENDED' | 'LEFT' | 'GRADUATED';
   club: {
     id: string;
     name: string;
