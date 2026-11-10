@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/database/prisma';
-import { type DiscoveryQuery,getDiscoveryResult, parseDiscoveryQuery } from '@/modules/discovery';
+import { type DiscoveryQuery, getDiscoveryResult, parseDiscoveryQuery } from '@/modules/discovery';
 import { landingRepository } from '@/modules/landing/repositories/landing-repository';
 import type { LandingData } from '@/modules/landing/types';
 
@@ -24,7 +24,7 @@ export async function getLandingData(
     newAnnouncements,
     openLostItems,
   ] = await Promise.all([
-    optional(() => getDiscoveryResult(query)),
+    getDiscoveryResult(query),
     optional(() => landingRepository.listEvents(prisma)),
     optional(() => landingRepository.listAnnouncements(prisma)),
     optional(() => landingRepository.listLostItems(prisma)),
@@ -35,8 +35,8 @@ export async function getLandingData(
   ]);
 
   return {
-    categories: discovery?.categories ?? [],
-    clubs: [...(discovery?.featured ?? []), ...(discovery?.clubs ?? [])].map((club) => ({
+    categories: discovery.categories,
+    clubs: [...discovery.featured, ...discovery.clubs].map((club) => ({
       id: club.id,
       name: club.name,
       slug: club.slug,
@@ -47,16 +47,7 @@ export async function getLandingData(
     events: events ?? [],
     announcements: announcements ?? [],
     lostItems: lostItems ?? [],
-    discovery: discovery ?? {
-      interests: [],
-      selectedInterests: query.interests,
-      categories: [],
-      featured: [],
-      clubs: [],
-      total: 0,
-      page: query.page,
-      pageSize: 12,
-    },
+    discovery,
     stats: { activeClubs, upcomingEvents, newAnnouncements, openLostItems },
   };
 }

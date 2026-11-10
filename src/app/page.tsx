@@ -131,6 +131,12 @@ function LandingContent({
           selected={discovery.selectedInterests}
           signedIn={signedIn}
         />
+        {discovery.usingFallbackData ? (
+          <div className="site-container discovery-query-notice" role="status">
+            We’re showing active clubs while personalized recommendations reconnect. Interest
+            matching may be temporarily unavailable.
+          </div>
+        ) : null}
 
         <section className="landing-section discovery-section" id="clubs-for-you">
           <div className="site-container">
@@ -141,9 +147,11 @@ function LandingContent({
                   Clubs for <em>you.</em>
                 </h2>
                 <p className="discovery-intro">
-                  {query.interests.length
-                    ? 'Recommendations are ranked using your selected interests and recent public club activity.'
-                    : 'Explore reviewed clubs and active campus communities.'}
+                  {discovery.usingFallbackData
+                    ? 'Browse active campus communities while personalised matching is temporarily unavailable.'
+                    : query.interests.length
+                      ? 'Recommendations are ranked using your selected interests and recent public club activity.'
+                      : 'Explore reviewed clubs and active campus communities.'}
                 </p>
               </div>
               <Link

@@ -47,4 +47,5 @@ export type DiscoveryResult = {
   total: number;
   page: number;
   pageSize: number;
+  usingFallbackData?: boolean;
 };

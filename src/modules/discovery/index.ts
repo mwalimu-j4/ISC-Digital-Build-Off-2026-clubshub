@@ -3,6 +3,7 @@ export {
   DISCOVERY_INTEREST_SLUGS,
   DISCOVERY_PAGE_SIZE,
   DISCOVERY_SCORE_WEIGHTS,
+  FALLBACK_DISCOVERY_INTERESTS,
   INTEREST_COOKIE,
 } from './constants';
 export { discoveryRepository } from './repositories/discovery-repository';
