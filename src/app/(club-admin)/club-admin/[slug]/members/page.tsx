@@ -1,6 +1,6 @@
-import Link from 'next/link';
 import type { MembershipStatus, Prisma } from '@prisma/client';
 import { ChevronLeft, ChevronRight, GraduationCap, ShieldBan, UserCheck, UserRoundX, Users } from 'lucide-react';
+import Link from 'next/link';
 
 import { requireUser } from '@/lib/auth/authorization';
 import { prisma } from '@/lib/database/prisma';
