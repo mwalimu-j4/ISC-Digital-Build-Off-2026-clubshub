@@ -116,8 +116,6 @@ export async function decideRequest(
   await requireClubAdmin(db, actor.id, existing.clubId);
   if (existing.status !== 'PENDING')
     throw new JoinRequestServiceError('Another admin already decided this request');
-  if (data.decision === 'REJECT' && !data.reason)
-    throw new JoinRequestServiceError('A rejection reason is required');
   const run = async (tx: JoinRequestDb) => {
     const updated = await tx.clubMembership.updateMany({
       where: { id: requestId, status: 'PENDING' },
@@ -149,7 +147,7 @@ export async function decideRequest(
       actorId: actor.id,
       targetEntity: 'ClubMembership',
       targetEntityId: requestId,
-      metadata: data.reason ? { reason: data.reason } : undefined,
+      metadata: data.decision === 'REJECT' ? { reason: data.reason } : undefined,
     });
     await createNotification(
       {
@@ -157,7 +155,9 @@ export async function decideRequest(
         type: 'GENERAL',
         title:
           data.decision === 'APPROVE' ? 'Your request was approved' : 'Your request was declined',
-        message: data.note || data.reason || 'Your club join request has been reviewed.',
+        message:
+          data.note || (data.decision === 'REJECT' ? data.reason : undefined) ||
+          'Your club join request has been reviewed.',
       },
       tx,
     );

@@ -10,11 +10,19 @@ export const joinRequestSchema = z.object({
   saveDetails: z.boolean().default(true),
 });
 
-export const decisionSchema = z.object({
-  decision: z.enum(['APPROVE', 'REJECT']),
-  note: z.string().trim().max(200).optional(),
-  reason: z.string().trim().min(2).max(120).optional(),
-});
+const decisionNote = z.string().trim().max(200).optional();
+
+export const decisionSchema = z.discriminatedUnion('decision', [
+  z.object({
+    decision: z.literal('APPROVE'),
+    note: decisionNote,
+  }),
+  z.object({
+    decision: z.literal('REJECT'),
+    note: decisionNote,
+    reason: z.string().trim().min(2, 'Add a rejection reason.').max(120),
+  }),
+]);
 
 export type JoinRequestInput = z.infer<typeof joinRequestSchema>;
 export type DecisionInput = z.infer<typeof decisionSchema>;
