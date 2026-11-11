@@ -763,6 +763,219 @@
   padding: 1rem 2.5rem 1.5rem;
   text-align: center;
 }
+.student-event-page {
+  margin: 0 auto;
+  max-width: 62rem;
+}
+.student-event-back-link {
+  align-items: center;
+  color: var(--blue-800);
+  display: inline-flex;
+  font-size: 0.78rem;
+  font-weight: 700;
+  gap: 0.4rem;
+  margin-bottom: 1.25rem;
+}
+.student-event-back-link:hover,
+.student-event-back-link:focus-visible {
+  color: var(--blue-600);
+  text-decoration: underline;
+}
+.student-event-hero {
+  align-items: flex-end;
+  background: linear-gradient(120deg, var(--blue-900), var(--blue-600));
+  border-radius: 1.5rem;
+  color: #fff;
+  display: flex;
+  gap: 2rem;
+  justify-content: space-between;
+  overflow: hidden;
+  padding: clamp(1.5rem, 4vw, 2.75rem);
+  position: relative;
+}
+.student-event-hero::after {
+  background: rgb(242 183 5 / 18%);
+  border-radius: 999px;
+  content: '';
+  height: 14rem;
+  position: absolute;
+  right: -4rem;
+  top: -7rem;
+  width: 14rem;
+}
+.student-event-hero-copy {
+  max-width: 42rem;
+  position: relative;
+  z-index: 1;
+}
+.student-event-hero .student-chip {
+  margin-bottom: 1.25rem;
+}
+.student-event-hero .student-eyebrow {
+  color: var(--gold-500);
+  margin-bottom: 0.4rem;
+}
+.student-event-hero .student-display {
+  color: #fff;
+  font-size: clamp(2.2rem, 6vw, 4.2rem);
+  line-height: 1.04;
+}
+.student-event-intro {
+  color: #dce6fa;
+  font-size: 0.92rem;
+  line-height: 1.65;
+  margin-top: 1rem;
+  max-width: 38rem;
+}
+.student-event-hero-mark {
+  align-items: center;
+  background: var(--gold-500);
+  border-radius: 1rem;
+  color: var(--blue-900);
+  display: flex;
+  flex: 0 0 5.5rem;
+  height: 5.5rem;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+}
+.student-event-content {
+  align-items: start;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: minmax(0, 1.45fr) minmax(17rem, 0.8fr);
+  margin-top: 1rem;
+}
+.student-event-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 1.25rem;
+  box-shadow: 0 0.5rem 1.5rem rgb(11 27 58 / 5%);
+  padding: clamp(1.25rem, 3vw, 1.75rem);
+}
+.student-event-section-heading {
+  align-items: start;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+}
+.student-event-section-heading h2,
+.student-event-registration h2,
+.student-event-description h2 {
+  color: var(--foreground);
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-top: 0.25rem;
+}
+.student-event-status {
+  background: var(--blue-100);
+  border-radius: 999px;
+  color: var(--blue-800);
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 0.35rem 0.6rem;
+  white-space: nowrap;
+}
+.student-event-detail-list {
+  display: grid;
+  gap: 0.85rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 1.5rem;
+}
+.student-event-detail-list div {
+  background: var(--muted);
+  border-radius: 0.8rem;
+  min-width: 0;
+  padding: 0.85rem;
+}
+.student-event-detail-list dt {
+  align-items: center;
+  color: var(--muted-foreground);
+  display: flex;
+  font-size: 0.68rem;
+  font-weight: 700;
+  gap: 0.35rem;
+  text-transform: uppercase;
+}
+.student-event-detail-list dt svg {
+  color: var(--blue-600);
+}
+.student-event-detail-list dd {
+  color: var(--foreground);
+  font-size: 0.8rem;
+  line-height: 1.45;
+  margin-top: 0.35rem;
+  overflow-wrap: anywhere;
+}
+.student-event-description {
+  border-top: 1px solid var(--border);
+  color: var(--muted-foreground);
+  font-size: 0.82rem;
+  line-height: 1.7;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+}
+.student-event-description p {
+  margin-top: 0.65rem;
+}
+.student-event-registration {
+  position: sticky;
+  top: 1rem;
+}
+.student-event-registration > p:not(.student-eyebrow):not(.student-event-error):not(.student-event-capacity) {
+  color: var(--muted-foreground);
+  font-size: 0.8rem;
+  line-height: 1.6;
+  margin-top: 0.7rem;
+}
+.student-event-error {
+  background: #fee8e7;
+  border: 1px solid #f4b7b4;
+  border-radius: 0.7rem;
+  color: #9c2c2c;
+  font-size: 0.75rem;
+  line-height: 1.45;
+  margin-top: 1rem;
+  padding: 0.7rem;
+}
+.student-event-capacity {
+  color: var(--gold-text);
+  font-size: 0.72rem;
+  font-weight: 800;
+  margin-top: 1rem;
+}
+.student-event-actions {
+  display: grid;
+  gap: 0.65rem;
+  margin-top: 1.35rem;
+}
+.student-event-actions form {
+  display: block;
+}
+@media (max-width: 700px) {
+  .student-event-hero {
+    align-items: start;
+    flex-direction: column;
+  }
+  .student-event-hero-mark {
+    display: none;
+  }
+  .student-event-content {
+    grid-template-columns: 1fr;
+  }
+  .student-event-registration {
+    position: static;
+  }
+}
+@media (max-width: 480px) {
+  .student-event-detail-list {
+    grid-template-columns: 1fr;
+  }
+  .student-event-section-heading {
+    align-items: start;
+    flex-direction: column;
+  }
+}
 @media (max-width: 1023px) {
   .student-theme .student-topbar {
     display: none;
