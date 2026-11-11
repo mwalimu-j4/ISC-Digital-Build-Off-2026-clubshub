@@ -1718,6 +1718,7 @@ html {
 body {
   background: var(--cream);
   color: var(--ink);
+  font-family: var(--font-inter), Arial, sans-serif;
   margin: 0;
   min-width: 320px;
 }

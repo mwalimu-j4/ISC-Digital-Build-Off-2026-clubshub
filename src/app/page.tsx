@@ -168,7 +168,19 @@ function LandingContent({
               </div>
             </div>
           </section>
-        ) : null}
+        ) : (
+          <section className="landing-section" id="announcements">
+            <div className="site-container">
+              <div className="landing-section-heading">
+                <div>
+                  <p className="landing-eyebrow">Stay in the know</p>
+                  <h2>Campus announcements.</h2>
+                </div>
+              </div>
+              <EmptyState>No public announcements yet.</EmptyState>
+            </div>
+          </section>
+        )}
 
         <section className="landing-section landing-lost" id="lost-found">
           <div className="site-container">

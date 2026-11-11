@@ -44,13 +44,13 @@ export default async function ClubAdminSectionPage({
       <p className="club-admin-eyebrow">Club admin</p>
       <h1 className="club-admin-display">{label}</h1>
       <section className="club-admin-panel club-admin-section-placeholder">
-        <h2>This workspace is ready for your club</h2>
+        <h2>This section is not part of the current demo.</h2>
         <p className="club-admin-muted">
           The overview is live with your club&apos;s real membership, event, announcement, and
           activity data. This workspace will be enabled as its supporting workflow is added.
         </p>
         <Link className="club-admin-navy-button" href={`/club-admin/${parsedSlug}`}>
-          Back to overview
+          Back to club admin
         </Link>
       </section>
     </div>

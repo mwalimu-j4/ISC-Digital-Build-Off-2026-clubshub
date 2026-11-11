@@ -7,6 +7,7 @@ import { Toaster } from 'sonner';
 
 import { AuthSessionProvider } from '@/components/shared/auth-session-provider';
 import { MobileBottomNav } from '@/components/shared/mobile-bottom-nav';
+import { RouteBack } from '@/components/shared/route-back';
 
 export const metadata: Metadata = {
   title: 'ClubsHub | Find your people on campus',
@@ -25,6 +26,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en">
       <body className={`${inter.variable} ${instrumentSerif.variable}`}>
         <AuthSessionProvider>
+          <RouteBack />
           {children}
           <MobileBottomNav />
           <Toaster position="top-right" richColors />

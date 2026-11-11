@@ -81,6 +81,10 @@ export default async function StudentClubDetailPage({
           )}
         </div>
       </section>
+      <section className="rounded-xl border border-border bg-card p-6">
+        <h2 className="text-lg font-semibold">Announcements</h2>
+        <p className="mt-3 text-sm text-muted-foreground">This club has no announcements yet.</p>
+      </section>
     </article>
   );
 }

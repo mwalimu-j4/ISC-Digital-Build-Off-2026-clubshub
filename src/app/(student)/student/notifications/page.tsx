@@ -38,7 +38,7 @@ export default async function StudentNotificationsPage() {
       </div>
       {notifications.length === 0 ? (
         <div className="rounded-xl border border-dashed border-border p-10 text-center">
-          <p className="text-muted-foreground">You are all caught up.</p>
+          <p className="text-muted-foreground">You have no notifications.</p>
         </div>
       ) : (
         <div className="space-y-3">
