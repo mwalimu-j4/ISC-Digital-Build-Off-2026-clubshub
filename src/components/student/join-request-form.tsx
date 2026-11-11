@@ -2,8 +2,6 @@
 
 import { useActionState } from 'react';
 
-import { DEPARTMENTS } from '@/modules/join-requests';
-
 type FormState = { error?: string; success?: boolean };
 type SubmitAction = (state: FormState, formData: FormData) => Promise<FormState>;
 
@@ -23,31 +21,20 @@ export function JoinRequestForm({ clubId, action }: { clubId: string; action: Su
         </p>
       ) : null}
       <label>
+        Full name
+        <input name="fullName" required maxLength={160} autoComplete="name" />
+      </label>
+      <label>
         School ID
         <input name="schoolId" required inputMode="text" maxLength={30} />
       </label>
       <label>
         Department
-        <select defaultValue="" name="department" required>
-          <option disabled value="">
-            Select department
-          </option>
-          {DEPARTMENTS.map((department) => (
-            <option key={department}>{department}</option>
-          ))}
-        </select>
+        <input name="department" required maxLength={120} />
       </label>
       <label>
         Major
         <input name="major" required maxLength={80} />
-      </label>
-      <label>
-        Year of study <span>(optional)</span>
-        <input name="yearOfStudy" maxLength={20} />
-      </label>
-      <label>
-        Why do you want to join? <span>(optional)</span>
-        <textarea name="message" maxLength={280} rows={4} />
       </label>
       <label className="join-request-checkbox">
         <input defaultChecked name="saveDetails" type="checkbox" />

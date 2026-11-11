@@ -8,6 +8,7 @@ const requestSelect = {
   appliedAt: true,
   approvedAt: true,
   department: true,
+  fullName: true,
   major: true,
   message: true,
   yearOfStudy: true,

@@ -1,13 +1,12 @@
 import { z } from 'zod';
 
-import { DEPARTMENTS, schoolIdPattern } from '@/modules/join-requests/constants';
+import { schoolIdPattern } from '@/modules/join-requests/constants';
 
 export const joinRequestSchema = z.object({
+  fullName: z.string().trim().min(1, 'Full name is required.').max(160),
   schoolId: z.string().trim().regex(schoolIdPattern, 'Enter a valid school ID.'),
-  department: z.enum(DEPARTMENTS),
+  department: z.string().trim().min(1, 'Department is required.').max(120),
   major: z.string().trim().min(2).max(80),
-  yearOfStudy: z.string().trim().max(20).optional(),
-  message: z.string().trim().max(280).optional(),
   saveDetails: z.boolean().default(true),
 });
 
