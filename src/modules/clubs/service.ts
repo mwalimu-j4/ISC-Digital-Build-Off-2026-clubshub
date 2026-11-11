@@ -21,7 +21,7 @@ function assertAdmin(role: UserRole) {
   if (!admin(role)) throw new ClubServiceError('Super-admin access is required');
 }
 
-async function assertClubAdmin(db: ClubDb, actorId: string, clubId: string) {
+export async function assertClubAdmin(db: ClubDb, actorId: string, clubId: string) {
   const membership = await db.clubMembership.findFirst({
     where: { clubId, userId: actorId, role: 'CLUB_ADMIN', status: 'APPROVED' },
   });
