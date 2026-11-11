@@ -15,6 +15,7 @@ const navigation = [
   { label: 'Overview', suffix: '' },
   { label: 'Join requests', suffix: '/requests' },
   { label: 'Members and roles', suffix: '/members' },
+  { label: 'Announcements', suffix: '/announcements' },
   { label: 'Events and check-in', suffix: '/events' },
   { label: 'Publish studio', suffix: '/publishing' },
   { label: 'Showcase', suffix: '/showcase' },
