@@ -104,6 +104,7 @@ export async function getDiscoveryResult(query: DiscoveryQuery, db: PrismaClient
     interests = interestCatalog;
     total = candidates.length;
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error(
       '[club-discovery] Interest-based query failed; loading active clubs without recommendation metadata.',
       error,
