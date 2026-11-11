@@ -1,5 +1,6 @@
 import Link from 'next/link';
 
+import { BackButton } from '@/components/shared/back-button';
 import { SpaceSwitcher } from '@/components/spaces/space-switcher';
 import type { UserSpace } from '@/modules/spaces';
 
@@ -50,7 +51,7 @@ export function AdminShell({ children, pendingCount = 0, userName, spaces = [] }
           <span>Super admin</span>
         </div>
       </aside>
-      <div className="admin-main">{children}</div>
+      <div className="admin-main"><BackButton fallbackHref="/super-admin" />{children}</div>
     </div>
   );
 }
