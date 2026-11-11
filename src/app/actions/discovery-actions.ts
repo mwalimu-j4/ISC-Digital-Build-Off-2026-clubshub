@@ -7,7 +7,7 @@ import { redirect } from 'next/navigation';
 import { getCurrentSession } from '@/lib/auth/session';
 import { INTEREST_COOKIE, parseDiscoveryQuery, saveUserInterests } from '@/modules/discovery';
 
-export async function saveInterestPreferences(formData: FormData) {
+async function persistInterestPreferences(formData: FormData) {
   const clear = formData.get('clear') === '1';
   const selected = clear ? [] : formData.getAll('interest').map(String);
   const query = parseDiscoveryQuery({
@@ -34,5 +34,14 @@ export async function saveInterestPreferences(formData: FormData) {
   if (query.sort !== 'match') params.set('sort', query.sort);
   if (query.verifiedOnly) params.set('verified', '1');
   if (query.q) params.set('q', query.q);
-  redirect(`/${params.size ? `?${params.toString()}` : ''}#clubs-for-you`);
+  return `/${params.size ? `?${params.toString()}` : ''}#clubs-for-you`;
+}
+
+export async function updateInterestPreferences(formData: FormData) {
+  return persistInterestPreferences(formData);
+}
+
+export async function saveInterestPreferences(formData: FormData) {
+  const destination = await persistInterestPreferences(formData);
+  redirect(destination);
 }

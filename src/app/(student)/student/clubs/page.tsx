@@ -1,6 +1,7 @@
 import { revalidatePath } from 'next/cache';
 import Link from 'next/link';
 
+import { ClubCard } from '@/components/clubs/club-card';
 import { Button } from '@/components/ui/button';
 import { requireRole } from '@/lib/auth/authorization';
 import { ClubServiceError, discoverClubs, joinClub } from '@/modules/clubs/service';
@@ -79,40 +80,50 @@ export default async function StudentClubsPage({
           </p>
         </div>
       ) : (
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <div className="discovery-grid">
           {clubs.map((club) => (
-            <article
+            <ClubCard
+              actions={
+                <>
+                  <Button asChild className="discovery-student-view" variant="outline" size="sm">
+                    <Link href={`/student/clubs/${club.slug}`}>View club</Link>
+                  </Button>
+                  {club.membershipStatus === 'APPROVED' ? (
+                    <span className="discovery-student-status">Member</span>
+                  ) : club.membershipStatus === 'PENDING' ? (
+                    <span className="discovery-student-status">Pending</span>
+                  ) : (
+                    <form action={joinClubAction}>
+                      <input type="hidden" name="clubId" value={club.id} />
+                      <Button className="discovery-join-button" size="sm" type="submit">
+                        Join
+                      </Button>
+                    </form>
+                  )}
+                </>
+              }
+              club={{
+                name: club.name,
+                slug: club.slug,
+                description: club.description,
+                category: club.category,
+                logoUrl: club.logoUrl,
+                memberCount: club._count.memberships,
+              }}
               key={club.id}
-              className="flex flex-col rounded-xl border border-border bg-card p-5"
-            >
-              <p className="text-xs font-medium uppercase tracking-wide text-primary">
-                {club.category}
-              </p>
-              <h2 className="mt-2 text-lg font-semibold">{club.name}</h2>
-              <p className="mt-2 line-clamp-3 flex-1 text-sm text-muted-foreground">
-                {club.description}
-              </p>
-              <p className="mt-4 text-xs text-muted-foreground">
-                {club._count.memberships} members
-              </p>
-              <div className="mt-4 flex items-center gap-2">
-                <Button asChild variant="outline" size="sm">
-                  <Link href={`/student/clubs/${club.slug}`}>View club</Link>
-                </Button>
-                {club.membershipStatus === 'APPROVED' ? (
-                  <span className="text-xs text-muted-foreground">Member</span>
-                ) : club.membershipStatus === 'PENDING' ? (
-                  <span className="text-xs text-muted-foreground">Pending</span>
-                ) : (
-                  <form action={joinClubAction}>
-                    <input type="hidden" name="clubId" value={club.id} />
-                    <Button size="sm" type="submit">
-                      Join
-                    </Button>
-                  </form>
-                )}
-              </div>
-            </article>
+              rows={[
+                {
+                  label: 'Membership',
+                  value:
+                    club.membershipStatus === 'APPROVED'
+                      ? 'You are a member'
+                      : club.membershipStatus === 'PENDING'
+                        ? 'Request pending'
+                        : 'Not a member yet',
+                },
+                { label: 'Club status', value: 'Active' },
+              ]}
+            />
           ))}
         </div>
       )}

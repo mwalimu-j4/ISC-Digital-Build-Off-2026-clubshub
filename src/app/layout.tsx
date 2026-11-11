@@ -1,4 +1,5 @@
 import './globals.css';
+import './clubs-for-you.css';
 
 import type { Metadata } from 'next';
 import { Instrument_Serif, Inter } from 'next/font/google';

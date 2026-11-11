@@ -1,6 +1,6 @@
 # Project status
 
-**Last updated:** 2026-11-10
+**Last updated:** 2026-11-11
 
 ## Current stage
 
@@ -28,6 +28,9 @@ foundation.
 - Logged-in account menu, responsive profile navigation, profile data, memberships,
   proposals, activity, server-validated profile settings, and the student dashboard
   experience are implemented.
+- Public and student club discovery now use one responsive, equal-height card component;
+  landing filters preserve URL state and interest preferences persist to the account or
+  anonymous preference cookie.
 
 ## Pending tasks
 
@@ -43,6 +46,16 @@ foundation.
 - `pnpm test`: passed (2 focused club-service tests)
 - `pnpm build`: passed
 - Manual viewport review: passed at 360px, 390px, 768px, 1024px, and 1440px
+
+## Clubs for You discovery refactor (2026-11-11)
+
+- `pnpm typecheck`: passed.
+- Focused discovery and shared-card unit tests: passed (12 tests).
+- Focused ESLint: passed.
+- `pnpm run build:app`: passed, including the full Next.js lint and type validation.
+  The build reports existing `<img>` performance warnings in Lost & Found components.
+- Responsive layout uses a three-column desktop grid, two columns at tablet widths,
+  and one column on phones; filter submissions retain a native server-rendered GET form.
 
 ## Known limitations
 
