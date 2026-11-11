@@ -15,7 +15,7 @@ export default async function StudentAnnouncementsPage() {
       </section>
       {announcements.length === 0 ? (
         <div className="rounded-xl border border-dashed border-border p-10 text-center">
-          <p className="text-muted-foreground">No announcements are available yet.</p>
+          <p className="text-muted-foreground">No announcements yet. Club announcements appear here after you join a club.</p>
         </div>
       ) : (
         <div className="space-y-4">
