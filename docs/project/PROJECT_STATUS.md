@@ -51,9 +51,14 @@ foundation.
 
 - `pnpm typecheck`: passed.
 - Focused discovery and shared-card unit tests: passed (12 tests).
+- `pnpm test`: passed (41 tests across 10 files).
 - Focused ESLint: passed.
 - `pnpm run build:app`: passed, including the full Next.js lint and type validation.
   The build reports existing `<img>` performance warnings in Lost & Found components.
+- Prettier check passed for all files changed in this refactor. The repository-wide
+  `pnpm format:check` still flags 49 existing files that this refactor did not change.
+- GitHub Actions could not start the PR quality job because GitHub reports an account
+  billing lock; local build, lint, type, and test checks completed successfully.
 - Responsive layout uses a three-column desktop grid, two columns at tablet widths,
   and one column on phones; filter submissions retain a native server-rendered GET form.
 

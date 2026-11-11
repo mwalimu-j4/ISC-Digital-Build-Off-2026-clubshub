@@ -44,5 +44,10 @@ The live `site-container` is shared by landing sections and caps at 1160px with 
 - Focused ESLint: passed.
 - `pnpm run build:app`: passed, including the full Next.js lint and type validation.
   Existing `<img>` performance warnings remain in Lost & Found components.
+- `pnpm test`: passed (41 tests across 10 files).
+- Changed source and documentation files pass Prettier. The repository-wide formatter
+  reports 49 unchanged files outside this refactor.
+- GitHub Actions could not start the PR quality job because GitHub reports an account
+  billing lock; local checks passed.
 - Browser screenshots, Lighthouse, and Playwright end-to-end tests were not run during
   this implementation.
