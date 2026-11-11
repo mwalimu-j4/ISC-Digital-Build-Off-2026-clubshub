@@ -1,32 +1,13 @@
-import { revalidatePath } from 'next/cache';
 import Link from 'next/link';
 
+import { JoinRequestDecisionForm } from '@/components/club-admin/join-request-decision-form';
 import { requireUser } from '@/lib/auth/authorization';
 import { getClubAdminOverview } from '@/modules/club-admin-overview';
-import { decideRequest, JoinRequestServiceError, listRequests } from '@/modules/join-requests';
+import { listRequests } from '@/modules/join-requests';
+
+import { decideAction } from './actions';
 
 export const dynamic = 'force-dynamic';
-
-async function decideAction(formData: FormData) {
-  'use server';
-  const user = await requireUser();
-  const requestId = String(formData.get('requestId'));
-  const decision = String(formData.get('decision'));
-  const note = String(formData.get('note') ?? '');
-  const reason = String(formData.get('reason') ?? '');
-  try {
-    await decideRequest(user, requestId, {
-      decision: decision === 'REJECT' ? 'REJECT' : 'APPROVE',
-      note,
-      reason,
-    });
-  } catch (error) {
-    if (error instanceof JoinRequestServiceError) throw new Error(error.message);
-    throw error;
-  }
-  revalidatePath(`/club-admin/${String(formData.get('slug'))}/requests`);
-  revalidatePath(`/club-admin/${String(formData.get('slug'))}`);
-}
 
 function relativeTime(date: Date) {
   const hours = Math.max(0, Math.floor((Date.now() - date.getTime()) / 3_600_000));
@@ -151,41 +132,7 @@ export default async function JoinRequestsPage({
               <p>{selected.message ?? 'Details not provided'}</p>
             </div>
             {status === 'PENDING' ? (
-              <form action={decideAction} className="join-request-decision">
-                <input name="requestId" type="hidden" value={selected.id} />
-                <input name="slug" type="hidden" value={slug} />
-                <label>
-                  Note to the applicant
-                  <textarea
-                    maxLength={200}
-                    name="note"
-                    placeholder="Add a warm welcome or helpful context."
-                    rows={3}
-                  />
-                </label>
-                <label>
-                  Rejection reason{' '}
-                  <input maxLength={120} name="reason" placeholder="Required only when rejecting" />
-                </label>
-                <div className="join-request-actions">
-                  <button
-                    className="club-admin-gold-button"
-                    name="decision"
-                    type="submit"
-                    value="APPROVE"
-                  >
-                    Approve
-                  </button>
-                  <button
-                    className="join-request-reject"
-                    name="decision"
-                    type="submit"
-                    value="REJECT"
-                  >
-                    Reject with reason
-                  </button>
-                </div>
-              </form>
+              <JoinRequestDecisionForm action={decideAction} requestId={selected.id} slug={slug} />
             ) : (
               <div className="join-request-decision-summary">
                 <strong>{status === 'APPROVED' ? 'Approved' : 'Rejected'}</strong>
