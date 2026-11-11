@@ -1,5 +1,6 @@
 import Link from 'next/link';
 
+import { BackButton } from '@/components/shared/back-button';
 import { SpaceSwitcher } from '@/components/spaces/space-switcher';
 import type { UserSpace } from '@/modules/spaces';
 
@@ -15,6 +16,7 @@ const navigation = [
   { label: 'Overview', suffix: '' },
   { label: 'Join requests', suffix: '/requests' },
   { label: 'Members and roles', suffix: '/members' },
+  { label: 'Announcements', suffix: '/announcements' },
   { label: 'Events and check-in', suffix: '/events' },
   { label: 'Publish studio', suffix: '/publishing' },
   { label: 'Showcase', suffix: '/showcase' },
@@ -59,7 +61,7 @@ export function ClubAdminShell({
           <span>Club administrator</span>
         </div>
       </aside>
-      <main className="club-admin-main">{children}</main>
+      <main className="club-admin-main"><BackButton fallbackHref={`/club-admin/${club.slug}`} />{children}</main>
       <nav aria-label="Mobile club administration navigation" className="club-admin-mobile-nav">
         <Link href={`/club-admin/${club.slug}`}>Home</Link>
         <Link href={`/club-admin/${club.slug}/requests`}>Requests</Link>

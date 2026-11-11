@@ -1,5 +1,6 @@
 import Link from 'next/link';
 
+import { BackButton } from '@/components/shared/back-button';
 import { SpaceSwitcher } from '@/components/spaces/space-switcher';
 import type { UserSpace } from '@/modules/spaces';
 
@@ -11,14 +12,13 @@ type AdminShellProps = {
 };
 
 const navigation = [
-  { href: '/super-admin', label: 'Overview', icon: '⌂' },
-  { href: '/super-admin/approvals', label: 'Club approvals', icon: '✓' },
-  { href: '/clubs', label: 'Clubs', icon: '◈' },
-  { href: '/super-admin/users', label: 'Users and roles', icon: '◎' },
-  { href: '/admin/clubs', label: 'Moderation', icon: '!' },
-  { href: '/super-admin#analytics', label: 'Analytics', icon: '▥' },
-  { href: '/super-admin#audit', label: 'Audit logs', icon: '≡' },
-  { href: '/super-admin#settings', label: 'Settings', icon: '⚙' },
+  { href: '/super-admin', label: 'Overview', icon: 'O' },
+  { href: '/super-admin/approvals', label: 'Club approvals', icon: 'C' },
+  { href: '/clubs', label: 'Clubs', icon: 'C' },
+  { href: '/super-admin/users', label: 'Users and roles', icon: 'U' },
+  { href: '/super-admin#analytics', label: 'Analytics', icon: 'A' },
+  { href: '/super-admin#audit', label: 'Audit logs', icon: 'A' },
+  { href: '/super-admin#settings', label: 'Settings', icon: 'S' },
 ];
 
 export function AdminShell({ children, pendingCount = 0, userName, spaces = [] }: AdminShellProps) {
@@ -51,7 +51,7 @@ export function AdminShell({ children, pendingCount = 0, userName, spaces = [] }
           <span>Super admin</span>
         </div>
       </aside>
-      <div className="admin-main">{children}</div>
+      <div className="admin-main"><BackButton fallbackHref="/super-admin" />{children}</div>
     </div>
   );
 }

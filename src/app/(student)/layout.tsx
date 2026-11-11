@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 
+import { BackButton } from '@/components/shared/back-button';
 import {
   StudentMobileHeader,
   StudentSidebar,
@@ -16,6 +17,7 @@ export default async function StudentLayout({ children }: { children: ReactNode 
         <StudentMobileHeader />
         <StudentTopBar />
         <main className="mx-auto max-w-[1240px] px-4 py-6 pb-24 sm:px-6 lg:px-10 lg:py-10 lg:pb-10">
+          <BackButton fallbackHref="/student" />
           {children}
         </main>
         <footer className="student-footer">

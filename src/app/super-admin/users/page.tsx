@@ -123,7 +123,7 @@ export default async function UsersPage({ searchParams }: { searchParams: Promis
           </form>
           <div className="users-rows">
             {data.users.length === 0 ? (
-              <p className="users-empty">No users match these filters.</p>
+              <p className="users-empty">No users found.</p>
             ) : (
               data.users.map((user) => (
                 <Link
