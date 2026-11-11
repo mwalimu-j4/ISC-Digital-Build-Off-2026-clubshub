@@ -138,6 +138,16 @@ three reviewed clubs rated Active or Very active. Match scores are omitted until
 least one interest is selected. No sample club data, fabricated match percentages,
 contact details, or leadership titles are added.
 
+## 2026-11-11 — Public and student discovery share one club card
+
+Landing recommendations and the signed-in student club list use the same card
+structure and responsive sizing. The landing page keeps its existing discovery DTO,
+ranking, interest preference persistence, links, and pagination; the student list
+keeps its existing membership status and server-validated join action. Interest
+filters progressively enhance the server-rendered controls with URL navigation that
+preserves scroll position. Discovery uses the existing `usingFallbackData` signal for
+its informational notice and does not fabricate club records.
+
 # Space switching
 
 - Club roles are never stored in the session, JWT, or cookies as authorization

@@ -1,0 +1,743 @@
+/* Consistent discovery cards and responsive controls shared by both club views. */
+.discovery-interest-section,
+.discovery-section {
+  color: #0b1f49;
+  font-family: var(--font-inter), Arial, sans-serif;
+}
+
+.discovery-interest-section {
+  padding-top: clamp(28px, 5vw, 64px);
+}
+
+.discovery-interest-panel {
+  border: 1px solid #e8e1d2;
+  border-radius: 24px;
+  background: #fff;
+  padding: clamp(22px, 3vw, 34px);
+}
+
+.discovery-interest-heading {
+  align-items: end;
+  display: flex;
+  gap: 24px;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.discovery-interest-heading h2,
+.discovery-heading h2 {
+  color: #0b1f49;
+  font-family: var(--font-instrument-serif), Georgia, serif;
+  font-size: clamp(32px, 4vw, 44px);
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  margin: 5px 0 0;
+}
+
+.discovery-interest-heading h2 em,
+.discovery-heading h2 em {
+  color: #a87500;
+  font-weight: 400;
+}
+
+.discovery-interest-heading > p,
+.discovery-intro {
+  color: #536582;
+  font-size: 15px;
+  line-height: 1.55;
+  margin: 0;
+  max-width: 430px;
+}
+
+.discovery-interest-options,
+.discovery-selected-chips,
+.discovery-category-chips {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.discovery-interest-chip {
+  align-items: center;
+  border: 1px solid #e8e1d2;
+  border-radius: 999px;
+  color: #102653;
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 14px;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 16px;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease;
+}
+
+.discovery-interest-chip:has(input:checked) {
+  background: #f6b900;
+  border-color: #f6b900;
+  color: #0b1f49;
+}
+
+.discovery-interest-chip input {
+  height: 1px;
+  opacity: 0;
+  position: absolute;
+  width: 1px;
+}
+
+.discovery-interest-chip:focus-within,
+.discovery-category-chips button:focus-visible,
+.discovery-selected-chip:focus-visible,
+.discovery-edit-interests:focus-visible {
+  outline: 3px solid #7aa7ff;
+  outline-offset: 2px;
+}
+
+.discovery-interest-footer {
+  align-items: center;
+  color: #61718a;
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 13px;
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.discovery-interest-footer a,
+.discovery-interest-footer button,
+.discovery-edit-interests {
+  color: #0d2b69;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.discovery-clear {
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.discovery-interest-footer .landing-button {
+  min-height: 44px;
+}
+
+.discovery-section {
+  padding-top: clamp(38px, 6vw, 76px);
+}
+
+.discovery-heading {
+  align-items: end;
+  margin-bottom: 22px;
+}
+
+.discovery-heading .discovery-intro {
+  margin-top: 10px;
+}
+
+.discovery-controls-panel {
+  border-bottom: 1px solid #e4dfd5;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+}
+
+.discovery-control-top-row,
+.discovery-selected-interests,
+.discovery-filter-form {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.discovery-control-top-row {
+  justify-content: space-between;
+}
+
+.discovery-selected-interests {
+  flex: 1 1 390px;
+}
+
+.discovery-control-label,
+.discovery-filter-control > span {
+  color: #6b7483;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.discovery-selected-interest-form {
+  margin: 0;
+}
+
+.discovery-selected-chip {
+  background: #e7efff;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  color: #102653;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  min-height: 36px;
+  padding: 0 12px;
+}
+
+.discovery-selected-chip span {
+  font-size: 17px;
+  margin-left: 5px;
+}
+
+.discovery-no-interests {
+  color: #68778f;
+  font-size: 13px;
+}
+
+.discovery-filter-form {
+  justify-content: flex-end;
+}
+
+.discovery-filter-control {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+}
+
+.discovery-filter-control select,
+.discovery-verified-toggle {
+  background: #fff;
+  border: 1px solid #e8e1d2;
+  border-radius: 999px;
+  color: #102653;
+  font: inherit;
+  font-size: 14px;
+  min-height: 44px;
+  padding: 0 14px;
+}
+
+.discovery-verified-toggle {
+  align-items: center;
+  cursor: pointer;
+  display: inline-flex;
+  gap: 9px;
+}
+
+.discovery-verified-toggle input {
+  accent-color: #0d2b69;
+  height: 18px;
+  width: 18px;
+}
+
+.discovery-control-submit,
+.discovery-category-chips button,
+.discovery-more a,
+.discovery-empty-state a,
+.discovery-empty-action {
+  align-items: center;
+  background: #fff;
+  border: 1px solid #123577;
+  border-radius: 999px;
+  color: #0d2b69;
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 18px;
+  text-decoration: none;
+}
+
+.discovery-category-chips {
+  margin-top: 16px;
+}
+
+.discovery-category-chips button {
+  border-color: #e8e1d2;
+  min-height: 40px;
+  padding: 0 15px;
+}
+
+.discovery-category-chips button span {
+  color: inherit;
+  font-size: 12px;
+  margin-left: 7px;
+  opacity: 0.68;
+}
+
+.discovery-category-chips button.active {
+  background: #0d2b69;
+  border-color: #0d2b69;
+  color: #fff;
+}
+
+.discovery-fallback-notice {
+  align-items: center;
+  background: #e9f2ff;
+  border: 1px solid #c8dcff;
+  border-radius: 14px;
+  color: #194078;
+  display: flex;
+  font-size: 14px;
+  gap: 10px;
+  margin: 0 0 18px;
+  min-height: 54px;
+  padding: 12px 16px;
+}
+
+.discovery-grid,
+.discovery-featured-grid,
+.discovery-compact-grid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.discovery-grid-shell {
+  position: relative;
+}
+
+.discovery-grid.is-pending {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.discovery-club-card {
+  background: #fff;
+  border: 1px solid #e8e1d2;
+  border-radius: 22px;
+  display: flex;
+  flex-direction: column;
+  min-height: 458px;
+  overflow: hidden;
+}
+
+.discovery-card-banner {
+  background: linear-gradient(110deg, #102f75, #214da5);
+  flex: 0 0 72px;
+  height: 72px;
+}
+
+.discovery-club-card:nth-child(3n + 2) .discovery-card-banner {
+  background: linear-gradient(110deg, #0b1f49, #153577);
+}
+
+.discovery-club-card:nth-child(3n + 3) .discovery-card-banner {
+  background: linear-gradient(110deg, #946900, #f0b400);
+}
+
+.discovery-card-badges {
+  align-items: center;
+  display: flex;
+  gap: 7px;
+  margin: -54px 16px 14px;
+  min-height: 28px;
+  position: relative;
+  top: auto;
+  left: auto;
+  right: auto;
+}
+
+.discovery-badge {
+  align-items: center;
+  background: #f6b900;
+  border-radius: 999px;
+  color: #0b1f49;
+  display: inline-flex;
+  font-size: 13px;
+  font-weight: 700;
+  gap: 5px;
+  min-height: 26px;
+  padding: 0 12px;
+}
+
+.discovery-badge-featured {
+  background: #0b1f49;
+  color: #f6c300;
+}
+
+.discovery-card-content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 0 18px 18px;
+}
+
+.discovery-card-title-row {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  margin-top: 0;
+  min-height: 54px;
+}
+
+.discovery-club-logo {
+  align-items: center;
+  background: #e4edff;
+  border-radius: 13px;
+  color: #0d2b69;
+  display: flex;
+  flex: 0 0 52px;
+  font-family: var(--font-instrument-serif), Georgia, serif;
+  font-size: 24px;
+  height: 52px;
+  justify-content: center;
+  overflow: hidden;
+  width: 52px;
+}
+
+.discovery-club-logo img {
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+.discovery-match-score {
+  border: 1px solid #d89e00;
+  border-radius: 999px;
+  color: #815c00;
+  font-size: 13px;
+  padding: 7px 10px;
+}
+
+.discovery-card-content h3 {
+  color: #0b1f49;
+  display: -webkit-box;
+  font-size: 18px;
+  font-weight: 650;
+  line-height: 1.25;
+  margin: 0;
+  min-height: 45px;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.discovery-club-category {
+  color: #586c8b;
+  font-size: 14px;
+  line-height: 20px;
+  margin: 1px 0 6px;
+  min-height: 20px;
+}
+
+.discovery-activity {
+  align-items: center;
+  color: #172b50;
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 13px;
+  gap: 7px;
+  min-height: 22px;
+}
+
+.discovery-activity-count-only {
+  color: #586c8b;
+}
+
+.discovery-activity-dots {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.discovery-activity-dots i {
+  background: #eee8dc;
+  border-radius: 50%;
+  height: 8px;
+  width: 8px;
+}
+
+.discovery-activity-dots i.on {
+  background: #f2b500;
+}
+
+.discovery-club-description {
+  color: #586c8b;
+  display: -webkit-box;
+  font-size: 15px;
+  line-height: 1.45;
+  margin: 9px 0 10px;
+  min-height: 44px;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.discovery-matching-interests {
+  align-content: flex-start;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-height: 27px;
+}
+
+.discovery-matching-interests span {
+  background: #e7efff;
+  border-radius: 999px;
+  color: #17366f;
+  font-size: 13px;
+  line-height: 24px;
+  padding: 0 10px;
+}
+
+.discovery-card-meta {
+  border-top: 1px solid #e8e1d2;
+  display: grid;
+  gap: 5px;
+  margin-top: 8px;
+  min-height: 65px;
+  padding-top: 9px;
+}
+
+.discovery-card-meta p {
+  color: #536582;
+  display: -webkit-box;
+  font-size: 13px;
+  line-height: 1.4;
+  margin: 0;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}
+
+.discovery-card-meta strong {
+  color: #122951;
+  font-weight: 650;
+}
+
+.discovery-card-meta .muted {
+  color: #6f7d90;
+}
+
+.discovery-card-actions {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 12px;
+}
+
+.discovery-card-actions > form {
+  margin: 0;
+}
+
+.discovery-join-button,
+.discovery-view-button,
+.discovery-student-view {
+  align-items: center;
+  border-radius: 999px;
+  display: inline-flex;
+  font-size: 14px;
+  font-weight: 650;
+  justify-content: center;
+  min-height: 44px;
+  text-decoration: none;
+}
+
+.discovery-join-button {
+  background: #f6b900;
+  border: 1px solid #f6b900;
+  color: #0b1f49;
+  flex: 1;
+  padding: 0 15px;
+}
+
+.discovery-view-button,
+.discovery-student-view {
+  background: #fff;
+  border: 1px solid #123577;
+  color: #0d2b69;
+  min-width: 84px;
+  padding: 0 14px;
+}
+
+.discovery-card-actions .discovery-student-view {
+  padding: 0 12px;
+}
+
+.discovery-card-actions .discovery-view-button,
+.discovery-card-actions .discovery-student-view {
+  min-width: 84px;
+}
+
+.discovery-student-status {
+  color: #536582;
+  font-size: 13px;
+  padding: 0 6px;
+}
+
+.discovery-empty-state {
+  background: #fff;
+  border: 1px solid #e8e1d2;
+  border-radius: 22px;
+  padding: 38px 22px;
+  text-align: center;
+}
+
+.discovery-empty-state form {
+  margin: 0;
+}
+
+.discovery-empty-state h3 {
+  color: #0b1f49;
+  font-family: var(--font-instrument-serif), Georgia, serif;
+  font-size: 26px;
+  font-weight: 400;
+  margin: 0;
+}
+
+.discovery-empty-state p {
+  color: #536582;
+  font-size: 15px;
+  margin: 10px auto 18px;
+  max-width: 560px;
+}
+
+.discovery-more {
+  display: flex;
+  justify-content: center;
+  margin-top: 22px;
+}
+
+.discovery-loading-overlay {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+  z-index: 1;
+}
+
+.discovery-card-skeleton {
+  animation: discovery-shimmer 1.35s ease-in-out infinite alternate;
+  background: #f8f7f3;
+  border: 1px solid #e8e1d2;
+  border-radius: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 458px;
+  overflow: hidden;
+  padding: 24px 18px;
+}
+
+.discovery-card-skeleton span {
+  background: linear-gradient(90deg, #e7eaf1, #f4f2ec, #e7eaf1);
+  border-radius: 9px;
+  height: 18px;
+  width: 76%;
+}
+
+.discovery-card-skeleton span:first-child {
+  height: 80px;
+  margin: -24px -18px 0;
+  width: calc(100% + 36px);
+}
+
+.discovery-card-skeleton span:last-child {
+  margin-top: auto;
+  width: 100%;
+}
+
+@keyframes discovery-shimmer {
+  from {
+    opacity: 0.78;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 1000px) {
+  .discovery-grid,
+  .discovery-featured-grid,
+  .discovery-compact-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .discovery-loading-overlay {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .discovery-control-top-row {
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 640px) {
+  .discovery-interest-heading,
+  .discovery-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .discovery-interest-heading h2,
+  .discovery-heading h2 {
+    font-size: 34px;
+  }
+
+  .discovery-interest-panel {
+    border-radius: 18px;
+    padding: 20px 16px;
+  }
+
+  .discovery-interest-chip {
+    font-size: 13px;
+    min-height: 42px;
+    padding: 0 12px;
+  }
+
+  .discovery-control-top-row,
+  .discovery-selected-interests,
+  .discovery-filter-form {
+    align-items: stretch;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .discovery-filter-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .discovery-filter-control {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .discovery-filter-control select,
+  .discovery-verified-toggle,
+  .discovery-control-submit {
+    width: 100%;
+  }
+
+  .discovery-category-chips {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding: 2px 1px 8px;
+  }
+
+  .discovery-category-chips button {
+    flex: 0 0 auto;
+  }
+
+  .discovery-grid,
+  .discovery-featured-grid,
+  .discovery-compact-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .discovery-loading-overlay {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .discovery-club-card {
+    min-height: 430px;
+  }
+}
