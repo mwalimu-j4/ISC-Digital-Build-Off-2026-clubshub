@@ -8,6 +8,7 @@ model ClubMembership {
   appliedAt  DateTime         @default(now()) @db.Timestamptz(3) @map("applied_at")
   approvedAt DateTime?        @db.Timestamptz(3) @map("approved_at")
   schoolId   String?          @map("school_id") @db.VarChar(80)
+  fullName   String?          @map("full_name") @db.VarChar(160)
   department String?          @db.VarChar(120)
   major      String?          @db.VarChar(80)
   message    String?          @db.VarChar(280)

@@ -23,11 +23,10 @@ async function requestAction(_: { error?: string; success?: boolean }, formData:
   const user = await requireRole('STUDENT');
   try {
     await submitJoinRequest(user, String(formData.get('clubId')), {
+      fullName: formData.get('fullName'),
       schoolId: formData.get('schoolId'),
       department: formData.get('department'),
       major: formData.get('major'),
-      yearOfStudy: formData.get('yearOfStudy') || undefined,
-      message: formData.get('message') || undefined,
       saveDetails: formData.get('saveDetails') === 'on',
     });
     return { success: true };

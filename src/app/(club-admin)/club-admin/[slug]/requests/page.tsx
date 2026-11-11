@@ -99,10 +99,10 @@ export default async function JoinRequestsPage({
                 key={request.id}
               >
                 <span className="join-request-avatar">
-                  {request.user.fullName.charAt(0).toUpperCase()}
+                  {(request.fullName ?? request.user.fullName).charAt(0).toUpperCase()}
                 </span>
                 <span className="join-request-list-copy">
-                  <strong>{request.user.fullName}</strong>
+                  <strong>{request.fullName ?? request.user.fullName}</strong>
                   <small>
                     {request.department ?? 'Details not provided'} ·{' '}
                     {request.major ?? 'Details not provided'}
@@ -117,11 +117,11 @@ export default async function JoinRequestsPage({
           <section className="club-admin-panel join-request-review" aria-label="Request review">
             <div className="join-request-review-heading">
               <span className="join-request-avatar large">
-                {selected.user.fullName.charAt(0).toUpperCase()}
+                {(selected.fullName ?? selected.user.fullName).charAt(0).toUpperCase()}
               </span>
               <div>
                 <p className="club-admin-eyebrow">Application</p>
-                <h2>{selected.user.fullName}</h2>
+                <h2>{selected.fullName ?? selected.user.fullName}</h2>
                 <p className="club-admin-muted">
                   Requested {selected.appliedAt.toLocaleDateString()}
                 </p>
